@@ -7,6 +7,11 @@ const routes = [
     path: '/livre-dor',
     name: 'livredor',
     component: () => import('@/views/LivreDorView.vue')
+  },
+  {
+    path:'/page-hotel',
+    name:'pagehotel',
+    component: () => import('@/views/Page_hotel.vue')
   }
 ]
 
