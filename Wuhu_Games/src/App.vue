@@ -5,6 +5,7 @@
   <header>
     <div class="navbar">
       <div class="sections-div">
+        <a class="section" href="http://localhost:5173">Accueil</a>
         <a class="section" href="http://localhost:5173/page-hotel">Hôtellerie</a>
         <a class="section" href="http://localhost:5173/livre-dor">Livre d'or</a>
       </div>

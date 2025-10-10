@@ -38,6 +38,10 @@ function deleteMessage(index) {
 
 
 <style scoped>
+* {
+  font-family: 'Montserrat';
+}
+
 .livre_or {
   background-color: #f0f8ff;
   padding: 2px;

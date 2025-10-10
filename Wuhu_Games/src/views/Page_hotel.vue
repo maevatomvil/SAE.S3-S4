@@ -24,6 +24,10 @@
 </script>
 
 <style scoped>
+*{
+  font-family: 'Montserrat';
+}
+
 .titre_hotel {
   text-align: center;
   padding: 20px;
@@ -50,6 +54,7 @@
   font-size: 1.1em;
   line-height: 1.6;
   color: #444;
+  text-align: justify;
 }
 
 .presentation_hotel img {
