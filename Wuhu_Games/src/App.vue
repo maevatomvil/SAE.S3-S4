@@ -9,6 +9,9 @@
         <a class="section" href="http://localhost:5173/page-hotel">Hôtellerie</a>
         <a class="section" href="http://localhost:5173/livre-dor">Livre d'or</a>
       </div>
+      <div class="image-div">
+        <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
+      </div>
     </div>
   </header>
   <router-view></router-view>
@@ -25,12 +28,13 @@
   background-color: white;
   border-top: whitesmoke solid 2px;
   border-left: whitesmoke solid 2px;
-  height: 100px;
+  height: 104px;
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
 }
 
 .sections-div {
   padding: 39px;
+  float: left;
 }
 
 .section {
@@ -39,5 +43,15 @@
   text-decoration: none;
   color: #2828e2;
   font-weight: bold;
+}
+
+.image-div {
+  float: right;
+  padding: 10px;
+}
+
+.image-div img {
+  height: 80px;
+  width: auto;
 }
 </style>
