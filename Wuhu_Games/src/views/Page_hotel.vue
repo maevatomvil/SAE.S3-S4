@@ -13,7 +13,7 @@
          conviviale pour vivre pleinement cette expérience
           unique.
         </p>
-        <img src="/home/kouadah/Documents/SAE.S3-S4/Wuhu_Games/public/image_chambre_hotel.jpg"
+        <img src="/public/image_chambre_hotel.jpg"
             alt="Image d'une chambre d'hôtel"/>
     </div>
 
