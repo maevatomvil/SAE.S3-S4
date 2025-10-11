@@ -4,17 +4,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <header>
     <div class="navbar">
+      <div class="image-div">
+        <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
+      </div>
       <div class="sections-div">
         <a class="section" href="http://localhost:5173">Accueil</a>
         <a class="section" href="http://localhost:5173/page-hotel">Hôtellerie</a>
         <a class="section" href="http://localhost:5173/livre-dor">Livre d'or</a>
       </div>
-      <div class="image-div">
-        <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
-      </div>
     </div>
   </header>
+
+  <body>
+
+  </body>
   <router-view></router-view>
+  <footer>
+    <div class="footer">
+      <div class="div-footer-infos">
+        <p class="footer-infos">...Situé sur l'île Wuhu...</p>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script setup>
@@ -34,7 +45,7 @@
 
 .sections-div {
   padding: 39px;
-  float: left;
+  float: right;
 }
 
 .section {
@@ -46,12 +57,24 @@
 }
 
 .image-div {
-  float: right;
+  float: left;
   padding: 10px;
 }
 
 .image-div img {
   height: 80px;
   width: auto;
+}
+
+.footer {
+  height: 200px;
+  border-top: whitesmoke;
+  background-color: #5858d8;
+  justify-content: center;
+  display: flex;
+}
+
+.footer-infos {
+  color: white;
 }
 </style>
