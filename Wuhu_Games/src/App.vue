@@ -8,9 +8,8 @@
         <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
       </div>
       <div class="sections-div">
-        <a class="section" href="http://localhost:5173">Accueil</a>
-        <a class="section" href="http://localhost:5173/page-hotel">Hôtellerie</a>
-        <a class="section" href="http://localhost:5173/livre-dor">Livre d'or</a>
+        <router-link class="section" to="/">Accueil</router-link>
+        <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
       </div>
     </div>
   </header>
