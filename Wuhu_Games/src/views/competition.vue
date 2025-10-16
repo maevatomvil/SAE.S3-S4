@@ -1,31 +1,23 @@
 <template>
     <div class="titre">
-        <h1>Présentation de l'hôtel</h1>
+        <h1>Réservations et inscriptions aux compétitions</h1>
     </div>
     <div class="presentation"> 
-        <p>Dans cette page, vous pourrez consulter le planning de 
-            disponibilité des chambres et en réserver une.
-            Notre hôtel allie confort et nature pour
-          accueillir les participants et les spectateurs
-           de l’événement sportif. 
-        Vous pourrez profiter d’un hébergement moderne, 
-        de services adaptés aux athlètes et d’une ambiance
-         conviviale pour vivre pleinement cette expérience
-          unique.
+        <p>Sur cette page vous pourrez voir les planning des compétions,vous inscrire dans une équipe pour une compétition ou réserver une place en tant que spectateur.
         </p>
-        <img src="/public/image_chambre_hotel.jpg"
-            alt="Image d'une chambre d'hôtel"/>
+        <img src="/public/image_basket.jpg"
+            alt="Image d'un match de basketball"/>
     </div>
     <div class="presentation_services"> 
       <h3>Nos services : </h3>
       <li>
-        Voir les chambres disponibles
+        Planning des compétitions
       </li>
       <li>
-        <router-link  to="/reservation-hotel">Réserver</router-link>
+        S'incrire dans une équipe
       </li>
       <li>
-        <router-link  to="/livre-dor">Consulter le livre d'or</router-link>
+        Réserver une place en tant que spéctateur
       </li>
     </div>
 
@@ -91,6 +83,8 @@
   margin: 0 auto;
   border-radius: 5px;
 }
+
+
 
 
 </style>

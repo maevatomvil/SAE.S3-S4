@@ -12,6 +12,26 @@ const routes = [
     path:'/page-hotel',
     name:'pagehotel',
     component: () => import('@/views/Page_hotel.vue')
+  },
+  {
+    path:'/competition',
+    name:'competition',
+    component: () => import('@/views/competition.vue')
+  },
+  {
+    path:'/restauration',
+    name:'restauration',
+    component: () => import('@/views/restauration.vue')
+  },
+  {
+    path:'/reservation-equipements',
+    name:'reservation-equipements',
+    component: () => import('@/views/reservation-equipements.vue')
+  },
+  {
+    path:'/reservation-hotel',
+    name:'reservation-hotel',
+    component: () => import('@/views/reservation-hotel.vue')
   }
 ]
 

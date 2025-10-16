@@ -1,31 +1,19 @@
 <template>
     <div class="titre">
-        <h1>Présentation de l'hôtel</h1>
+        <h1>Restauration</h1>
     </div>
     <div class="presentation"> 
-        <p>Dans cette page, vous pourrez consulter le planning de 
-            disponibilité des chambres et en réserver une.
-            Notre hôtel allie confort et nature pour
-          accueillir les participants et les spectateurs
-           de l’événement sportif. 
-        Vous pourrez profiter d’un hébergement moderne, 
-        de services adaptés aux athlètes et d’une ambiance
-         conviviale pour vivre pleinement cette expérience
-          unique.
-        </p>
-        <img src="/public/image_chambre_hotel.jpg"
-            alt="Image d'une chambre d'hôtel"/>
+        <p>Nous proposons une large gamme de repas tels que des Hamburgers, CheeseBurger, pizza, hot-dogs ... <br></br>Vous pouvez dès à présent réserver vos plats, vous recevrez un QR code permettant de recupérer votre repas sur place</p>
+        <img src="/public/repas.jpg"
+            alt="Image d'un match de basketball"/>
     </div>
     <div class="presentation_services"> 
       <h3>Nos services : </h3>
       <li>
-        Voir les chambres disponibles
+        Menu / noter nos plats
       </li>
       <li>
-        <router-link  to="/reservation-hotel">Réserver</router-link>
-      </li>
-      <li>
-        <router-link  to="/livre-dor">Consulter le livre d'or</router-link>
+        Réserver une table
       </li>
     </div>
 
@@ -91,6 +79,8 @@
   margin: 0 auto;
   border-radius: 5px;
 }
+
+
 
 
 </style>

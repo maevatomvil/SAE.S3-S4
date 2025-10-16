@@ -2,6 +2,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
   <header>
     <div class="navbar">
       <div class="image-div">
@@ -12,14 +13,17 @@
       <div class="sections-div">
         <router-link class="section" to="/">Accueil</router-link>
         <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
+        <router-link class="section" to="/competition">Compétition</router-link>
+        <router-link class="section" to="/restauration">Restauration</router-link>
+        <router-link class="section" to="/reservation-equipements">Réservation d’infrastructures et d’équipements sportifs</router-link>
       </div>
     </div>
   </header>
 
-  <body>
+  <main>
+    <router-view></router-view>
+  </main>
 
-  </body>
-  <router-view></router-view>
   <footer>
     <div class="footer">
       <div class="div-footer-infos">
@@ -33,9 +37,10 @@
 </script>
 
 <style scoped>
-*{
+* {
   font-family: 'Montserrat';
 }
+
 .navbar {
   background-color: white;
   border-top: whitesmoke solid 2px;
@@ -67,12 +72,17 @@
   width: auto;
 }
 
+main {
+  min-height: calc(100vh - 300px); 
+}
+
 .footer {
   height: 200px;
-  border-top: whitesmoke;
   background-color: #5858d8;
   justify-content: center;
   display: flex;
+  align-items: center;
+  margin-top: auto;
 }
 
 .footer-infos {

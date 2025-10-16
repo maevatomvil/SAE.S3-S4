@@ -1,35 +1,24 @@
 <template>
     <div class="titre">
-        <h1>Présentation de l'hôtel</h1>
+        <h1>Bienvenue sur la page de Réservation des équipements et des infrastructures</h1>
     </div>
     <div class="presentation"> 
-        <p>Dans cette page, vous pourrez consulter le planning de 
-            disponibilité des chambres et en réserver une.
-            Notre hôtel allie confort et nature pour
-          accueillir les participants et les spectateurs
-           de l’événement sportif. 
-        Vous pourrez profiter d’un hébergement moderne, 
-        de services adaptés aux athlètes et d’une ambiance
-         conviviale pour vivre pleinement cette expérience
-          unique.
+        <p>Pour participer à une activité il vous faudra une infrastructure (gymnase, terrain, ...) et des équipements (raquettes, ballons).<br></br>
+            Sur cette page vous pouvez accéder au planning des disponibilitées des infrastructures et les réserver ainsi que les équipements.
         </p>
-        <img src="/public/image_chambre_hotel.jpg"
-            alt="Image d'une chambre d'hôtel"/>
+        <img src="/public/equipements.jpg"
+            alt="Image d'un match de basketball"/>
     </div>
     <div class="presentation_services"> 
       <h3>Nos services : </h3>
       <li>
-        Voir les chambres disponibles
+        Réservation d'infrastructure / planning de disponibilité
       </li>
       <li>
-        <router-link  to="/reservation-hotel">Réserver</router-link>
-      </li>
-      <li>
-        <router-link  to="/livre-dor">Consulter le livre d'or</router-link>
+        Réservation d’équipements 
       </li>
     </div>
 
-    
 
 
 </template>
@@ -91,6 +80,8 @@
   margin: 0 auto;
   border-radius: 5px;
 }
+
+
 
 
 </style>
