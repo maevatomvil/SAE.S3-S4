@@ -5,7 +5,9 @@
   <header>
     <div class="navbar">
       <div class="image-div">
-        <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
+        <router-link to="/">
+          <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
+        </router-link>
       </div>
       <div class="sections-div">
         <router-link class="section" to="/">Accueil</router-link>

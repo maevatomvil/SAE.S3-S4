@@ -1,8 +1,8 @@
 <template>
-    <div class="titre_hotel">
+    <div class="titre">
         <h1>Bienvenue sur la page de présentation de l'hôtel</h1>
     </div>
-    <div class="presentation_hotel"> 
+    <div class="presentation"> 
         <p>Dans cette page, vous pourrez consulter le planning de 
             disponibilité des chambres et en réserver une.
             Notre hôtel allie confort et nature pour
@@ -15,6 +15,18 @@
         </p>
         <img src="/public/image_chambre_hotel.jpg"
             alt="Image d'une chambre d'hôtel"/>
+    </div>
+    <div class="presentation_services"> 
+      <h3>Nos services : </h3>
+      <li>
+        Visualisation du nombre de chambres disponibles
+      </li>
+      <li>
+        Réservation arrivée/départ,
+      </li>
+      <li>
+        <router-link  to="/livre-dor">Consulter le livre d'or</router-link>
+      </li>
     </div>
 
     <div class="calendar">
@@ -93,22 +105,25 @@
 </script>
 
 <style scoped>
+  
+
 *{
   font-family: 'Montserrat';
+  text-decoration:none;
 }
 
-.titre_hotel {
+.titre  {
   text-align: center;
   padding: 20px;
 }
 
-.titre_hotel h1 {
+.titre h1 {
   margin-bottom: 30px;
   font-size: 2em;
   color: #333;
 }
 
-.presentation_hotel {
+.presentation {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +132,7 @@
   margin: 0 auto;
 }
 
-.presentation_hotel p {
+.presentation  p {
   flex: 1;
   text-align: left;
   font-size: 1.1em;
@@ -126,12 +141,21 @@
   text-align: justify;
 }
 
-.presentation_hotel img {
+.presentation  img {
   flex: 1;
   max-width: 40%;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.presentation_services{
+  background-color: rgb(230, 230, 230);
+  justify-content: center;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 5px;
 }
 
 /*calendrier*/
