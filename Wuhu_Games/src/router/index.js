@@ -32,7 +32,13 @@ const routes = [
     path:'/reservation-hotel',
     name:'reservation-hotel',
     component: () => import('@/views/reservation-hotel.vue')
+  },
+  {
+    path:'/planning-competitions',
+    name:'planning-competitions',
+    component: () => import('@/views/planning_competitions.vue')
   }
+
 ]
 
 

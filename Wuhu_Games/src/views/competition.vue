@@ -11,7 +11,7 @@
     <div class="presentation_services"> 
       <h3>Nos services : </h3>
       <li>
-        Planning des compétitions
+        <router-link  to="/planning-competitions"> Planning des compétitions</router-link>
       </li>
       <li>
         S'incrire dans une équipe
