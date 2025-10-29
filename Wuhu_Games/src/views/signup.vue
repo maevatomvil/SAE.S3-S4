@@ -57,15 +57,6 @@ async function handleSignup() {
           <input v-model="form.password" type="password" placeholder="Entrez votre mot de passe" required />
         </div>
 
-        <div class="input-group">
-          <label>Rôle</label>
-          <select v-model="form.role">
-            <option value="visiteur">Visiteur</option>
-            <option value="organisateur">Organisateur</option>
-            <option value="prestataire">Prestataire</option>
-          </select>
-        </div>
-
         <button type="submit" class="btn-signup">S'inscrire</button>
 
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>

@@ -51,7 +51,7 @@ async function signup(data) {
         username: data.username,
         email: data.email,
         password: hashedPassword,
-        role: data.role || 'visiteur',
+        role: 'visiteur',
         session: uuidv4()
     }
 
