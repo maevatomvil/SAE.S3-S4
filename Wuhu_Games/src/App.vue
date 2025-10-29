@@ -3,19 +3,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+  <!-- HEADER -->
   <header>
     <div class="navbar">
       <div class="image-div">
         <router-link to="/">
-          <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games">
+          <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games" />
         </router-link>
       </div>
+
       <div class="sections-div">
         <router-link class="section" to="/">Accueil</router-link>
         <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
         <router-link class="section" to="/competition">Compétition</router-link>
         <router-link class="section" to="/restauration">Restauration</router-link>
-        <router-link class="section" to="/reservation-equipements">Réservation d’infrastructures et d’équipements sportifs</router-link>
+        <router-link class="section" to="/reservation-equipements">
+          Réservation d’infrastructures et d’équipements sportifs
+        </router-link>
+        <router-link class="section" to="/login">
+          <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="Connexion" />
+        </router-link>
       </div>
     </div>
   </header>
@@ -34,6 +41,10 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import Login from "@/views/login.vue"
+
+const showLogin = ref(false)
 </script>
 
 <style scoped>
@@ -73,7 +84,7 @@
 }
 
 main {
-  min-height: calc(100vh - 300px); 
+  min-height: calc(100vh - 300px);
 }
 
 .footer {
