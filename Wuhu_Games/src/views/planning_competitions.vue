@@ -46,22 +46,31 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getCompetitions } from '@/services/services.js'
+import { useCompetitions } from '@/stores/competitions.js'
 
-const competitions = ref([])
+const competitions = useCompetitions()
 
 onMounted(async () => {
-  competitions.value = await getCompetitions()
+  await competitions.getCompetitions()
+})
+
+ref({
+  jour: '',
+  heure: '',
+  titre: '',
+  lieu: ''
 })
 
 const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 
 function matin(jour) {
-  return competitions.value.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
+  if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []
+  return competitions.compUser.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
 }
 
 function apresMidi(jour) {
-  return competitions.value.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
+  if(!competitions.compUser || !Array.isArray(competitions.compUser))  return []
+  return competitions.compUser.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
 }
 </script>
 
