@@ -41,15 +41,35 @@
 
     </div>
   </div>
+  <div v-if="auth.authUser && auth.authUser.role === 'organisateur'">
+    <h2>Ajouter une compétition</h2>
+
+    <div class="ajout-compet">
+      <select v-model="newCompet.jour">
+        <option disabled value="">Choisir un jour</option>
+        <option v-for="jour in jours" :key="jour" :value="jour">{{ jour }}</option>
+      </select>
+
+      <input v-model="newCompet.titre" type="text" placeholder="Titre de la compétition" />
+      <input v-model="newCompet.heure" type="time" />
+      <input v-model="newCompet.lieu" type="text" placeholder="Lieu" />
+
+      <button @click="ajouterCompet">Ajouter</button>
+    </div>
+  </div>
+
+  
+
   <br><br><br>
 </template>
 
 <script setup>
+import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 
 const competitions = useCompetitions()
-
+const auth = useAuth()
 onMounted(async () => {
   await competitions.getCompetitions()
 })
@@ -62,6 +82,25 @@ ref({
 })
 
 const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+const newCompet = ref({
+  titre: '',
+  heure: '',
+  lieu: ''
+})
+
+function ajouterCompet() {
+  if (!newCompet.value.titre || !newCompet.value.heure || !newCompet.value.lieu || !newCompet.value.jour){
+    return;
+  } else {
+    competitions.compUser.push({
+      ...newCompet.value
+    })
+    newCompet.value.jour = ''
+    newCompet.value.titre = ''
+    newCompet.value.heure = ''
+    newCompet.value.lieu = ''
+  }
+}
 
 function matin(jour) {
   if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []

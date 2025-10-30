@@ -29,6 +29,8 @@
 
   <main>
     <router-view></router-view>
+    
+
   </main>
 
   <footer>
@@ -41,9 +43,11 @@
 </template>
 
 <script setup>
+import { useAuth } from '@/stores/auth.js'
+
 import { ref } from 'vue'
 import Login from "@/views/login.vue"
-
+const auth = useAuth()
 const showLogin = ref(false)
 </script>
 
@@ -71,6 +75,11 @@ const showLogin = ref(false)
   text-decoration: none;
   color: #2828e2;
   font-weight: bold;
+}
+.connecte-texte {
+  font-size: 12px;
+  color: #666;
+  margin-left: 10px;
 }
 
 .image-div {
