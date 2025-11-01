@@ -1,6 +1,6 @@
 import LocalSource from "@/services/localsource.service.js";
 
-async function loginFromLoclSource(data) {
+async function loginFromLocalSource(data) {
     return LocalSource.login(data);
 }
 
@@ -11,7 +11,7 @@ async function signupFromLocalSource(data) {
 async function login(data) {
     let response = null;
     try {
-        response = await loginFromLoclSource(data);
+        response = await loginFromLocalSource(data);
     } catch(err) {
         response = {error: 1, status: 404, data: 'erreur réseau, impossible de se connecter' }
     }

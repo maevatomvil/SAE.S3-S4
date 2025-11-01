@@ -3,9 +3,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-  <!-- HEADER -->
   <header>
-    <div class="navbar">
+    <div v-if="!isAuthenticated" class="navbar">
       <div class="image-div">
         <router-link to="/">
           <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games" />
@@ -20,17 +19,37 @@
         <router-link class="section" to="/reservation-equipements">
           Réservation d’infrastructures et d’équipements sportifs
         </router-link>
-        <router-link class="section" to="/login">
-          <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="Connexion" />
+        <button type="button" class="logout-btn">
+          <router-link class="login-btn" to="/login">
+            <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="Connexion" />
+          </router-link>
+        </button>
+      </div>
+    </div>
+    <div v-if="isAuthenticated" class="navbar">
+      <div class="image-div">
+        <router-link to="/">
+          <img src="/public/Wuhu Games.svg" alt="logo Wuhu Games" />
         </router-link>
+      </div>
+
+      <div class="sections-div">
+        <router-link class="section" to="/">Accueil</router-link>
+        <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
+        <router-link class="section" to="/competition">Compétition</router-link>
+        <router-link class="section" to="/restauration">Restauration</router-link>
+        <router-link class="section" to="/reservation-equipements">
+          Réservation d’infrastructures et d’équipements sportifs
+        </router-link>
+        <button type="button" @click="handleLogout" class="logout-btn">
+          <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="déconnexion">
+        </button>
       </div>
     </div>
   </header>
 
   <main>
     <router-view></router-view>
-    
-
   </main>
 
   <footer>
@@ -45,10 +64,17 @@
 <script setup>
 import { useAuth } from '@/stores/auth.js'
 
-import { ref } from 'vue'
-import Login from "@/views/login.vue"
+import { computed } from 'vue'
+import {useRouter} from "vue-router";
+
 const auth = useAuth()
-const showLogin = ref(false)
+const router = useRouter()
+const isAuthenticated = computed(() => auth.isAuthenticated());
+function handleLogout() {
+  auth.logout();
+  router.push('/');
+}
+
 </script>
 
 <style scoped>
@@ -64,6 +90,13 @@ const showLogin = ref(false)
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
 }
 
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
 .sections-div {
   padding: 39px;
   float: right;
@@ -75,11 +108,6 @@ const showLogin = ref(false)
   text-decoration: none;
   color: #2828e2;
   font-weight: bold;
-}
-.connecte-texte {
-  font-size: 12px;
-  color: #666;
-  margin-left: 10px;
 }
 
 .image-div {

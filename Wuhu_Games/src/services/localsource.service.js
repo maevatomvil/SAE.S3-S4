@@ -7,15 +7,40 @@ const useSQL = false;
 let authUsers = JSON.parse(JSON.stringify(authData))
 let compUsers = JSON.parse(JSON.stringify(competitions))
 
+function initAuthUsers() {
+    const saved = localStorage.getItem('auth')
+    if (saved) {
+        try {
+            const localUsers = JSON.parse(saved)
+            authUsers = localUsers
+        } catch (e) {
+            console.error('Erreur lors du chargement des utilisateurs:', e)
+        }
+    } else {
+        localStorage.setItem('auth', JSON.stringify(authUsers))
+    }
+}
+
+if (!useSQL) {
+    initAuthUsers()
+}
+
 async function login(data) {
     if (!useSQL) {
         if ((!data.username) || (!data.password))
             return {error: 1, status: 404, data: 'aucun login/pass fourni'}
+
         let user = authUsers.find(e => e.username === data.username)
         if (!user)
             return {error: 1, status: 404, data: 'login/pass incorrect'}
+
+        const hashedPassword = await hashPassword(data.password);
+        if (user.password !== hashedPassword)
+            return {error: 1, status: 404, data: 'login/password incorrect'}
+
         if (!user.session) {
             user.session = uuidv4()
+            localStorage.setItem('auth', JSON.stringify(authUsers))
         }
         let u = {
             username: user.username,
@@ -39,6 +64,7 @@ async function hashPassword(password) {
     const data = encoder.encode(password);
     const hash = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hash));
+    console.log(hashArray.map(b => b.toString(16).padStart(2,'0')).join(''));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
@@ -71,6 +97,8 @@ async function signup(data) {
         }
 
         authUsers.push(newUser)
+
+        localStorage.setItem('auth', JSON.stringify(authUsers))
 
         return {
             error: 0,
