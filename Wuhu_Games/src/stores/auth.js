@@ -6,6 +6,15 @@ import AuthService from '@/services/auth.service'
 export const useAuth = defineStore('auth',() => {
     const authUser = ref(null)
 
+    async function initSession() {
+        const response = await AuthService.checkSession()
+        if (response.error === 0) {
+            authUser.value = response.data
+            return true
+        }
+        return false
+    }
+
     async function login(data) {
         console.log('login');
         let response = await AuthService.login(data)
@@ -27,9 +36,9 @@ export const useAuth = defineStore('auth',() => {
         }
     }
 
-    function logout() {
-        authUser.value = null;
-        sessionStorage.removeItem('authUser');
+    async function logout() {
+        await AuthService.logout();
+        authUser.value = null
     }
 
     function isAuthenticated() {
@@ -40,5 +49,13 @@ export const useAuth = defineStore('auth',() => {
         return authUser.value && authUser.value.role === role;
     }
 
-    return { authUser, login, signup, logout, isAuthenticated, hasRole }
+    return {
+        authUser,
+        login,
+        signup,
+        logout,
+        initSession,
+        isAuthenticated,
+        hasRole
+    }
 })

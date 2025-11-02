@@ -19,7 +19,7 @@ async function handleSignup() {
   errorMessage.value = ''
   try {
     await auth.signup(form.value)
-    await router.push('/login')
+    await router.push('/')
   } catch (err) {
     errorMessage.value = err.message || "Erreur lors de l'inscription"
   }

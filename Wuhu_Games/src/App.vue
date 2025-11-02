@@ -65,16 +65,20 @@
 
 <script setup>
 import { useAuth } from '@/stores/auth.js'
-
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import {useRouter} from "vue-router";
 
 const auth = useAuth()
 const router = useRouter()
 const isAuthenticated = computed(() => auth.isAuthenticated());
-function handleLogout() {
-  auth.logout();
-  router.push('/');
+
+onMounted(async () => {
+  await auth.initSession()
+})
+
+async function handleLogout() {
+  await auth.logout();
+  await router.push('/');
 }
 
 </script>
