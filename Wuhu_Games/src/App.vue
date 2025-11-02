@@ -23,6 +23,7 @@
           <router-link class="login-btn" to="/login">
             <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="Connexion" />
           </router-link>
+          <p>Se connecter</p>
         </button>
       </div>
     </div>
@@ -43,6 +44,7 @@
         </router-link>
         <button type="button" @click="handleLogout" class="logout-btn">
           <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="déconnexion">
+          <p>Se déconnecter</p>
         </button>
       </div>
     </div>
@@ -95,10 +97,16 @@ function handleLogout() {
   border: none;
   cursor: pointer;
   vertical-align: middle;
+
+}
+
+.logout-btn p {
+  margin: 0;
+  color: #2828e2;
 }
 
 .sections-div {
-  padding: 39px;
+  padding: 30px;
   float: right;
 }
 

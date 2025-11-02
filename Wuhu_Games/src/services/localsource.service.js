@@ -27,6 +27,7 @@ if (!useSQL) {
 
 async function login(data) {
     if (!useSQL) {
+
         if ((!data.username) || (!data.password))
             return {error: 1, status: 404, data: 'aucun login/pass fourni'}
 
@@ -34,7 +35,8 @@ async function login(data) {
         if (!user)
             return {error: 1, status: 404, data: 'login/pass incorrect'}
 
-        const hashedPassword = await hashPassword(data.password);
+        const hashedPassword = await hashPassword(data.password)
+
         if (user.password !== hashedPassword)
             return {error: 1, status: 404, data: 'login/password incorrect'}
 
@@ -64,7 +66,6 @@ async function hashPassword(password) {
     const data = encoder.encode(password);
     const hash = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hash));
-    console.log(hashArray.map(b => b.toString(16).padStart(2,'0')).join(''));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
