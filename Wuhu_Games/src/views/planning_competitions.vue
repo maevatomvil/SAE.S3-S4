@@ -104,13 +104,18 @@ function ajouterCompet() {
 
 function matin(jour) {
   if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []
-  return competitions.compUser.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
+  return competitions.compUser
+    .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
+    .sort((a, b) => a.heure.localeCompare(b.heure))
 }
 
 function apresMidi(jour) {
-  if(!competitions.compUser || !Array.isArray(competitions.compUser))  return []
-  return competitions.compUser.filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
+  if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []
+  return competitions.compUser
+    .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
+    .sort((a, b) => a.heure.localeCompare(b.heure))
 }
+
 </script>
 
 <style>
