@@ -3,54 +3,68 @@
     "jour": "Lundi",
     "heure": "09:00",
     "titre": "Tir à l'arc",
-    "lieu": "Terrain de tir à l'arc"
+    "lieu": "Terrain de tir à l'arc",
+    "joueurs": []
   },
   {
     "jour": "Lundi",
     "heure": "14:30",
     "titre": "Canoë-Kayak",
-    "lieu": "Rivière Wuhu"
+    "lieu": "Rivière Wuhu",
+    "joueurs": []
+
   },
   {
     "jour": "Mardi",
     "heure": "10:00",
     "titre": "Bowling",
-    "lieu": "Stadium Wuhu"
+    "lieu": "Stadium Wuhu",
+    "joueurs": []
   },
   {
     "jour": "Mardi",
     "heure": "15:00",
     "titre": "Golf Demi-Finale",
-    "lieu": "Golf Wuhu"
+    "lieu": "Golf Wuhu",
+    "joueurs": []
   },
 {
     "jour": "Mardi",
     "heure": "20:00",
     "titre": "Golf Finale",
-    "lieu": "Golf Wuhu"
+    "lieu": "Golf Wuhu",
+    "joueurs": []
   },
   {
     "jour": "Mercredi",
     "heure": "11:00",
     "titre": "Tennis de table",
-    "lieu": "Stadium Wuhu"
+    "lieu": "Stadium Wuhu",
+    "joueurs": []
   },
   {
     "jour": "Jeudi",
     "heure": "14:00",
     "titre": "Tennis",
-    "lieu": "Stadium Wuhu"
+    "lieu": "Stadium Wuhu",
+    "joueurs": []
   },
   {
     "jour": "Vendredi",
     "heure": "09:30",
     "titre": "Basketball",
-    "lieu": "Stadium Wuhu"
+    "lieu": "Stadium Wuhu",
+    "joueurs": []
   },
   {
     "jour": "Samedi",
     "heure": "16:00",
     "titre": "Cyclisme",
-    "lieu": "Piste de cyclisme "
+    "lieu": "Piste de cyclisme ",
+    "joueurs": [{
+       "username": "jdupont",
+        "firstname": "Jean",
+        "surname": "Dupont"
+    }]
   }
 ]

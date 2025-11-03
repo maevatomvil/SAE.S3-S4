@@ -11,7 +11,7 @@
         <h3>Matin</h3>
         <div class="cases">
           <template v-if="matin(jour).length >= 1">
-            <div v-for="compet in matin(jour)" :key="compet.titre" class="case">
+            <div v-for="compet in matin(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
@@ -27,7 +27,7 @@
         <h3>Après-midi</h3>
         <div class="cases">
           <template v-if="apresMidi(jour).length >= 1">
-            <div v-for="compet in apresMidi(jour)" :key="compet.titre" class="case">
+            <div v-for="compet in apresMidi(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
@@ -58,7 +58,17 @@
     </div>
   </div>
 
-  
+  <div v-if="selectedCompet" class="popup">
+    <div class="popup-content">
+      <h3>Participants: </h3>
+      <ul>
+        <li v-for="joueur in selectedCompet.joueurs || []" :key="joueur.username">
+          {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
+        </li>
+      </ul>
+      <button @click="selectedCompet = null">Fermer</button>
+    </div>
+  </div>
 
   <br><br><br>
 </template>
@@ -93,7 +103,8 @@ function ajouterCompet() {
     return;
   } else {
     competitions.compUser.push({
-      ...newCompet.value
+      ...newCompet.value,
+      joueurs: []
     })
     newCompet.value.jour = ''
     newCompet.value.titre = ''
@@ -114,6 +125,11 @@ function apresMidi(jour) {
   return competitions.compUser
     .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
     .sort((a, b) => a.heure.localeCompare(b.heure))
+}
+
+const selectedCompet = ref(null)
+function ouvrirParticipants(compet) {
+  selectedCompet.value = compet
 }
 
 </script>
@@ -163,4 +179,24 @@ function apresMidi(jour) {
 }
 
 .case.vide { background: #eaeaea; color: #aaa; }
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  min-width: 300px;
+  max-width: 500px;
+}
 </style>

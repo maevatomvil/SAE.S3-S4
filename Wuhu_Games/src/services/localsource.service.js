@@ -13,6 +13,7 @@ function initAuthUsers() {
         try {
             const localUsers = JSON.parse(saved)
             authUsers = localUsers
+            
         } catch (e) {
             console.error('Erreur lors du chargement des utilisateurs:', e)
         }
@@ -204,7 +205,8 @@ export async function getCompetitions() {
             jour: u.jour,
             heure: u.heure,
             titre: u.titre,
-            lieu: u.lieu
+            lieu: u.lieu,
+            joueurs: u.joueurs
         }))
         return {error: 0, status: 200, data: competitions}
     }
