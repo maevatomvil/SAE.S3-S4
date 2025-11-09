@@ -11,10 +11,7 @@
     <div class="presentation_services"> 
       <h3>Nos services : </h3>
       <li>
-        <router-link  to="/planning-competitions"> Planning des compétitions</router-link>
-      </li>
-      <li>
-        S'incrire dans une équipe
+        <router-link  to="/planning-competitions"> Planning des compétitions | Inscription</router-link>
       </li>
       <li>
         Réserver une place en tant que spéctateur

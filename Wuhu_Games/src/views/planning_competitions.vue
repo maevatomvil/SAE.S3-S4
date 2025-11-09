@@ -13,6 +13,7 @@
           <template v-if="matin(jour).length >= 1">
             <div v-for="compet in matin(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
+              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
             </div>
@@ -29,6 +30,7 @@
           <template v-if="apresMidi(jour).length >= 1">
             <div v-for="compet in apresMidi(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
+              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
             </div>
@@ -66,7 +68,26 @@
           {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
         </li>
       </ul>
+      <button @click="ouvrirPopupInscription(selectedCompet)">S'inscrire</button>
       <button @click="selectedCompet = null">Fermer</button>
+    </div>
+  </div>
+  <div v-if="popupInscriptionOuvert" class="popup">
+    <div class="popup-content">
+          <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
+          <br></br>
+          <div class="inscriptiondiv" :class="{ vert: numerosInscription[popupInscriptionOuvert.titre] }">
+            <button @click="inscrire(popupInscriptionOuvert.titre)">M'inscrire</button>
+          </div>
+          <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
+              Vous êtes inscrit à la compétition. 
+              <br></br>Numéro d'inscription : {{ numerosInscription[popupInscriptionOuvert.titre] }}
+              <br></br>Username : {{auth.authUser.username}}
+              <br></br>
+              <h4 style="color:red"> ne partagez ce numéro à personne, il vous sera demandé avec votre username sur place.</h4>
+          </div>
+
+      <button @click="popupInscriptionOuvert = null">Fermer</button>
     </div>
   </div>
 
@@ -80,6 +101,11 @@ import { useCompetitions } from '@/stores/competitions.js'
 
 const competitions = useCompetitions()
 const auth = useAuth()
+const inscriptions = ref({})
+const numerosInscription = ref({})
+const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+const selectedCompet = ref(null)
+
 onMounted(async () => {
   await competitions.getCompetitions()
 })
@@ -91,7 +117,6 @@ ref({
   lieu: ''
 })
 
-const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 const newCompet = ref({
   titre: '',
   heure: '',
@@ -127,11 +152,27 @@ function apresMidi(jour) {
     .sort((a, b) => a.heure.localeCompare(b.heure))
 }
 
-const selectedCompet = ref(null)
+const popupInscriptionOuvert = ref(null)
 function ouvrirParticipants(compet) {
   selectedCompet.value = compet
 }
 
+function ouvrirPopupInscription(compet) {
+  selectedCompet.value = null 
+  popupInscriptionOuvert.value = compet
+}
+
+function inscrire(titre) {
+  if (!numerosInscription.value[titre]) {
+    let numero
+    do {
+      numero = Math.floor(Math.random() * 99999) + 1
+    } while (Object.values(inscriptions.value[titre] || {}).includes(numero))
+    if (!inscriptions.value[titre]) inscriptions.value[titre] = {}
+    inscriptions.value[titre][auth.authUser.username] = numero
+    numerosInscription.value[titre] = numero
+  }
+}
 </script>
 
 <style>
@@ -198,5 +239,38 @@ function ouvrirParticipants(compet) {
   border-radius: 10px;
   min-width: 300px;
   max-width: 500px;
+}
+
+.inscriptiondiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 8px;
+  background-color: grey;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+.inscriptiondiv.vert {
+  background-color: #4CAF50; 
+}
+
+.divCodeInscription{
+  visibility: hidden;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  height: 400px
+}
+.divCodeInscription.visibility{
+  visibility:visible;
 }
 </style>
