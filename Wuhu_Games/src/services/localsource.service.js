@@ -217,11 +217,140 @@ export async function getCompetitions() {
     }
 }
 
+
+
+export function getCompetitionsMatin(competitions, jour) {
+    return competitions
+        .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
+        .sort((a, b) => a.heure.localeCompare(b.heure))
+}
+
+export function getCompetitionsApresMidi(competitions, jour) {
+    return competitions
+        .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
+        .sort((a, b) => a.heure.localeCompare(b.heure))
+}
+
+
+export function ajouterCompetition(newCompet, competitions) {
+    if (!newCompet.titre || !newCompet.heure || !newCompet.lieu || !newCompet.jour) return
+    const competToAdd = {
+        ...newCompet,
+        joueurs: []
+    }
+    competitions.push(competToAdd)
+    compUsers.push(competToAdd)
+    localStorage.setItem('competitions', JSON.stringify(compUsers))
+}
+
+
+
+
+let inscriptions = JSON.parse(localStorage.getItem("inscriptions")) || {}
+let numerosInscription = JSON.parse(localStorage.getItem("numerosInscription")) || {}
+
+function saveToLocalStorage() {
+    localStorage.setItem("inscriptions", JSON.stringify(inscriptions))
+    localStorage.setItem("numerosInscription", JSON.stringify(numerosInscription))
+}
+
+export function getInscriptions() {
+    if (!useSQL) {
+        return inscriptions
+    } else {
+        return executeSQL('SELECT titre, username, numero FROM inscriptions')
+            .then(rows => {
+                const result = {}
+                rows.forEach(r => {
+                    if (!result[r.titre]) result[r.titre] = {}
+                    result[r.titre][r.username] = r.numero
+                })
+                return result
+            })
+    }
+}
+
+export function getNumero(titre) {
+    if (!useSQL) {
+        return numerosInscription[titre] || null
+    } else {
+        return executeSQL('SELECT numero FROM inscriptions WHERE titre = ? LIMIT 1', [titre])
+            .then(rows => rows.length ? rows[0].numero : null)
+    }
+}
+
+export async function inscrireUser(compet, user) {
+    if (!useSQL) {
+        if (!numerosInscription[compet.titre]) {
+            let numero
+            do {
+                numero = Math.floor(Math.random() * 99999) + 1
+            } while (Object.values(inscriptions[compet.titre] || {}).includes(numero))
+
+            if (!inscriptions[compet.titre]) inscriptions[compet.titre] = {}
+            inscriptions[compet.titre][user.username] = numero
+            numerosInscription[compet.titre] = numero
+            if (!compet.joueurs.find(j => j.username === user.username)) {
+                compet.joueurs.push({
+                    username: user.username,
+                    firstname: user.firstname,
+                    surname: user.surname
+                })
+            }
+            const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+            if (index !== -1) {
+                compUsers[index] = compet
+                localStorage.setItem('competitions', JSON.stringify(compUsers))
+            }
+            saveToLocalStorage()
+            return numero
+        }
+        return numerosInscription[compet.titre]
+    } else {
+        let numero
+        let rows
+        do {
+            numero = Math.floor(Math.random() * 99999) + 1
+            rows = await executeSQL('SELECT numero FROM inscriptions WHERE titre = ? AND numero = ?', [compet.titre, numero])
+        } while (rows.length > 0)
+
+        await executeSQL(
+            'INSERT INTO inscriptions (titre, username, numero) VALUES (?, ?, ?)',
+            [compet.titre, user.username, numero]
+        )
+
+        numerosInscription[compet.titre] = numero
+        if (!compet.joueurs.find(j => j.username === user.username)) {
+            compet.joueurs.push({
+                username: user.username,
+                firstname: user.firstname,
+                surname: user.surname
+            })
+        }
+
+        return numero
+    }
+}
+
+
+
+
+
+
+
+
 export default {
     login,
     checkSession,
     logout,
     signup,
     getUsers,
-    getCompetitions
+    getCompetitions,
+    getInscriptions,
+    getNumero,
+    inscrireUser,
+    getCompetitionsMatin,
+    getCompetitionsApresMidi,
+    ajouterCompetition
 }
+

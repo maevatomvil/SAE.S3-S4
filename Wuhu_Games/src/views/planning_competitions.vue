@@ -1,19 +1,20 @@
 <template>
+  
   <div class="titre">
     <h1>Planning des compétitions</h1>
   </div>
 
-  <div class="planning">
+  <div class="planning" v-if="competitions.compUser">
     <div v-for="jour in jours" :key="jour" class="jour">
       <h2>{{ jour }}</h2>
 
       <div class="periode">
         <h3>Matin</h3>
         <div class="cases">
-          <template v-if="matin(jour).length >= 1">
-            <div v-for="compet in matin(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
+          <template v-if="getCompetitionsMatin(competitions.compUser, jour).length">
+            <div v-for="compet in getCompetitionsMatin(competitions.compUser, jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
-              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
+              <p v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
             </div>
@@ -27,8 +28,8 @@
       <div class="periode">
         <h3>Après-midi</h3>
         <div class="cases">
-          <template v-if="apresMidi(jour).length >= 1">
-            <div v-for="compet in apresMidi(jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
+          <template v-if="getCompetitionsApresMidi(competitions.compUser, jour).length">
+            <div v-for="compet in getCompetitionsApresMidi(competitions.compUser, jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
               <p><strong>{{ compet.titre }}</strong></p>
               <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
@@ -43,6 +44,7 @@
 
     </div>
   </div>
+
   <div v-if="auth.authUser && auth.authUser.role === 'organisateur'">
     <h2>Ajouter une compétition</h2>
 
@@ -72,20 +74,21 @@
       <button @click="selectedCompet = null">Fermer</button>
     </div>
   </div>
+
   <div v-if="popupInscriptionOuvert" class="popup">
     <div class="popup-content">
-          <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
+      <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
+      <br></br>
+      <div class="inscriptiondiv" :class="{ vert: getNumero(popupInscriptionOuvert) }">
+        <button @click="inscrire(popupInscriptionOuvert)">M'inscrire</button>
+      </div>
+      <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
+          Vous êtes inscrit à la compétition. 
+          <br></br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
+          <br></br>Username : {{auth.authUser.username}}
           <br></br>
-          <div class="inscriptiondiv" :class="{ vert: numerosInscription[popupInscriptionOuvert.titre] }">
-            <button @click="inscrire(popupInscriptionOuvert.titre)">M'inscrire</button>
-          </div>
-          <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
-              Vous êtes inscrit à la compétition. 
-              <br></br>Numéro d'inscription : {{ numerosInscription[popupInscriptionOuvert.titre] }}
-              <br></br>Username : {{auth.authUser.username}}
-              <br></br>
-              <h4 style="color:red"> ne partagez ce numéro à personne, il vous sera demandé avec votre username sur place.</h4>
-          </div>
+          <h4 style="color:red"> ne partagez ce numéro à personne, il vous sera demandé avec votre username sur place.</h4>
+      </div>
 
       <button @click="popupInscriptionOuvert = null">Fermer</button>
     </div>
@@ -95,64 +98,45 @@
 </template>
 
 <script setup>
+import { getInscriptions, getNumero, inscrireUser ,getCompetitionsMatin, getCompetitionsApresMidi, ajouterCompetition } from '@/services/localsource.service.js'
 import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 
-const competitions = useCompetitions()
-const auth = useAuth()
 const inscriptions = ref({})
 const numerosInscription = ref({})
+
+const competitions = useCompetitions()
+const auth = useAuth()
 const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 const selectedCompet = ref(null)
 
 onMounted(async () => {
   await competitions.getCompetitions()
-})
-
-ref({
-  jour: '',
-  heure: '',
-  titre: '',
-  lieu: ''
+  inscriptions.value = getInscriptions()
+  Object.keys(inscriptions.value).forEach(titre => {
+    numerosInscription.value[titre] = Object.values(inscriptions.value[titre])[0]
+  })
 })
 
 const newCompet = ref({
+  jour: '',
   titre: '',
   heure: '',
   lieu: ''
 })
 
-function ajouterCompet() {
-  if (!newCompet.value.titre || !newCompet.value.heure || !newCompet.value.lieu || !newCompet.value.jour){
-    return;
-  } else {
-    competitions.compUser.push({
-      ...newCompet.value,
-      joueurs: []
-    })
+async function ajouterCompet() {
+    ajouterCompetition(newCompet.value, competitions.compUser)
+    await competitions.getCompetitions()
     newCompet.value.jour = ''
     newCompet.value.titre = ''
     newCompet.value.heure = ''
     newCompet.value.lieu = ''
-  }
-}
-
-function matin(jour) {
-  if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []
-  return competitions.compUser
-    .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) < 12)
-    .sort((a, b) => a.heure.localeCompare(b.heure))
-}
-
-function apresMidi(jour) {
-  if (!competitions.compUser || !Array.isArray(competitions.compUser)) return []
-  return competitions.compUser
-    .filter(c => c.jour === jour && parseInt(c.heure.split(':')[0]) >= 12)
-    .sort((a, b) => a.heure.localeCompare(b.heure))
 }
 
 const popupInscriptionOuvert = ref(null)
+
 function ouvrirParticipants(compet) {
   selectedCompet.value = compet
 }
@@ -162,16 +146,10 @@ function ouvrirPopupInscription(compet) {
   popupInscriptionOuvert.value = compet
 }
 
-function inscrire(titre) {
-  if (!numerosInscription.value[titre]) {
-    let numero
-    do {
-      numero = Math.floor(Math.random() * 99999) + 1
-    } while (Object.values(inscriptions.value[titre] || {}).includes(numero))
-    if (!inscriptions.value[titre]) inscriptions.value[titre] = {}
-    inscriptions.value[titre][auth.authUser.username] = numero
-    numerosInscription.value[titre] = numero
-  }
+function inscrire(compet) {
+  const numero = inscrireUser(compet, auth.authUser)
+  inscriptions.value = getInscriptions()
+  numerosInscription.value[compet.titre] = numero
 }
 </script>
 
