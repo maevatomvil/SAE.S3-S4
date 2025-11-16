@@ -17,3 +17,4 @@ async function getCompetitions(data) {
 export default {
     getCompetitions
 }
+
