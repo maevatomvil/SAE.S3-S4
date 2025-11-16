@@ -73,7 +73,7 @@
   font-size: 1.2rem;
   margin-bottom: 40px;
   color: #444;
-  text-align: center;
+  text-align: justify;
 }
 
 .titre2 {
@@ -83,7 +83,7 @@
 .titre2 h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #6aa0e6; 
+  color: #6aa0e6;
 }
 
 .titre2 p,
@@ -91,6 +91,7 @@
   font-size: 1.1rem;
   margin-bottom: 25px;
   color: #444;
+  text-align: justify;
 }
 
 .liste-activites {
