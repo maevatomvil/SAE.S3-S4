@@ -22,8 +22,24 @@ function initAuthUsers() {
     }
 }
 
+function initCompUsers() {
+    const saved = localStorage.getItem('competitions')
+    if (saved) {
+        try {
+            const localComps = JSON.parse(saved)
+            compUsers = [...competitions, ...localComps.filter(c => !competitions.some(r => r.titre === c.titre && r.jour === c.jour && r.heure === c.heure))]
+        } catch (e) {
+            console.error('Erreur lors du chargement des compétitions:', e)
+            compUsers = JSON.parse(JSON.stringify(competitions))
+        }
+    } else {
+        localStorage.setItem('competitions', JSON.stringify(compUsers))
+    }
+}
+
 if (!useSQL) {
     initAuthUsers()
+    initCompUsers()
 }
 
 async function login(data) {
@@ -201,14 +217,9 @@ export async function getUsers() {
 
 export async function getCompetitions() {
     if (!useSQL) {
-        const competitions = compUsers.map(u => ({
-            jour: u.jour,
-            heure: u.heure,
-            titre: u.titre,
-            lieu: u.lieu,
-            joueurs: u.joueurs
-        }))
-        return {error: 0, status: 200, data: competitions}
+        const savedCompetitions = JSON.parse(localStorage.getItem('competitions')) || []
+        const merged = [...competitions, ...savedCompetitions.filter(c => !competitions.some(r => r.titre === c.titre && r.jour === c.jour && r.heure === c.heure))]
+        return {error: 0, status: 200, data: merged}
     }
     else {
         const sql = 'SELECT jour, heure, titre, lieu FROM competitions'
@@ -216,8 +227,6 @@ export async function getCompetitions() {
         return {error: 0, status: 200, data: datas}
     }
 }
-
-
 
 export function getCompetitionsMatin(competitions, jour) {
     return competitions
@@ -232,18 +241,20 @@ export function getCompetitionsApresMidi(competitions, jour) {
 }
 
 
-export function ajouterCompetition(newCompet, competitions) {
+export function ajouterCompetition(newCompet, competitionsParam) {
     if (!newCompet.titre || !newCompet.heure || !newCompet.lieu || !newCompet.jour) return
     const competToAdd = {
         ...newCompet,
         joueurs: []
     }
-    competitions.push(competToAdd)
-    compUsers.push(competToAdd)
-    localStorage.setItem('competitions', JSON.stringify(compUsers))
+
+    competitionsParam.push(competToAdd)
+
+    if (!compUsers.some(c => c.titre === competToAdd.titre && c.jour === competToAdd.jour && c.heure === competToAdd.heure)) {
+        compUsers.push(competToAdd)
+        localStorage.setItem('competitions', JSON.stringify(compUsers))
+    }
 }
-
-
 
 
 let inscriptions = JSON.parse(localStorage.getItem("inscriptions")) || {}
@@ -332,13 +343,6 @@ export async function inscrireUser(compet, user) {
     }
 }
 
-
-
-
-
-
-
-
 export default {
     login,
     checkSession,
@@ -353,4 +357,3 @@ export default {
     getCompetitionsApresMidi,
     ajouterCompetition
 }
-

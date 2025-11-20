@@ -104,6 +104,7 @@
 
 .carte-activite {
   flex: 1 1 200px;
+  
   background-color: #f8f9fa;
   padding: 20px;
   text-align: center;
