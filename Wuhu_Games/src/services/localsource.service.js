@@ -301,6 +301,7 @@ export async function inscrireUser(compet, user) {
             if (!inscriptions[compet.titre]) inscriptions[compet.titre] = {}
             inscriptions[compet.titre][user.username] = numero
             numerosInscription[compet.titre] = numero
+            if (!compet.joueurs) compet.joueurs = []
             if (!compet.joueurs.find(j => j.username === user.username)) {
                 compet.joueurs.push({
                     username: user.username,

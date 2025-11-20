@@ -146,11 +146,34 @@ function ouvrirPopupInscription(compet) {
   popupInscriptionOuvert.value = compet
 }
 
-function inscrire(compet) {
-  const numero = inscrireUser(compet, auth.authUser)
+
+
+async function inscrire(compet) {
+  const numero = await inscrireUser(compet, auth.authUser)
   inscriptions.value = getInscriptions()
   numerosInscription.value[compet.titre] = numero
+  await competitions.getCompetitions()
+
+  // Trouver la compétition dans le store
+  const index = competitions.compUser.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+  if (index !== -1) {
+    const comp = competitions.compUser[index]
+
+    // Ajouter l'utilisateur s'il n'existe pas déjà
+    if (!comp.joueurs.find(j => j.username === auth.authUser.username)) {
+      comp.joueurs.push({
+        username: auth.authUser.username,
+        firstname: auth.authUser.firstname,
+        surname: auth.authUser.surname
+      })
+    }
+
+    // Mettre à jour le popup
+    selectedCompet.value = { ...comp } 
+  }
 }
+
+
 </script>
 
 <style>
