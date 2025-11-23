@@ -3,6 +3,10 @@
   <div class="titre">
     <h1>Planning des compétitions</h1>
   </div>
+  <div v-if="!auth.authUser" >
+    <p>Connectez vous pour voir le planning</p>
+  </div>
+
 
   <div class="planning" v-if="competitions.compUser">
     <div v-for="jour in jours" :key="jour" class="jour">

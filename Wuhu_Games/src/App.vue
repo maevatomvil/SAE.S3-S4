@@ -12,21 +12,30 @@
       </div>
 
       <div class="sections-div">
-        <router-link class="section" to="/">Accueil</router-link>
-        <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
-        <router-link class="section" to="/competition">Compétition</router-link>
-        <router-link class="section" to="/restauration">Restauration</router-link>
+        <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
+        <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
+        <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
+        <router-link class="section" to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
         <router-link class="section" to="/reservation-equipements">
-          Réservation d’infrastructures et d’équipements sportifs
+          {{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}
         </router-link>
+        <div class="lang-switch">
+          <span :class="{ active: !isEnglish }">FR</span>
+          <label class="switch">
+            <input type="checkbox" v-model="isEnglish" @change="toggleLanguage">
+            <span class="slider"></span>
+          </label>
+          <span :class="{ active: isEnglish }">EN</span>
+        </div>
         <button type="button" class="logout-btn">
           <router-link class="login-btn" to="/login">
             <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="Connexion" />
           </router-link>
-          <p>Se connecter</p>
+          <p>{{ isEnglish ? 'Login' : 'Se connecter' }}</p>
         </button>
       </div>
     </div>
+
     <div v-if="isAuthenticated" class="navbar">
       <div class="image-div">
         <router-link to="/">
@@ -35,16 +44,16 @@
       </div>
 
       <div class="sections-div">
-        <router-link class="section" to="/">Accueil</router-link>
-        <router-link class="section" to="/page-hotel">Hôtellerie</router-link>
-        <router-link class="section" to="/competition">Compétition</router-link>
-        <router-link class="section" to="/restauration">Restauration</router-link>
+        <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
+        <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
+        <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
+        <router-link class="section" to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
         <router-link class="section" to="/reservation-equipements">
-          Réservation d’infrastructures et d’équipements sportifs
+          {{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}
         </router-link>
         <button type="button" @click="handleLogout" class="logout-btn">
           <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="déconnexion">
-          <p>Se déconnecter</p>
+          <p>{{ isEnglish ? 'Logout' : 'Se déconnecter' }}</p>
         </button>
       </div>
     </div>
@@ -57,7 +66,7 @@
   <footer>
     <div class="footer">
       <div class="div-footer-infos">
-        <p class="footer-infos">...Situé sur l'île Wuhu...</p>
+        <p class="footer-infos">{{ isEnglish ? "Located on Wuhu Island" : "...Situé sur l'île Wuhu..." }}</p>
       </div>
     </div>
   </footer>
@@ -66,21 +75,27 @@
 <script setup>
 import { useAuth } from '@/stores/auth.js'
 import { computed, onMounted } from 'vue'
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router"
+import { useLanguageStore } from '@/stores/languageStore.js' 
 
 const auth = useAuth()
 const router = useRouter()
-const isAuthenticated = computed(() => auth.isAuthenticated());
+const isAuthenticated = computed(() => auth.isAuthenticated())
 
 onMounted(async () => {
   await auth.initSession()
 })
 
 async function handleLogout() {
-  await auth.logout();
-  await router.push('/');
+  await auth.logout()
+  await router.push('/')
 }
 
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
+function toggleLanguage() {
+  languageStore.toggleLanguage()
+}
 </script>
 
 <style scoped>
@@ -100,8 +115,8 @@ async function handleLogout() {
   background: none;
   border: none;
   cursor: pointer;
+  outline: none;
   vertical-align: middle;
-
 }
 
 .logout-btn p {
@@ -110,8 +125,11 @@ async function handleLogout() {
 }
 
 .sections-div {
-  padding: 30px;
-  float: right;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  white-space: nowrap;
 }
 
 .section {
@@ -147,5 +165,61 @@ main {
 
 .footer-infos {
   color: white;
+}
+
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 25px;
+  font-weight: bold;
+  color: #2828e2;
+}
+
+.lang-switch span.active {
+  color: #000;
+}
+
+.switch {
+  position: relative;
+  width: 45px;
+  height: 22px;
+  display: inline-block;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 34px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border-radius: 50%;
+  left: 2px;
+  bottom: 2px;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background-color: #2828e2;
+}
+
+input:checked + .slider:before {
+  transform: translateX(23px);
 }
 </style>
