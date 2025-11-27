@@ -27,7 +27,22 @@ function initCompUsers() {
     if (saved) {
         try {
             const localComps = JSON.parse(saved)
-            compUsers = [...competitions, ...localComps.filter(c => !competitions.some(r => r.titre === c.titre && r.jour === c.jour && r.heure === c.heure))]
+
+            // Fusionner les compétitions JSON avec celles du localStorage en gardant les joueurs
+            compUsers = competitions.map(c => {
+                const savedComp = localComps.find(
+                    s => s.titre === c.titre && s.jour === c.jour && s.heure === c.heure
+                )
+                return savedComp ? savedComp : c
+            })
+
+            // Ajouter les compétitions locales qui n’existent pas dans le JSON
+            localComps.forEach(s => {
+                if (!compUsers.some(c => c.titre === s.titre && c.jour === s.jour && c.heure === s.heure)) {
+                    compUsers.push(s)
+                }
+            })
+
         } catch (e) {
             console.error('Erreur lors du chargement des compétitions:', e)
             compUsers = JSON.parse(JSON.stringify(competitions))
@@ -36,6 +51,7 @@ function initCompUsers() {
         localStorage.setItem('competitions', JSON.stringify(compUsers))
     }
 }
+
 
 if (!useSQL) {
     initAuthUsers()
@@ -218,15 +234,25 @@ export async function getUsers() {
 export async function getCompetitions() {
     if (!useSQL) {
         const savedCompetitions = JSON.parse(localStorage.getItem('competitions')) || []
-        const merged = [...competitions, ...savedCompetitions.filter(c => !competitions.some(r => r.titre === c.titre && r.jour === c.jour && r.heure === c.heure))]
+        const merged = competitions.map(c => {
+            const saved = savedCompetitions.find(s => s.titre === c.titre && s.jour === c.jour && s.heure === c.heure)
+            return saved ? saved : c
+        })
+        savedCompetitions.forEach(s => {
+            if (!merged.some(c => c.titre === s.titre && c.jour === s.jour && c.heure === s.heure)) {
+                merged.push(s)
+            }
+        })
         return {error: 0, status: 200, data: merged}
-    }
-    else {
+    } else {
         const sql = 'SELECT jour, heure, titre, lieu FROM competitions'
         const datas = await executeSQL(sql)
         return {error: 0, status: 200, data: datas}
     }
 }
+
+
+
 
 export function getCompetitionsMatin(competitions, jour) {
     return competitions
@@ -289,35 +315,36 @@ export function getNumero(titre) {
             .then(rows => rows.length ? rows[0].numero : null)
     }
 }
-
 export async function inscrireUser(compet, user) {
     if (!useSQL) {
-        if (!numerosInscription[compet.titre]) {
-            let numero
-            do {
-                numero = Math.floor(Math.random() * 99999) + 1
-            } while (Object.values(inscriptions[compet.titre] || {}).includes(numero))
+        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+        if (index === -1) return null
 
-            if (!inscriptions[compet.titre]) inscriptions[compet.titre] = {}
-            inscriptions[compet.titre][user.username] = numero
-            numerosInscription[compet.titre] = numero
-            if (!compet.joueurs) compet.joueurs = []
-            if (!compet.joueurs.find(j => j.username === user.username)) {
-                compet.joueurs.push({
-                    username: user.username,
-                    firstname: user.firstname,
-                    surname: user.surname
-                })
-            }
-            const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
-            if (index !== -1) {
-                compUsers[index] = compet
-                localStorage.setItem('competitions', JSON.stringify(compUsers))
-            }
-            saveToLocalStorage()
-            return numero
+        const comp = compUsers[index]
+
+        if (!comp.joueurs) comp.joueurs = []
+        if (!comp.joueurs.find(j => j.username === user.username)) {
+            comp.joueurs.push({
+                username: user.username,
+                firstname: user.firstname,
+                surname: user.surname
+            })
         }
-        return numerosInscription[compet.titre]
+
+        if (!inscriptions[comp.titre]) inscriptions[comp.titre] = {}
+        let numero
+        do {
+            numero = Math.floor(Math.random() * 99999) + 1
+        } while (Object.values(inscriptions[comp.titre]).includes(numero))
+        inscriptions[comp.titre][user.username] = numero
+        numerosInscription[comp.titre] = numero
+
+        compUsers[index] = comp
+        localStorage.setItem('competitions', JSON.stringify(compUsers))
+        localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
+        localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+
+        return numero
     } else {
         let numero
         let rows
@@ -332,17 +359,26 @@ export async function inscrireUser(compet, user) {
         )
 
         numerosInscription[compet.titre] = numero
-        if (!compet.joueurs.find(j => j.username === user.username)) {
-            compet.joueurs.push({
-                username: user.username,
-                firstname: user.firstname,
-                surname: user.surname
-            })
+
+        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+        if (index !== -1) {
+            const comp = compUsers[index]
+            if (!comp.joueurs) comp.joueurs = []
+            if (!comp.joueurs.find(j => j.username === user.username)) {
+                comp.joueurs.push({
+                    username: user.username,
+                    firstname: user.firstname,
+                    surname: user.surname
+                })
+            }
+            compUsers[index] = comp
+            localStorage.setItem('competitions', JSON.stringify(compUsers))
         }
 
         return numero
     }
 }
+
 
 export default {
     login,
