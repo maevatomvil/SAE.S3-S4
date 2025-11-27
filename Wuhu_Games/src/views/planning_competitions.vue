@@ -74,7 +74,14 @@
           {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
         </li>
       </ul>
-      <button @click="ouvrirPopupInscription(selectedCompet)">S'inscrire</button>
+      <button 
+        v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]" 
+          @click="ouvrirPopupInscription(selectedCompet)">
+        S'inscrire
+      </button>
+      <button v-else @click="ouvrirPopupInscription(selectedCompet)">
+        votre inscription
+      </button>
       <button @click="selectedCompet = null">Fermer</button>
     </div>
   </div>
@@ -83,8 +90,13 @@
     <div class="popup-content">
       <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
       <br></br>
-      <div class="inscriptiondiv" :class="{ vert: getNumero(popupInscriptionOuvert) }">
-        <button @click="inscrire(popupInscriptionOuvert)">M'inscrire</button>
+       <div class="inscriptiondiv" ::class="{ vert: getNumero(popupInscriptionOuvert.titre) }">
+        <template v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
+          <p>Inscrit</p>
+        </template>
+        <template v-else>
+          <button @click="inscrire(popupInscriptionOuvert)">M'inscrire</button>
+        </template>
       </div>
       <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
           Vous êtes inscrit à la compétition. 
@@ -142,7 +154,8 @@ async function ajouterCompet() {
 const popupInscriptionOuvert = ref(null)
 
 function ouvrirParticipants(compet) {
-  selectedCompet.value = compet
+  selectedCompet.value = compet;
+ 
 }
 
 function ouvrirPopupInscription(compet) {

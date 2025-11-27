@@ -309,12 +309,25 @@ export function getInscriptions() {
 
 export function getNumero(titre) {
     if (!useSQL) {
-        return numerosInscription[titre] || null
+        try {
+            const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
+            if (!current) return null
+            if (inscriptions[titre] && inscriptions[titre][current.username]) {
+                return inscriptions[titre][current.username]
+            }
+            return null
+        } catch (e) {
+            return null
+        }
     } else {
-        return executeSQL('SELECT numero FROM inscriptions WHERE titre = ? LIMIT 1', [titre])
+        const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
+        if (!current) return Promise.resolve(null)
+        return executeSQL('SELECT numero FROM inscriptions WHERE titre = ? AND username = ? LIMIT 1', [titre, current.username])
             .then(rows => rows.length ? rows[0].numero : null)
     }
 }
+
+
 export async function inscrireUser(compet, user) {
     if (!useSQL) {
         const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
