@@ -104,6 +104,9 @@
           <br></br>Username : {{auth.authUser.username}}
           <br></br>
           <h4 style="color:red"> ne partagez ce numéro à personne, il vous sera demandé avec votre username sur place.</h4>
+          <button v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]" @click="desinscrire(popupInscriptionOuvert)">
+             Me désinscrire
+        </button>
       </div>
 
       <button @click="popupInscriptionOuvert = null">Fermer</button>
@@ -118,6 +121,8 @@ import { getInscriptions, getNumero, inscrireUser ,getCompetitionsMatin, getComp
 import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
+import { desinscrireUser } from '@/services/localsource.service.js'
+
 
 const inscriptions = ref({})
 const numerosInscription = ref({})
@@ -188,6 +193,24 @@ async function inscrire(compet) {
     // Mettre à jour le popup
     selectedCompet.value = { ...comp } 
   }
+}
+
+
+
+
+async function desinscrire(compet) {
+  await desinscrireUser(compet, auth.authUser)
+  inscriptions.value = getInscriptions()
+  delete numerosInscription.value[compet.titre]
+  await competitions.getCompetitions()
+  const index = competitions.compUser.findIndex(
+    c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure
+  )
+  if (index !== -1) {
+    selectedCompet.value = { ...competitions.compUser[index] }
+  }
+
+  popupInscriptionOuvert.value = null
 }
 
 

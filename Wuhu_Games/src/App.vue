@@ -15,10 +15,14 @@
         <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
         <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
         <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
-        <router-link class="section" to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
-        <router-link class="section" to="/reservation-equipements">
-          {{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}
-        </router-link>
+        <div class="section dropdown">
+        <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
+          <div class="dropdown-content">
+            <router-link to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
+            <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
+            <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
+          </div>
+        </div>
         <div class="lang-switch">
           <span :class="{ active: !isEnglish }">FR</span>
           <label class="switch">
@@ -47,10 +51,22 @@
         <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
         <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
         <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
-        <router-link class="section" to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
-        <router-link class="section" to="/reservation-equipements">
-          {{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}
-        </router-link>
+        <div class="section dropdown">
+        <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
+          <div class="dropdown-content">
+            <router-link to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
+            <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
+            <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
+          </div>
+        </div>
+         <div class="lang-switch">
+          <span :class="{ active: !isEnglish }">FR</span>
+          <label class="switch">
+            <input type="checkbox" v-model="isEnglish" @change="toggleLanguage">
+            <span class="slider"></span>
+          </label>
+          <span :class="{ active: isEnglish }">EN</span>
+        </div>
         <button type="button" @click="handleLogout" class="logout-btn">
           <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="déconnexion">
           <p>{{ isEnglish ? 'Logout' : 'Se déconnecter' }}</p>
@@ -128,6 +144,7 @@ function toggleLanguage() {
   padding: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 15px;
   white-space: nowrap;
 }
@@ -222,4 +239,42 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(23px);
 }
+
+
+
+
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 250px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+  flex-direction: column;
+}
+
+.dropdown-content a {
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #2828e2;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+
 </style>

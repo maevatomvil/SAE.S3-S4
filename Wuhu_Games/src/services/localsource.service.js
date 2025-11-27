@@ -393,6 +393,61 @@ export async function inscrireUser(compet, user) {
 }
 
 
+export async function desinscrireUser(compet, user) {
+  if (!useSQL) {
+    const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+    if (index === -1) return null
+
+    const comp = compUsers[index]
+    if (comp.joueurs) {
+      comp.joueurs = comp.joueurs.filter(j => j.username !== user.username)
+    }
+
+    if (inscriptions[compet.titre]) {
+      delete inscriptions[compet.titre][user.username]
+      if (Object.keys(inscriptions[compet.titre]).length === 0) {
+        delete inscriptions[compet.titre]
+      }
+    }
+    delete numerosInscription[compet.titre]
+
+    compUsers[index] = comp
+    localStorage.setItem('competitions', JSON.stringify(compUsers))
+    localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
+    localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+    return true
+  } else {
+    const sqlDelete = 'DELETE FROM inscriptions WHERE titre = ? AND username = ?'
+    await executeSQL(sqlDelete, [compet.titre, user.username])
+
+    const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+    if (index !== -1) {
+      const comp = compUsers[index]
+      if (comp.joueurs) {
+        comp.joueurs = comp.joueurs.filter(j => j.username !== user.username)
+      }
+      compUsers[index] = comp
+      localStorage.setItem('competitions', JSON.stringify(compUsers))
+    }
+
+    if (inscriptions[compet.titre]) {
+      delete inscriptions[compet.titre][user.username]
+      if (Object.keys(inscriptions[compet.titre]).length === 0) {
+        delete inscriptions[compet.titre]
+      }
+    }
+    delete numerosInscription[compet.titre]
+    localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
+    localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+    
+    return true
+  }
+}
+
+
+
+
+
 export default {
     login,
     checkSession,
@@ -405,5 +460,6 @@ export default {
     inscrireUser,
     getCompetitionsMatin,
     getCompetitionsApresMidi,
-    ajouterCompetition
+    ajouterCompetition,
+    desinscrireUser
 }
