@@ -15,13 +15,19 @@
         </div>
 
         <div class="input-group">
-          <label>Description (sera visible au public) </label>
+          <label>Description (sera visible au public)</label>
           <input v-model="form.shortDescription" placeholder="Paragraphe qui sera affiché sur la page de votre service" required />
         </div>
 
         <div class="input-group">
-          <label>Fonctionnalités</label>
-          <textarea v-model="form.features" placeholder="Expliquez les fonctionnalités  de votre service" required></textarea>
+          <label>Choisissez vos services</label>
+
+          <div v-for="s in availableServices" :key="s.id" class="service-item">
+            <input type="checkbox" :id="s.id" :value="s.id" v-model="form.services" />
+            <label :for="s.id">{{ s.name }}</label>
+
+            <button v-if="form.services.includes(s.id)" type="button" class="btn-template" @click="openTemplate(s.id)">Accéder au template</button>
+          </div>
         </div>
 
         <button type="submit" class="btn-submit">Envoyer la demande</button>
@@ -35,12 +41,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const form = ref({
   name: '',
   image: null,
   shortDescription: '',
-  features: ''
+  services: []
 })
 
 const successMessage = ref('')
@@ -53,20 +62,47 @@ function handleFileUpload(event) {
 async function handleSubmit() {
   try {
     if (!form.value.image) {
-      errorMessage.value = "Veuillez sélectionner une image"
+      errorMessage.value = "fournissez une  image"
       return
     }
 
-    console.log("Données du formulaire :", form.value)
 
     successMessage.value = "Votre demande a été envoyée !"
     errorMessage.value = ""
-    form.value = { name: '', image: null, shortDescription: '', features: '' }
+
+    form.value = {
+      name: '',
+      image: null,
+      shortDescription: '',
+      services: []
+    }
+
   } catch (err) {
     errorMessage.value = "Erreur lors de l'envoi de la demande"
     successMessage.value = ""
   }
 }
+
+const availableServices = ref([
+  { id: 'achat', name: 'Page d’achat' },
+  { id: 'reservation', name: 'Réservation' },
+  { id: 'planning', name: 'Planning' },
+  { id: 'info', name: 'PageInformation' }])
+
+function openTemplate(serviceId) {
+  if (serviceId === 'achat') {
+    router.push('/AddAchats')
+  } else if (serviceId === 'reservation') {
+    router.push('/AddReservation')
+  } else if (serviceId === 'planning') {
+    router.push('/AddPlanning')
+  }  else if (serviceId === 'info') {
+    router.push('/PageInformation')
+  } 
+
+  
+}
+
 </script>
 
 <style scoped>
@@ -126,11 +162,6 @@ async function handleSubmit() {
   font-size: 14px;
 }
 
-.input-group textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
 .btn-submit {
   background-color: #0000f5;
   color: white;
@@ -157,5 +188,25 @@ async function handleSubmit() {
   font-size: 14px;
   text-align: center;
   margin-top: 10px;
+}
+
+.service-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-template {
+  background-color: #0000f5;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-template:hover {
+  background-color: #2828e2;
 }
 </style>

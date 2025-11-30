@@ -56,7 +56,27 @@ const routes = [
         path: '/addPrestataire',
         name: 'addPrestataire',
         component: () => import('@/views/addPrestataire.vue')
+    },{
+        path: '/AddAchats',
+        name: 'AddAchats',
+        component: () => import('@/views/Templates/TemplateAchat.vue')
+    },{
+        path: '/AddReservation',
+        name: 'AddReservation',
+        component: () => import('@/views/Templates/TemplateReservation.vue')
+    },
+    {
+        path: '/PageInformation',
+        name: 'PageInformation',
+        component: () => import('@/views/Templates/TemplatePageInfo.vue')
+    },
+    {
+        path: '/AddPlanning',
+        name: 'AddPlanning',
+        component: () => import('@/views/Templates/TemplatePlanning.vue')
     }
+
+
 
 ]
 
