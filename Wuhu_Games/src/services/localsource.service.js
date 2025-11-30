@@ -446,6 +446,43 @@ export async function desinscrireUser(compet, user) {
 
 
 
+export async function supprimerCompetition(compet) {
+    if (!useSQL) {
+        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+        if (index !== -1) {
+            compUsers.splice(index, 1)
+        }
+        if (inscriptions[compet.titre]) {
+            delete inscriptions[compet.titre]
+        }
+        if (numerosInscription[compet.titre]) {
+            delete numerosInscription[compet.titre]
+        }
+        localStorage.setItem('competitions', JSON.stringify(compUsers))
+        localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
+        localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+    } else {
+        const sqlDeleteInscriptions = 'DELETE FROM inscriptions WHERE titre = ?'
+        await executeSQL(sqlDeleteInscriptions, [compet.titre])
+
+        const sqlDeleteCompet = 'DELETE FROM competitions WHERE titre = ? AND jour = ? AND heure = ?'
+        await executeSQL(sqlDeleteCompet, [compet.titre, compet.jour, compet.heure])
+
+        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
+        if (index !== -1) {
+            compUsers.splice(index, 1)
+        }
+        if (inscriptions[compet.titre]) delete inscriptions[compet.titre]
+        if (numerosInscription[compet.titre]) delete numerosInscription[compet.titre]
+        localStorage.setItem('competitions', JSON.stringify(compUsers))
+        localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
+        localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+    }
+}
+
+
+
+
 
 
 export default {

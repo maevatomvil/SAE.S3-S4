@@ -21,6 +21,9 @@
               <p v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
+               <button v-if="auth.authUser && auth.authUser.role === 'organisateur'" @click="supprimer(compet)">
+                  Supprimer
+              </button>
             </div>
           </template>
           <div v-else>
@@ -38,7 +41,11 @@
               <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
+              <button v-if="auth.authUser && auth.authUser.role === 'organisateur'" @click="supprimer(compet)">
+                  Supprimer
+              </button>
             </div>
+            
           </template>
           <div v-else>
             <div class="case vide"></div>
@@ -122,6 +129,7 @@ import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 import { desinscrireUser } from '@/services/localsource.service.js'
+import { supprimerCompetition } from '@/services/localsource.service.js'
 
 
 const inscriptions = ref({})
@@ -214,6 +222,22 @@ async function desinscrire(compet) {
 }
 
 
+
+
+
+async function supprimer(compet) {
+  if (!confirm(` supprimer la compétition "${compet.titre}" ?`)) return
+
+  await supprimerCompetition(compet)  
+  await competitions.getCompetitions() 
+
+  if (selectedCompet.value && selectedCompet.value.titre === compet.titre) {
+    selectedCompet.value = null
+  }
+  if (popupInscriptionOuvert.value && popupInscriptionOuvert.value.titre === compet.titre) {
+    popupInscriptionOuvert.value = null
+  }
+}
 </script>
 
 <style>
