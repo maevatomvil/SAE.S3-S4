@@ -74,7 +74,12 @@ const routes = [
         path: '/AddPlanning',
         name: 'AddPlanning',
         component: () => import('@/views/Templates/TemplatePlanning.vue')
+    },{
+        path: '/prestataire-demandes',
+        name: 'PrestataireDemandes',
+        component: () => import('@/views/DemandesPrestataires.vue')
     }
+
 
 
 
