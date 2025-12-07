@@ -96,12 +96,17 @@
         Exhibitors have a <strong>dedicated space</strong>, strong <strong>visibility</strong> and many opportunities for <strong>events</strong> or <strong>demonstrations</strong>.
       </p>
     </section>
+
+    <div style="height:800px">
+      <MapComponent/>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore.js'
+import MapComponent from '@/views/Map.vue'
 
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
