@@ -136,7 +136,7 @@ const isEnglish = computed(() => languageStore.isEnglish)
 }
 
 .titre1 h1 {
-  font-size: 3rem;
+  font-size: 5rem;
   margin-bottom: 30px;
   color: white;
   text-align: center;
