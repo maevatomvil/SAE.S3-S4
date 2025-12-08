@@ -71,6 +71,9 @@
           </label>
           <span :class="{ active: isEnglish }">EN</span>
         </div>
+        <div class="user-info" v-if="isAuthenticated">
+          <p class="username">{{ auth.authUser?.username }}</p>
+        </div>
         <button type="button" @click="handleLogout" class="logout-btn">
           <img src="/public/login_24dp_0000F5_FILL0_wght400_GRAD0_opsz24.svg" alt="déconnexion">
           <p>{{ isEnglish ? 'Logout' : 'Se déconnecter' }}</p>
@@ -180,6 +183,11 @@ main {
   min-height: calc(100vh - 300px);
 }
 
+.username {
+  margin: 0 10px 0 0;
+  font-weight: bold;
+  color: #2828e2;
+}
 .footer {
   height: 200px;
   background-color: #5858d8;
