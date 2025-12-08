@@ -1,7 +1,10 @@
 <template>
+  <section class="titre1 main">
+    <h1>Wuhu Games</h1>
+  </section>
   <div class="page-principale">
+    
     <section class="titre1">
-      <h1>Wuhu Games</h1>
 
       <p v-if="!isEnglish">
         Les <strong>Wuhu Games</strong> reviennent pour une nouvelle semaine d’<strong>activités en plein air</strong>, de <strong>compétitions</strong> et d’<strong>animations</strong> au cœur de l’île Wuhu.
@@ -25,7 +28,7 @@
         <div class="carte-activite" v-else>Archery</div>
 
         <div class="carte-activite" v-if="!isEnglish">Canoë-kayak</div>
-        <div class="carte-activite" v-else>Canoe-Kayak</div>
+        <div class="carte-activite" v-else>Canoeing</div>
 
         <div class="carte-activite" v-if="!isEnglish">Bowling</div>
         <div class="carte-activite" v-else>Bowling</div>
@@ -121,10 +124,21 @@ const isEnglish = computed(() => languageStore.isEnglish)
   line-height: 1.8;
 }
 
+.main {
+  margin: 0;
+  width:100%;
+  height:100vh;
+  background-image: url(/Images/HomePage.png);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .titre1 h1 {
   font-size: 3rem;
   margin-bottom: 30px;
-  color: #333;
+  color: white;
   text-align: center;
 }
 

@@ -86,7 +86,7 @@
   <footer>
     <div class="footer">
       <div class="div-footer-infos">
-        <p class="footer-infos">{{ isEnglish ? "Located on Wuhu Island" : "...Situé sur l'île Wuhu..." }}</p>
+        <p class="footer-infos">{{ isEnglish ? "Wuhu Games, the yearly meetup at Wuhu Island" : "Wuhu Games, le rendez-vous annuel de l'île Wuhu" }}</p>
       </div>
     </div>
   </footer>
@@ -119,16 +119,20 @@ function toggleLanguage() {
 </script>
 
 <style scoped>
+
 * {
   font-family: 'Montserrat';
 }
 
 .navbar {
+  position: fixed;
+  width: calc(100% - 20px);
+  margin: 10px;
+  border-radius: 52px;
   background-color: white;
-  border-top: whitesmoke solid 2px;
-  border-left: whitesmoke solid 2px;
-  height: 104px;
+  height: 100px;
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 }
 
 .logout-btn {
@@ -154,7 +158,7 @@ function toggleLanguage() {
 }
 
 .section {
-  padding: 40px;
+  padding: 20px 40px;
   font-size: 20px;
   text-decoration: none;
   color: #2828e2;
@@ -167,8 +171,9 @@ function toggleLanguage() {
 }
 
 .image-div img {
-  height: 80px;
+  height: 75px;
   width: auto;
+  padding-left: 2.5px;
 }
 
 main {
@@ -279,6 +284,5 @@ input:checked + .slider:before {
 .dropdown:hover .dropdown-content {
   display: flex;
 }
-
 
 </style>
