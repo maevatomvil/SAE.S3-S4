@@ -1,6 +1,8 @@
 <template>
   <section class="titre1 main">
     <h1>Wuhu Games</h1>
+    <h2 v-if="!isEnglish">Faites du sport dans un environnement tropical</h2>
+    <h2 v-else>Practice sport in a tropical environment</h2>
   </section>
   <div class="page-principale">
     
@@ -129,17 +131,24 @@ const isEnglish = computed(() => languageStore.isEnglish)
   width:100%;
   height:100vh;
   background-image: url(/Images/HomePage.png);
+  background-color: rgba(0,0,0,0.2);
+  background-blend-mode: darken;
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
-.titre1 h1 {
+.main h1 {
   font-size: 5rem;
-  margin-bottom: 30px;
+  margin-bottom: 0;
   color: white;
   text-align: center;
+}
+
+.main h2 {
+  color:white;
 }
 
 .titre1 p {
