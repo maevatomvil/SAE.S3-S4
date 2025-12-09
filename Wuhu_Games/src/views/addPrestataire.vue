@@ -4,9 +4,15 @@
       <h2 class="prestataire-title">Devenir Prestataire</h2>
 
       <form @submit.prevent="handleSubmit" class="prestataire-form">
+
         <div class="input-group">
           <label>Nom du service (sera visible au public)</label>
           <input v-model="form.name" placeholder="Entrez le nom de votre service" required />
+        </div>
+
+        <div class="input-group">
+          <label>Email de contact</label>
+          <input type="email" v-model="form.email" placeholder="exemple@mail.com" required />
         </div>
 
         <div class="input-group">
@@ -26,7 +32,14 @@
             <input type="checkbox" :id="s.id" :value="s.id" v-model="form.services" />
             <label :for="s.id">{{ s.name }}</label>
 
-            <button v-if="form.services.includes(s.id)" type="button" class="btn-template" @click="openTemplate(s.id)">Accéder au template</button>
+            <button
+              v-if="form.services.includes(s.id)"
+              type="button"
+              class="btn-template"
+              @click="openTemplate(s.id)"
+            >
+              Accéder au template
+            </button>
           </div>
         </div>
 
@@ -47,10 +60,12 @@ import TemplateService from '@/services/template.service'
 const router = useRouter()
 
 const form = ref({
-  name: '',
+  name: 'magasin',
+  email: 'magasin@gmail.com',
   image: null,
-  shortDescription: '',
-  services: []
+  shortDescription: 'description du magasin',
+  services: [],
+  username: localStorage.getItem('username') || ''
 })
 
 const successMessage = ref('')
@@ -59,6 +74,7 @@ const errorMessage = ref('')
 onMounted(() => {
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
   if (savedForm.name) form.value = savedForm
+  form.value.username = localStorage.getItem('username') || ''
 })
 
 function handleFileUpload(event) {
@@ -75,11 +91,14 @@ function convertFileToBase64(file) {
 }
 
 async function handleSubmit() {
-  if (!form.value.name || !form.value.shortDescription) {
+  if (!form.value.name || !form.value.shortDescription || !form.value.email) {
     errorMessage.value = 'Tous les champs sont obligatoires'
     successMessage.value = ''
     return
   }
+
+  form.value.username = localStorage.getItem('username') || ''
+  form.value.email = form.value.email
 
   try {
     const template = await TemplateService.getCurrentTemplate()
@@ -95,7 +114,7 @@ async function handleSubmit() {
     if (result.error === 0) {
       successMessage.value = 'Formulaire envoyé avec succès !'
       errorMessage.value = ''
-      form.value = { name:'', image:null, shortDescription:'', services:[] }
+      form.value = { name:'', email:'', image:null, shortDescription:'', services:[], username:'' }
       TemplateService.clearCurrentTemplate()
       localStorage.removeItem('savedForm')
     } else {
@@ -116,7 +135,7 @@ const availableServices = ref([
 ])
 
 function openTemplate(serviceId) {
-  localStorage.setItem('savedForm', JSON.stringify(form.value)) 
+  localStorage.setItem('savedForm', JSON.stringify(form.value))
   if (serviceId === 'achat') router.push('/AddAchats')
   else if (serviceId === 'reservation') router.push('/AddReservation')
   else if (serviceId === 'planning') router.push('/AddPlanning')
@@ -131,7 +150,7 @@ function openTemplate(serviceId) {
 .prestataire-form { width:100%; display:flex; flex-direction:column; gap:16px; }
 .input-group { display:flex; flex-direction:column; }
 .input-group label { font-weight:600; margin-bottom:5px; color:#333; }
-.input-group input, .input-group textarea { border:1px solid #ccc; border-radius:8px; padding:10px; font-size:14px; }
+.input-group input { border:1px solid #ccc; border-radius:8px; padding:10px; font-size:14px; }
 .btn-submit { background:#0000f5; color:white; font-weight:600; padding:10px; border:none; border-radius:8px; cursor:pointer; }
 .btn-submit:hover { background:#2828e2; }
 .success { color:green; font-size:14px; text-align:center; margin-top:10px; }

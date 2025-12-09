@@ -6,6 +6,9 @@
     </div>
     <div v-for="demande in demandes" :key="demande.id" class="demande-card">
       <h2>{{ demande.name }}</h2>
+<!-- <p><strong>Utilisateur :</strong> {{ demande.username }}</p> -->
+      <p><strong>Email :</strong> {{ demande.email }}</p>
+
       <p><strong>Description courte :</strong> {{ demande.shortDescription }}</p>
       <p><strong>Titre de la page :</strong> {{ demande.pageTitle }}</p>
       <div v-if="demande.image">

@@ -24,13 +24,16 @@ export async function saveTemplate(data) {
       image: data.image,
       pageTitle: data.pageTitle,
       templateContent: data.templateContent,
-      type: 'prestataire' 
+      type: 'prestataire' ,
+      username: data.username,
+      email: data.email,
+
     }
     templates.push(newTemplate)
     localStorage.setItem('templates', JSON.stringify(templates))
     return { error: 0, status: 200, data: newTemplate }
   } else {
-    const sql = 'INSERT INTO templates (name, shortDescription, image, pageTitle, templateContent) VALUES (?, ?, ?, ?, ?)'
+    const sql = 'INSERT INTO templates (name, shortDescription, image, pageTitle, templateContent, username, email) VALUES (?, ?, ?, ?, ?, ?, ?)'
     try {
       await executeSQL(sql, [data.name, data.shortDescription, data.image, data.pageTitle, data.templateContent])
       return { error: 0, status: 200, data: data }
