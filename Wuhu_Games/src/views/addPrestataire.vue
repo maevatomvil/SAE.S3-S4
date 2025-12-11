@@ -56,6 +56,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service'
+import auth from '@/services/auth.service.js'
 
 const router = useRouter()
 
@@ -65,7 +66,7 @@ const form = ref({
   image: null,
   shortDescription: '',
   services: [],
-  username: localStorage.getItem('username') || ''
+  username:  auth.authUser?.username || ''
 })
 
 const successMessage = ref('')
@@ -74,7 +75,8 @@ const errorMessage = ref('')
 onMounted(() => {
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
   if (savedForm.name) form.value = savedForm
-  form.value.username = localStorage.getItem('username') || ''
+  form.value.username =  auth.authUser?.username || ''
+  
 })
 
 function handleFileUpload(event) {
@@ -97,7 +99,7 @@ async function handleSubmit() {
     return
   }
 
-  form.value.username = localStorage.getItem('username') || ''
+  form.value.username =  auth.authUser?.username || ''
   form.value.email = form.value.email
 
   try {

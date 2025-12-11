@@ -61,6 +61,11 @@
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
               {{ isEnglish ? 'Vendor Requests' : 'Demande de prestation' }}
             </router-link>
+            <div v-for="prestataire in prestataires" :key="prestataire.username">
+              <router-link :to="`/prestataire/${prestataire.username}`">
+                {{ prestataire.name }}
+              </router-link>
+            </div>
           </div>
         </div>
          <div class="lang-switch">
@@ -97,17 +102,27 @@
 
 <script setup>
 import { useAuth } from '@/stores/auth.js'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted , ref} from 'vue'
 import { useRouter } from "vue-router"
 import { useLanguageStore } from '@/stores/languageStore.js' 
-
+import TemplateService from '@/services/template.service.js'
+import PrestataireMenuService from '@/services/prestataireMenu.service.js'
+const prestataires = ref([])
 const auth = useAuth()
 const router = useRouter()
 const isAuthenticated = computed(() => auth.isAuthenticated())
 
 onMounted(async () => {
   await auth.initSession()
+  const res = await PrestataireMenuService.getPrestatairesValides()
+  if (res.error === 0) {
+    prestataires.value = res.data
+  }
 })
+
+
+
+
 
 async function handleLogout() {
   await auth.logout()

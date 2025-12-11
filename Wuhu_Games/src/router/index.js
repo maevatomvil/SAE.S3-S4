@@ -78,7 +78,14 @@ const routes = [
         path: '/prestataire-demandes',
         name: 'PrestataireDemandes',
         component: () => import('@/views/DemandesPrestataires.vue')
+    },
+    {
+        path: '/prestataire/:username',
+        name: 'PrestatairePage',
+        component: () => import('@/views/PrestatairePage.vue'),
+        props: true
     }
+
 
 
 

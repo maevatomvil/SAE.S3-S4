@@ -24,10 +24,9 @@ export async function saveTemplate(data) {
       image: data.image,
       pageTitle: data.pageTitle,
       templateContent: data.templateContent,
-      type: 'prestataire' ,
+      type: 'prestataire',
       username: data.username,
       email: data.email,
-
     }
     templates.push(newTemplate)
     localStorage.setItem('templates', JSON.stringify(templates))
@@ -73,8 +72,10 @@ export async function getCurrentTemplate() {
 export function clearCurrentTemplate() {
   localStorage.removeItem('currentTemplate')
 }
+
 export async function getPrestataireDemandes() {
   if (!useSQL) {
+    // Filtrer uniquement les demandes en attente
     const demandes = templates.filter(t => t.type === 'prestataire')
     return { error: 0, status: 200, data: demandes }
   } else {
@@ -84,5 +85,4 @@ export async function getPrestataireDemandes() {
   }
 }
 
-
-export default { saveTemplate, getTemplates, deleteTemplate, saveCurrentTemplate, getCurrentTemplate, clearCurrentTemplate }
+export default { saveTemplate, getTemplates, deleteTemplate, saveCurrentTemplate, getCurrentTemplate, clearCurrentTemplate, getPrestataireDemandes }
