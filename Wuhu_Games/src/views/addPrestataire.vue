@@ -60,10 +60,10 @@ import TemplateService from '@/services/template.service'
 const router = useRouter()
 
 const form = ref({
-  name: 'magasin',
-  email: 'magasin@gmail.com',
+  name: '',
+  email: '',
   image: null,
-  shortDescription: 'description du magasin',
+  shortDescription: '',
   services: [],
   username: localStorage.getItem('username') || ''
 })

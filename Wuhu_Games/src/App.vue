@@ -127,6 +127,24 @@ function toggleLanguage() {
   font-family: 'Montserrat';
 }
 
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;           
+  padding-top: 120px;
+}
+
+
+
 .navbar {
   position: fixed;
   width: calc(100% - 20px);

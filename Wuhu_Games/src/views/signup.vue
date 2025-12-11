@@ -11,7 +11,7 @@ const form = ref({
   username: '',
   email: '',
   password: '',
-  role: 'visiteur'
+  role: ''
 })
 const errorMessage = ref('')
 
