@@ -64,7 +64,7 @@
 }
 
 .presentation_services {
-  background-color: rgb(88, 88, 216);
+  background-color: rgb(255, 255, 255);
   padding: 20px;
   max-width: 900px;
   margin: 30px auto;
@@ -74,7 +74,6 @@
 
 .presentation_services h3 {
   margin-bottom: 20px;
-  color: white;
 }
 
 .services_cards {
@@ -85,7 +84,7 @@
 }
 
 .service_card {
-  background: #fff;
+  background: #5858d8;
   padding: 20px 25px;
   border-radius: 10px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
@@ -99,7 +98,7 @@
   margin: 0;
   font-size: 1.05em;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
 }
 
 .service_card:hover {
