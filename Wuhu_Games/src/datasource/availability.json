@@ -1,0 +1,16 @@
+{
+  "2025-05-11": { "simple": 5, "double": 3, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-12": { "simple": 4, "double": 2, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-13": { "simple": 6, "double": 4, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-14": { "simple": 3, "double": 2, "priceSimple": 55, "priceDouble": 85 },
+  "2025-05-15": { "simple": 5, "double": 3, "priceSimple": 55, "priceDouble": 85 },
+  "2025-05-16": { "simple": 2, "double": 1, "priceSimple": 60, "priceDouble": 90 },
+  "2025-05-17": { "simple": 4, "double": 2, "priceSimple": 60, "priceDouble": 90 },
+  "2025-05-18": { "simple": 3, "double": 3, "priceSimple": 60, "priceDouble": 90 },
+  "2025-05-19": { "simple": 5, "double": 2, "priceSimple": 55, "priceDouble": 85 },
+  "2025-05-20": { "simple": 4, "double": 4, "priceSimple": 55, "priceDouble": 85 },
+  "2025-05-21": { "simple": 3, "double": 2, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-22": { "simple": 4, "double": 3, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-23": { "simple": 2, "double": 1, "priceSimple": 50, "priceDouble": 80 },
+  "2025-05-24": { "simple": 3, "double": 2, "priceSimple": 50, "priceDouble": 80 }
+}

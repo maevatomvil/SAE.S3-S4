@@ -1,93 +1,437 @@
 <template>
+  <div>
     <div class="titre">
-        <h1>Réserver</h1>
-        <h2> Choisissez vos dates de début / fin de séjour</h2>
-    </div> 
-    <div class="calendar-container">
-      <div class="calendar">
-          <div class="calendar__opts">
-            <select name="calendar__month" id="calendar__month">
-              <option selected>Mai</option>
-            </select>
-
-            <select name="calendar__year" id="calendar__year">
-              <option selected>2025</option>
-            </select>
-          </div>
-
-          <div class="calendar__body">
-            <div class="calendar__days">
-              <div>L</div>
-              <div>M</div>
-              <div>M</div>
-              <div>J</div>
-              <div>V</div>
-              <div>S</div>
-              <div>D</div>
-            </div>
-
-            <div class="calendar__dates">
-              <div class="calendar__date calendar__date--grey"><span>27</span></div>
-              <div class="calendar__date calendar__date--grey"><span>28</span></div>
-              <div class="calendar__date calendar__date--grey"><span>29</span></div>
-              <div class="calendar__date calendar__date--grey"><span>30</span></div>
-              <div class="calendar__date"><span>1</span></div>
-              <div class="calendar__date"><span>2</span></div>
-              <div class="calendar__date"><span>3</span></div>
-              <div class="calendar__date"><span>4</span></div>
-              <div class="calendar__date"><span>5</span></div>
-              <div class="calendar__date"><span>6</span></div>
-              <div class="calendar__date"><span>7</span></div>
-              <div class="calendar__date"><span>8</span></div>
-              <div class="calendar__date"><span>9</span></div>
-              <div class="calendar__date"><span>10</span></div>
-              <div class="calendar__date calendar__date--selected calendar__date--first-date calendar__date--range-start"><span>11</span></div>
-              <div class="calendar__date calendar__date--selected"><span>12</span></div>
-              <div class="calendar__date calendar__date--selected"><span>13</span></div>
-              <div class="calendar__date calendar__date--selected"><span>14</span></div>
-              <div class="calendar__date calendar__date--selected"><span>15</span></div>
-              <div class="calendar__date calendar__date--selected"><span>16</span></div>
-              <div class="calendar__date calendar__date--selected"><span>17</span></div>
-              <div class="calendar__date calendar__date--selected"><span>18</span></div>
-              <div class="calendar__date calendar__date--selected"><span>19</span></div>
-              <div class="calendar__date calendar__date--selected"><span>20</span></div>
-              <div class="calendar__date calendar__date--selected"><span>21</span></div>
-              <div class="calendar__date calendar__date--selected"><span>22</span></div>
-              <div class="calendar__date calendar__date--selected"><span>23</span></div>
-              <div class="calendar__date calendar__date--selected calendar__date--last-date calendar__date--range-end"><span>24</span></div>
-              <div class="calendar__date"><span>25</span></div>
-              <div class="calendar__date"><span>26</span></div>
-              <div class="calendar__date"><span>27</span></div>
-              <div class="calendar__date"><span>28</span></div>
-              <div class="calendar__date"><span>29</span></div>
-              <div class="calendar__date"><span>30</span></div>
-              <div class="calendar__date"><span>31</span></div>
-            </div>
-          </div>
-
-          <div class="calendar__buttons">
-            <button class="calendar__button calendar__button--grey">Back</button>
-
-            <button class="calendar__button calendar__button--primary">Apply</button>
-          </div>
-        </div>
+      <h1>Réserver</h1>
+      <h2>Choisissez vos dates de début / fin de séjour</h2>
     </div>
 
+    <div class="calendar-container">
+      <div class="calendar">
+        <div class="calendar__opts">
+          <select name="calendar__month" id="calendar__month" disabled>
+            <option selected>Mai</option>
+          </select>
+
+          <select name="calendar__year" id="calendar__year" disabled>
+            <option selected>2025</option>
+          </select>
+        </div>
+
+        <div class="calendar__body">
+          <div class="calendar__days">
+            <div>L</div>
+            <div>M</div>
+            <div>M</div>
+            <div>J</div>
+            <div>V</div>
+            <div>S</div>
+            <div>D</div>
+          </div>
+
+          <div class="calendar__dates">
+            <div
+              v-for="day in days"
+              :key="day.date"
+              class="calendar__date"
+              :class="[
+                day.grey && 'calendar__date--grey',
+                !day.disabled && isSelected(day.date) && 'calendar__date--selected',
+                isRangeStart(day.date) && 'calendar__date--first-date calendar__date--range-start',
+                isRangeEnd(day.date) && 'calendar__date--last-date calendar__date--range-end'
+              ]"
+              @click="onDayClick(day)"
+            >
+              <span>{{ day.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="calendar__buttons">
+          <button class="calendar__button calendar__button--grey" @click="resetSelection">
+            Back
+          </button>
+
+          <button class="calendar__button calendar__button--primary" @click="applySelection">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panneau de réservation sous le calendrier -->
+    <div class="reservation-panel" v-if="availabilityInfo">
+      <!-- Disponibilités -->
+      <div class="card availability-card">
+        <h3>Disponibilités</h3>
+
+        <p class="date-range">
+          <span v-if="availabilityInfo.mode === 'single'">
+            Pour le <strong>{{ formatDateFr(availabilityInfo.startDate) }}</strong>
+          </span>
+          <span v-else>
+            Du <strong>{{ formatDateFr(availabilityInfo.startDate) }}</strong>
+            au <strong>{{ formatDateFr(availabilityInfo.endDate) }}</strong>
+            ({{ availabilityInfo.nights }} nuit<span v-if="availabilityInfo.nights > 1">s</span>)
+          </span>
+        </p>
+
+        <p class="hint">
+          <span v-if="availabilityInfo.mode === 'single'">
+            Chambres disponibles pour cette nuit :
+          </span>
+          <span v-else>
+            Nombre minimum de chambres disponibles sur toute la période :
+          </span>
+        </p>
+
+        <ul class="availability-list">
+          <li>
+            <strong>Chambre lit simple :</strong>
+            <span>{{ availabilityInfo.simple }}</span>
+          </li>
+          <li>
+            <strong>Chambre lit double :</strong>
+            <span>{{ availabilityInfo.double }}</span>
+          </li>
+        </ul>
+
+        <p class="prices-title">Prix par nuit</p>
+        <ul class="availability-list">
+          <li>
+            <span>Lit simple</span>
+            <span>{{ availabilityInfo.priceSimple }} €</span>
+          </li>
+          <li>
+            <span>Lit double</span>
+            <span>{{ availabilityInfo.priceDouble }} €</span>
+          </li>
+        </ul>
+
+        <!-- Choix du type de chambre -->
+        <div class="room-options">
+          <button
+            class="room-button"
+            :class="{ 'room-button--selected': selectedRoomType === 'simple' }"
+            :disabled="availabilityInfo.simple === 0"
+            @click="chooseRoom('simple')"
+          >
+            Chambre lit simple
+          </button>
+          <button
+            class="room-button"
+            :class="{ 'room-button--selected': selectedRoomType === 'double' }"
+            :disabled="availabilityInfo.double === 0"
+            @click="chooseRoom('double')"
+          >
+            Chambre lit double
+          </button>
+        </div>
+      </div>
+
+      <!-- Récapitulatif -->
+      <div v-if="recap" class="card recap-card">
+        <h3>Récapitulatif de votre séjour</h3>
+
+        <p class="recap-dates">
+          Du <strong>{{ formatDateFr(recap.startDate) }}</strong>
+          au <strong>{{ formatDateFr(recap.endDate) }}</strong>
+          – {{ recap.nights }} nuit<span v-if="recap.nights > 1">s</span>
+        </p>
+
+        <p class="recap-room">
+          Type de chambre :
+          <strong v-if="recap.roomType === 'simple'">Lit simple</strong>
+          <strong v-else>Lit double</strong>
+        </p>
+
+        <div class="recap-prices">
+          <div>
+            <span>Prix par nuit</span>
+            <strong>{{ recap.pricePerNight }} €</strong>
+          </div>
+          <div v-if="recap.nights > 1">
+            <span>Total pour {{ recap.nights }} nuit<span v-if="recap.nights > 1">s</span></span>
+            <strong>{{ recap.total }} €</strong>
+          </div>
+        </div>
+
+        <button class="validate-button" @click="validateOrder">
+          Valider ma commande
+        </button>
+      </div>
+
+      <!-- Numéro de commande -->
+      <div v-if="orderId" class="card order-card">
+        <h3>Merci pour votre réservation !</h3>
+        <p>Votre numéro de commande :</p>
+        <p class="order-id">{{ orderId }}</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
+import availability from '@/datasource/availability.json';
 
-</script>
+// Jours affichés dans le calendrier (mois de mai 2025, avec les 2 semaines d'événement 11–24)
+const days = [
+  // Avril (grisés)
+  { label: 27, date: '2025-04-27', disabled: true, grey: true },
+  { label: 28, date: '2025-04-28', disabled: true, grey: true },
+  { label: 29, date: '2025-04-29', disabled: true, grey: true },
+  { label: 30, date: '2025-04-30', disabled: true, grey: true },
 
-<style >
-  
+  // 1–10 mai (affichés mais non réservables)
+  { label: 1, date: '2025-05-01', disabled: true, grey: true },
+  { label: 2, date: '2025-05-02', disabled: true, grey: true },
+  { label: 3, date: '2025-05-03', disabled: true, grey: true },
+  { label: 4, date: '2025-05-04', disabled: true, grey: true },
+  { label: 5, date: '2025-05-05', disabled: true, grey: true },
+  { label: 6, date: '2025-05-06', disabled: true, grey: true },
+  { label: 7, date: '2025-05-07', disabled: true, grey: true },
+  { label: 8, date: '2025-05-08', disabled: true, grey: true },
+  { label: 9, date: '2025-05-09', disabled: true, grey: true },
+  { label: 10, date: '2025-05-10', disabled: true, grey: true },
 
-*{
-  font-family: 'Montserrat';
-  text-decoration:none;
+  // 11–24 mai : période de l'événement, cliquable
+  { label: 11, date: '2025-05-11', disabled: false, grey: false },
+  { label: 12, date: '2025-05-12', disabled: false, grey: false },
+  { label: 13, date: '2025-05-13', disabled: false, grey: false },
+  { label: 14, date: '2025-05-14', disabled: false, grey: false },
+  { label: 15, date: '2025-05-15', disabled: false, grey: false },
+  { label: 16, date: '2025-05-16', disabled: false, grey: false },
+  { label: 17, date: '2025-05-17', disabled: false, grey: false },
+  { label: 18, date: '2025-05-18', disabled: false, grey: false },
+  { label: 19, date: '2025-05-19', disabled: false, grey: false },
+  { label: 20, date: '2025-05-20', disabled: false, grey: false },
+  { label: 21, date: '2025-05-21', disabled: false, grey: false },
+  { label: 22, date: '2025-05-22', disabled: false, grey: false },
+  { label: 23, date: '2025-05-23', disabled: false, grey: false },
+  { label: 24, date: '2025-05-24', disabled: false, grey: false },
+
+  // 25–31 mai (non réservables)
+  { label: 25, date: '2025-05-25', disabled: true, grey: true },
+  { label: 26, date: '2025-05-26', disabled: true, grey: true },
+  { label: 27, date: '2025-05-27', disabled: true, grey: true },
+  { label: 28, date: '2025-05-28', disabled: true, grey: true },
+  { label: 29, date: '2025-05-29', disabled: true, grey: true },
+  { label: 30, date: '2025-05-30', disabled: true, grey: true },
+  { label: 31, date: '2025-05-31', disabled: true, grey: true }
+];
+
+const rangeStart = ref(null);
+const rangeEnd = ref(null);
+
+const availabilityInfo = ref(null);
+const selectedRoomType = ref(null);
+const orderId = ref(null);
+
+const selectedDatesList = computed(() => {
+  if (!rangeStart.value) return [];
+  const start = rangeStart.value;
+  const end = rangeEnd.value || rangeStart.value;
+  const dates = [];
+  let current = start;
+  while (current <= end) {
+    if (availability[current]) {
+      dates.push(current);
+    }
+    current = getNextDate(current);
+  }
+  return dates;
+});
+
+function getNextDate(dateStr) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + 1);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
-.titre  {
+function onDayClick(day) {
+  if (day.disabled) return;
+
+  // On modifie la sélection -> on reset les infos de réservation
+  availabilityInfo.value = null;
+  selectedRoomType.value = null;
+  orderId.value = null;
+
+  // Aucun début ou on avait déjà une plage complète -> on recommence une nouvelle plage
+  if (!rangeStart.value || (rangeStart.value && rangeEnd.value)) {
+    rangeStart.value = day.date;
+    rangeEnd.value = null;
+    return;
+  }
+
+  // Si on reclique sur le même jour, on reste sur une seule date
+  if (day.date === rangeStart.value) {
+    rangeEnd.value = null;
+    return;
+  }
+
+  // Si on clique sur un jour avant le début, on inverse
+  if (day.date < rangeStart.value) {
+    rangeEnd.value = rangeStart.value;
+    rangeStart.value = day.date;
+  } else {
+    rangeEnd.value = day.date;
+  }
+}
+
+function isSelected(date) {
+  if (!rangeStart.value) return false;
+  if (!rangeEnd.value) return date === rangeStart.value;
+  return date >= rangeStart.value && date <= rangeEnd.value;
+}
+
+function isRangeStart(date) {
+  return rangeStart.value && date === rangeStart.value;
+}
+
+function isRangeEnd(date) {
+  return rangeEnd.value && date === rangeEnd.value && rangeEnd.value !== rangeStart.value;
+}
+
+function applySelection() {
+  if (!selectedDatesList.value.length) {
+    availabilityInfo.value = null;
+    selectedRoomType.value = null;
+    orderId.value = null;
+    return;
+  }
+
+  const dates = selectedDatesList.value;
+  const nights = dates.length;
+
+  if (nights === 1) {
+    const data = availability[dates[0]];
+    if (!data) {
+      availabilityInfo.value = null;
+      return;
+    }
+    availabilityInfo.value = {
+      mode: 'single',
+      startDate: dates[0],
+      endDate: dates[0],
+      nights,
+      simple: data.simple,
+      double: data.double,
+      priceSimple: data.priceSimple,
+      priceDouble: data.priceDouble
+    };
+  } else {
+    let minSimple = Infinity;
+    let minDouble = Infinity;
+    let priceSimple = null;
+    let priceDouble = null;
+
+    dates.forEach((d, index) => {
+      const data = availability[d];
+      if (!data) return;
+      if (data.simple < minSimple) minSimple = data.simple;
+      if (data.double < minDouble) minDouble = data.double;
+      if (index === 0) {
+        priceSimple = data.priceSimple;
+        priceDouble = data.priceDouble;
+      }
+    });
+
+    availabilityInfo.value = {
+      mode: 'range',
+      startDate: dates[0],
+      endDate: dates[dates.length - 1],
+      nights,
+      simple: minSimple === Infinity ? 0 : minSimple,
+      double: minDouble === Infinity ? 0 : minDouble,
+      priceSimple,
+      priceDouble
+    };
+  }
+
+  selectedRoomType.value = null;
+  orderId.value = null;
+}
+
+function chooseRoom(type) {
+  if (!availabilityInfo.value) return;
+  selectedRoomType.value = type;
+}
+
+const recap = computed(() => {
+  if (!availabilityInfo.value || !selectedRoomType.value) return null;
+
+  const nights = availabilityInfo.value.nights;
+  const pricePerNight =
+    selectedRoomType.value === 'simple'
+      ? availabilityInfo.value.priceSimple
+      : availabilityInfo.value.priceDouble;
+
+  if (!pricePerNight) return null;
+
+  return {
+    roomType: selectedRoomType.value,
+    nights,
+    pricePerNight,
+    total: nights * pricePerNight,
+    startDate: availabilityInfo.value.startDate,
+    endDate: availabilityInfo.value.endDate
+  };
+});
+
+function generateOrderId() {
+  const now = new Date();
+
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+
+  // random hex 4 chars (0000 → FFFF)
+  const random = Math.floor(Math.random() * 0xffff)
+    .toString(16)
+    .toUpperCase()
+    .padStart(4, '0');
+
+  return `CMD-${yy}${mm}${dd}-${hh}${min}-${random}`;
+}
+
+
+function validateOrder() {
+  if (!recap.value) return;
+  //orderId.value = `CMD-${Date.now().toString().slice(-6)}`;
+  orderId.value = generateOrderId();
+}
+
+function resetSelection() {
+  rangeStart.value = null;
+  rangeEnd.value = null;
+  availabilityInfo.value = null;
+  selectedRoomType.value = null;
+  orderId.value = null;
+}
+
+function formatDateFr(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+</script>
+
+<style>
+* {
+  font-family: 'Montserrat';
+  text-decoration: none;
+}
+
+.titre {
   text-align: center;
   padding: 20px;
 }
@@ -98,9 +442,7 @@
   color: #333;
 }
 
-
-/*calendrier*/
-
+/* calendrier */
 .calendar {
   --side-padding: 20px;
   --border-radius: 34px;
@@ -111,7 +453,8 @@
   background-color: #f3f4f6;
   padding: 15px 20px;
 }
-.calendar__opts, .calendar__buttons {
+.calendar__opts,
+.calendar__buttons {
   background-color: #fff;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -153,7 +496,7 @@
   position: relative;
 }
 .calendar__date::before {
-  content: "";
+  content: '';
   position: absolute;
   background-color: rgba(255, 255, 255, 0);
   width: 100%;
@@ -171,6 +514,11 @@
   color: #c5c8ca;
   cursor: not-allowed;
 }
+.calendar__date--grey span {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
 .calendar__date--selected {
   color: #ff374b;
 }
@@ -187,7 +535,7 @@
   border-bottom-right-radius: var(--accent-br);
 }
 .calendar__date--range-start::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 3px;
   border-radius: 24px;
@@ -207,7 +555,7 @@
   z-index: 1;
 }
 .calendar__date--range-end::after {
-  content: "";
+  content: '';
   position: absolute;
   height: calc(var(--height) * 0.9);
   background-color: #ffeaec;
@@ -245,21 +593,17 @@
   transform: translateY(-1px);
 }
 
-
 .calendar-container {
   display: flex;
   justify-content: center;
   align-items: center;
-   
 }
-
-
 
 body {
   display: grid;
   place-items: center;
   background-color: #eaedf2;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-size: 14px;
 }
 
@@ -284,4 +628,134 @@ select {
   background-position: calc(100% - var(--side-padding)) center;
 }
 
+/* Panneau de réservation façon "Airbnb" */
+
+.reservation-panel {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  padding: 20px 24px;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+}
+
+.date-range,
+.hint {
+  margin: 4px 0;
+  color: #555;
+}
+
+.availability-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 15px;
+}
+.availability-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.prices-title {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.room-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.room-button {
+  flex: 1;
+  background: #f7f7f7;
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+.room-button:hover:not(:disabled) {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+.room-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.room-button--selected {
+  background: #ff385c;
+  color: #fff;
+  border-color: #ff385c;
+  box-shadow: 0 10px 24px rgba(255, 56, 92, 0.35);
+}
+
+.recap-card .recap-dates {
+  margin: 6px 0 8px;
+}
+.recap-card .recap-room {
+  margin: 4px 0 12px;
+}
+
+.recap-prices {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.recap-prices > div span {
+  display: block;
+  color: #555;
+  font-size: 0.9rem;
+}
+.recap-prices > div strong {
+  font-size: 1.05rem;
+}
+
+.validate-button {
+  width: 100%;
+  background: #ff385c;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 1rem;
+  padding: 12px 18px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 12px 26px rgba(255, 56, 92, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.validate-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(255, 56, 92, 0.4);
+}
+.validate-button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 20px rgba(255, 56, 92, 0.3);
+}
+
+.order-card p {
+  margin: 4px 0;
+}
+.order-id {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+}
 </style>
