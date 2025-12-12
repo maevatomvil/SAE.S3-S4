@@ -75,7 +75,7 @@ async function handleSignup() {
   display: flex;
   justify-content: center;    /* centre horizontalement */
   align-items: center;        /* centre verticalement */
-  background-color: #f5f6fa;  /* optionnel : fond clair */
+  background: linear-gradient(to right, #5858d8, #0080ff); /* optionnel : fond clair */
   z-index: 0;
 }
 

@@ -600,8 +600,6 @@ function formatDateFr(dateStr) {
 }
 
 body {
-  display: grid;
-  place-items: center;
   background-color: #eaedf2;
   font-family: 'Nunito', sans-serif;
   font-size: 14px;

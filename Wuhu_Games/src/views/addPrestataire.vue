@@ -146,7 +146,7 @@ function openTemplate(serviceId) {
 </script>
 
 <style scoped>
-.prestataire { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; background:#f5f6fa; z-index:0; }
+.prestataire { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; background: linear-gradient(to right, #5858d8, #0080ff); z-index:0; }
 .prestataire-container { background:white; padding:40px 60px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; }
 .prestataire-title { font-size:24px; font-weight:bold; margin-bottom:20px; color:#0000f5; }
 .prestataire-form { width:100%; display:flex; flex-direction:column; gap:16px; }
