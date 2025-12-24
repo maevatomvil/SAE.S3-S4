@@ -43,9 +43,13 @@ function serviceName(id) {
 }
 
 onMounted(async () => {
-  const res = await TemplateService.getPrestataireDemandes()
+  const res = await TemplateService.getTemplates()
   if (res.error === 0) {
-    prestataire.value = res.data.find(p => p.username === route.params.username) || {}
+    prestataire.value = res.data.find(p => p.username === route.params.username && p.type === 'prestataireValide') || {}
+    console.log('Prestataire chargé:', prestataire.value)
   }
 })
+
+
+
 </script>

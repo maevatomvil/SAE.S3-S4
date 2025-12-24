@@ -21,7 +21,11 @@
             <router-link to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
             <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
             <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
-            
+            <div v-for="prestataire in prestataires" :key="prestataire.username">
+              <router-link :to="`/prestataire/${prestataire.username}`">
+                {{ prestataire.name }}
+              </router-link>
+            </div>
           </div>
         </div>
         <div class="lang-switch">
