@@ -42,7 +42,7 @@ onMounted(async () => {
 async function accepterDemande(demande) {
   await PrestataireService.accepterDemande(demande)
   demandes.value = demandes.value.filter(d => d.id !== demande.id)
-  window.location.reload()
+  
 }
 
 

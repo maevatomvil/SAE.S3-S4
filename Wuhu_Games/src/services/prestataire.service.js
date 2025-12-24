@@ -1,11 +1,11 @@
 import TemplateService from './template.service.js'
 
 const useSQL = false
-let templates = JSON.parse(localStorage.getItem('templates') || '[]')
-let users = JSON.parse(localStorage.getItem('users') || '[]') 
 
 async function accepterDemande(demande) {
   if (!useSQL) {
+    const templates = JSON.parse(localStorage.getItem('templates') || '[]')
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
     const index = templates.findIndex(t => t.id === demande.id)
     if (index !== -1) {
       templates[index].type = 'prestataireValide'
@@ -35,11 +35,13 @@ async function accepterDemande(demande) {
 
 async function refuserDemande(demande) {
   if (!useSQL) {
-    templates = templates.filter(t => t.id !== demande.id)
-    localStorage.setItem('templates', JSON.stringify(templates))
+    const templates = JSON.parse(localStorage.getItem('templates') || '[]')
+    const updatedTemplates = templates.filter(t => t.id !== demande.id)
+
+    localStorage.setItem('templates', JSON.stringify(updatedTemplates))
     return { error: 0, status: 200 }
   } else {
-     try {
+    try {
       const sqlDelete = "DELETE FROM templates WHERE id = ?"
       await executeSQL(sqlDelete, [demande.id])
       return { error: 0, status: 200 }
