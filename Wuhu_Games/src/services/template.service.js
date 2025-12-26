@@ -27,6 +27,7 @@ export async function saveTemplate(data) {
       type: 'prestataire',
       username: data.username,
       email: data.email,
+      services: data.services,
     }
     templates.push(newTemplate)
     localStorage.setItem('templates', JSON.stringify(templates))
@@ -75,7 +76,6 @@ export function clearCurrentTemplate() {
 
 export async function getPrestataireDemandes() {
   if (!useSQL) {
-    // Filtrer uniquement les demandes en attente
     const demandes = templates.filter(t => t.type === 'prestataire')
     return { error: 0, status: 200, data: demandes }
   } else {

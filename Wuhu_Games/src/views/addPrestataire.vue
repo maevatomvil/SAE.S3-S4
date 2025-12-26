@@ -75,6 +75,7 @@ const errorMessage = ref('')
 onMounted(() => {
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
   if (savedForm.name) form.value = savedForm
+  if (!form.value.services) form.value.services = []
   form.value.username = auth.authUser?.username || ''
 })
 

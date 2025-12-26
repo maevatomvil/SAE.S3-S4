@@ -84,7 +84,28 @@ const routes = [
         name: 'PrestatairePage',
         component: () => import('@/views/PrestatairePage.vue'),
         props: true
+    },{
+        path: '/prestataire/:username/info',
+        name: 'PrestatairePageInfo',
+        component: () => import('@/views/Pageservices/PrestatairePageInfo.vue'),
+        props: true
+    },{
+        path: '/prestataire/:username/achat',
+        name: 'PrestatairePageAchat',
+        component: () => import('@/views/Pageservices/PrestatairePageAchat.vue'),
+        props: true
+    },{
+        path: '/prestataire/:username/reservation',
+        name: 'PrestatairePageReservation',
+        component: () => import('@/views/Pageservices/PrestatairePageReservation.vue'),
+        props: true
+    },{
+        path: '/prestataire/:username/planning',
+        name: 'PrestatairePagePlanning',
+        component: () => import('@/views/Pageservices/PrestatairePagePlanning.vue'),
+        props: true
     }
+
 
 
 
