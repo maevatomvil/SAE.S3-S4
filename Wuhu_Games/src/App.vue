@@ -65,10 +65,14 @@
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
               {{ isEnglish ? 'Vendor Requests' : 'Demande de prestation' }}
             </router-link>
+            
             <div v-for="prestataire in prestataires" :key="prestataire.username">
               <router-link :to="`/prestataire/${prestataire.username}`">
                 {{ prestataire.name }}
               </router-link>
+                <button v-if="auth.authUser?.role === 'organisateur'" @click="supprimerPrestataire(prestataire)">
+              Supprimer
+            </button>
             </div>
           </div>
         </div>
@@ -109,7 +113,7 @@ import { useAuth } from '@/stores/auth.js'
 import { computed, onMounted , ref} from 'vue'
 import { useRouter } from "vue-router"
 import { useLanguageStore } from '@/stores/languageStore.js' 
-import TemplateService from '@/services/template.service.js'
+import PrestataireService from '@/services/prestataire.service.js'
 import PrestataireMenuService from '@/services/prestataireMenu.service.js'
 const prestataires = ref([])
 const auth = useAuth()
@@ -125,6 +129,14 @@ onMounted(async () => {
 })
 
 
+async function supprimerPrestataire(prestataire) {
+  const res = await PrestataireService.supprimerPrestataire(prestataire.username)
+  if (res.error === 0) {
+    prestataires.value = prestataires.value.filter(p => p.username !== prestataire.username)
+  } else {
+    alert('Erreur lors de la suppression du prestataire')
+  }
+}
 
 
 

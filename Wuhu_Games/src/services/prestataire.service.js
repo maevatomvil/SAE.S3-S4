@@ -51,4 +51,33 @@ async function refuserDemande(demande) {
   }
 }
 
-export default { accepterDemande, refuserDemande }
+
+
+async function supprimerPrestataire(username) {
+  if (!useSQL) {
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const prestataires = JSON.parse(localStorage.getItem('templates') || '[]')
+    const updatedPrestataires = prestataires.filter(p => p.username !== username)
+    localStorage.setItem('templates', JSON.stringify(updatedPrestataires))
+    const user = users.find(u => u.username === username)
+    if (user) {
+      user.role = 'visiteur'
+      localStorage.setItem('users', JSON.stringify(users))
+    }
+    return { error: 0, status: 200 }
+  } else {
+    try {
+      const sqlDeleteTemplate = 'DELETE FROM templates WHERE username = ?'
+      await executeSQL(sqlDeleteTemplate, [username])
+      const sqlUpdateUser = "UPDATE users SET role = 'visiteur' WHERE username = ?"
+      await executeSQL(sqlUpdateUser, [username])
+      return { error: 0, status: 200 }
+    } catch (err) {
+      return { error: 1, status: 500, data: 'Erreur lors de la suppression du prestataire' }
+    }
+  }
+}
+
+export default { accepterDemande, refuserDemande, supprimerPrestataire }
+
+
