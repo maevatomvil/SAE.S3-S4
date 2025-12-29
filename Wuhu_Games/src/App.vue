@@ -70,7 +70,7 @@
               <router-link :to="`/prestataire/${prestataire.username}`">
                 {{ prestataire.name }}
               </router-link>
-                <button v-if="auth.authUser?.role === 'organisateur'" @click="supprimerPrestataire(prestataire)">
+                <button v-if="auth.authUser?.role === 'organisateur'  || auth.authUser?.username === prestataire.username " @click="supprimerPrestataire(prestataire)">
               Supprimer
             </button>
             </div>
