@@ -2,6 +2,7 @@
   <div class="prestataire">
     <div class="prestataire-container">
       <h2 class="prestataire-title">Devenir Prestataire</h2>
+      <h4>Important : un utilisateur ne peut posséder qu’une seule page prestataire à la fois. <br>Si une demande est déjà en attente la nouvelle ne sera pas prise en compte.</h4>
 
       <form @submit.prevent="handleSubmit" class="prestataire-form">
 
@@ -48,6 +49,8 @@
         <p v-if="successMessage" class="success">{{ successMessage }}</p>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
+      <h5>⏳ Votre demande sera examinée sous 24 heures. Vous serez informé de la décision finale par e-mail.</h5>
+
     </div>
   </div>
 </template>

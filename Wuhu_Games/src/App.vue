@@ -18,7 +18,7 @@
         <div class="section dropdown">
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
           <div class="dropdown-content">
-            <router-link to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
+            <router-link  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
             <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
             <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
             <div v-for="prestataire in prestataires" :key="prestataire.username">
@@ -59,7 +59,7 @@
         <div class="section dropdown">
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
           <div class="dropdown-content">
-            <router-link to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
+            <router-link  v-if="peutDevenirPrestataire"  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
             <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
             <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
@@ -150,6 +150,15 @@ const isEnglish = computed(() => languageStore.isEnglish)
 function toggleLanguage() {
   languageStore.toggleLanguage()
 }
+
+
+const peutDevenirPrestataire = computed(() => {
+  if (!isAuthenticated.value) return false
+  const username = auth.authUser?.username
+  return !prestataires.value.some(p => p.username === username)
+})
+
+
 </script>
 
 <style scoped>

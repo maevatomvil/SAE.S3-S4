@@ -26,6 +26,7 @@ async function accepterDemande(demande) {
       const sqlUpdateUser = "UPDATE users SET role = 'prestataire' WHERE username = ?"
       await executeSQL(sqlUpdateUser, [demande.username])
 
+      
       return { error: 0, status: 200, data: demande }
     } catch (err) {
       return { error: 1, status: 500, data: 'Erreur lors de la validation de la demande' }
