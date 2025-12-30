@@ -1,19 +1,20 @@
 <template>
   <div v-if="prestataire">
+  
+
     <div class="titre">
       <h1>{{ prestataire.name }}</h1>
     </div>
 
     <div class="presentation">
       <p>{{ prestataire.shortDescription }}</p>
-      <img
-        :src="prestataire.image || '/public/default.jpg'"
-        :alt="`Image de ${prestataire.name}`"
-      />
+     
+      <img :src="prestataire.image || '/public/image_basket.jpg'" :alt="`Image de ${prestataire.name}`"/>
     </div>
 
     <div class="presentation_services" v-if="prestataire.services?.length">
-      <h3>Nos services :</h3>
+      <h3>Nos services :</h3> 
+     
 
       <div class="services_cards">
         <div v-for="serviceId in prestataire.services" :key="serviceId" class="service_card">
@@ -21,6 +22,9 @@
             <p>{{ serviceLabel(serviceId) }}</p>
           </router-link>
         </div>
+          <button v-if="peutModifier" @click="goToEdit" style="border-radius: 20px; ">
+      Modifier ma page
+    </button>
       </div>
     </div>
   </div>
@@ -31,9 +35,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted,computed } from 'vue'
+import { useRoute,useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service.js'
+import { useAuth } from '@/stores/auth.js'
+import PrestataireMenuService from '@/services/prestataireMenu.service.js'
+const router = useRouter()
+const auth = useAuth()
 
 const route = useRoute()
 const prestataire = ref(null)
@@ -55,6 +63,17 @@ onMounted(async () => {
       res.data.find(p =>p.username === route.params.username &&p.type === 'prestataireValide' ) || null
   }
 })
+
+const peutModifier = computed(() =>
+  auth.authUser?.username === prestataire.value?.username
+)
+
+
+function goToEdit() {
+  router.push(`/prestataire/${prestataire.value.username}/edit`)
+}
+
+
 </script>
 
 <style scoped>

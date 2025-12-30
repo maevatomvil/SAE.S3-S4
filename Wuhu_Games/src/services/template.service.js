@@ -86,3 +86,14 @@ export async function getPrestataireDemandes() {
 }
 
 export default { saveTemplate, getTemplates, deleteTemplate, saveCurrentTemplate, getCurrentTemplate, clearCurrentTemplate, getPrestataireDemandes }
+
+ 
+
+ 
+
+
+ 
+  
+ 
+ 
+ 

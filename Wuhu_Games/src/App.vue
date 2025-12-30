@@ -159,7 +159,20 @@ const peutDevenirPrestataire = computed(() => {
 })
 
 
+
+
 </script>
+
+<style>
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  background-color: #ffffff;
+}
+</style>
+
+
+
 
 <style scoped>
 
