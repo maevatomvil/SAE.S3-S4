@@ -79,6 +79,54 @@ async function supprimerPrestataire(username) {
   }
 }
 
-export default { accepterDemande, refuserDemande, supprimerPrestataire }
+
+
+
+async function updatePrestataire(updatedPrestataire) {
+  if (!useSQL) {
+    const templates = JSON.parse(localStorage.getItem('templates') || '[]')
+    const index = templates.findIndex(
+      t => t.username === updatedPrestataire.username && t.type === 'prestataireValide'
+    )
+
+    if (index !== -1) {
+      templates[index] = {
+        ...templates[index],
+        ...updatedPrestataire
+      }
+      localStorage.setItem('templates', JSON.stringify(templates))
+      return { error: 0, status: 200 }
+    }
+    return { error: 1, status: 404 }
+  } else {
+    try {
+      const sqlUpdate = `
+        UPDATE templates
+        SET 
+          name = ?,
+          email = ?,
+          image = ?,
+          shortDescription = ?,
+          services = ?
+        WHERE username = ? AND type = 'prestataireValide'
+      `
+      await executeSQL(sqlUpdate, [
+        updatedPrestataire.name,
+        updatedPrestataire.email,
+        updatedPrestataire.image,
+        updatedPrestataire.shortDescription,
+        JSON.stringify(updatedPrestataire.services),
+        updatedPrestataire.username
+      ])
+      return { error: 0, status: 200 }
+    } catch (err) {
+      return { error: 1, status: 500 }
+    }
+  }
+}
+
+
+
+export default { accepterDemande, refuserDemande, supprimerPrestataire , updatePrestataire}
 
 

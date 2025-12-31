@@ -55,6 +55,7 @@ onMounted(async () => {
 
 async function accepterDemande(demande) {
   await PrestataireService.accepterDemande(demande)
+  window.location.reload()
   demandes.value = demandes.value.filter(d => d.id !== demande.id)
 }
 async function refuserDemande(demande) {

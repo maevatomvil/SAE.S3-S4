@@ -1,31 +1,35 @@
 <template>
   <div v-if="prestataire">
-  
-
     <div class="titre">
       <h1>{{ prestataire.name }}</h1>
     </div>
 
     <div class="presentation">
       <p>{{ prestataire.shortDescription }}</p>
-     
-      <img :src="prestataire.image || '/public/image_basket.jpg'" :alt="`Image de ${prestataire.name}`"/>
+      <img
+        :src="prestataire.image || '/public/image_basket.jpg'"
+        :alt="`Image de ${prestataire.name}`"
+      />
     </div>
 
-    <div class="presentation_services" v-if="prestataire.services?.length">
-      <h3>Nos services :</h3> 
-     
+    <div class="presentation_services">
+      <h3 v-if="prestataire.services?.length">Nos services :</h3>
 
-      <div class="services_cards">
-        <div v-for="serviceId in prestataire.services" :key="serviceId" class="service_card">
+      <div class="services_cards" v-if="prestataire.services?.length">
+        <div
+          v-for="serviceId in prestataire.services"  :key="serviceId"  class="service_card">
           <router-link :to="`/prestataire/${prestataire.username}/${serviceId}`" class="service_link">
             <p>{{ serviceLabel(serviceId) }}</p>
           </router-link>
         </div>
-          <button v-if="peutModifier" @click="goToEdit" style="border-radius: 20px; ">
-      Modifier ma page
-    </button>
       </div>
+     <div :style="peutModifier ? 'margin-top: 40px;' : ''"></div>
+      <div class="modif_container" v-if="peutModifier">
+        <div class="service_card modif_card" @click="goToEdit">
+          <p>Modifier ma page</p>
+        </div>
+    </div>
+
     </div>
   </div>
 
@@ -33,6 +37,7 @@
     <h3>Cette page n'existe plus</h3>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted,computed } from 'vue'
@@ -160,6 +165,24 @@ function goToEdit() {
   transform: translateY(-5px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
+
+
+.modif_container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+
+.modif_card {
+  cursor: pointer;
+  background: #5858d8;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .service_link {
   text-decoration: none;

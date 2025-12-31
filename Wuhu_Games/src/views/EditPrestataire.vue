@@ -3,7 +3,11 @@
     <div class="prestataire-container">
       <h2 class="prestataire-title">Modifier ma page prestataire</h2>
 
-      <form class="prestataire-form">
+      <p v-if="!hasAccess" class="error">
+        Vous n'avez pas accès à cette page
+      </p>
+
+      <form v-else class="prestataire-form">
         <div class="input-group">
           <label>Nom du service (visible au public)</label>
           <input v-model="form.name" placeholder="Entrez le nom de votre service" />
@@ -24,7 +28,7 @@
 
         <div class="input-group">
           <label>Description (visible au public)</label>
-          <input v-model="form.shortDescription" placeholder="Paragraphe affiché sur la page du service" />
+          <input v-model="form.shortDescription" />
         </div>
 
         <div class="input-group">
@@ -35,7 +39,9 @@
           </div>
         </div>
 
-        <button type="button" class="btn-submit">Mettre à jour</button>
+        <button type="button" class="btn-submit" @click="submitForm">
+          Mettre à jour
+        </button>
       </form>
     </div>
   </div>
@@ -45,8 +51,11 @@
 import { ref, onMounted } from 'vue'
 import { useAuth } from '@/stores/auth.js'
 import TemplateService from '@/services/template.service.js'
+import PrestataireService from '@/services/prestataire.service.js'
 
 const auth = useAuth()
+
+const hasAccess = ref(false)
 
 const form = ref({
   name: '',
@@ -64,29 +73,47 @@ const availableServices = ref([
   { id: 'info', name: 'Page d’information' }
 ])
 
+async function submitForm() {
+  const res = await PrestataireService.updatePrestataire(form.value)
+  window.location.reload()
+  if (res.error === 0) {
+    alert('Page prestataire mise à jour')
+  }
+}
+
 onMounted(async () => {
   const res = await TemplateService.getTemplates()
   if (res.error === 0) {
-    const p = res.data.find(p => p.username === auth.authUser?.username && p.type === 'prestataireValide')
+    const p = res.data.find(
+      p => p.username === auth.authUser?.username && p.type === 'prestataireValide'
+    )
     if (p) {
-      form.value = { 
-        name: p.name, 
-        email: p.email || '', 
-        image: p.image || null, 
-        shortDescription: p.shortDescription || '', 
-        services: p.services || [], 
-        username: p.username 
+      hasAccess.value = true
+      form.value = {
+        name: p.name,
+        email: p.email || '',
+        image: p.image || null,
+        shortDescription: p.shortDescription || '',
+        services: p.services || [],
+        username: p.username
       }
     }
   }
 })
 
-function handleFileUpload(event) {
+function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+  })
+}
+
+async function handleFileUpload(event) {
   const file = event.target.files[0]
   if (!file) return
-  const reader = new FileReader()
-  reader.onload = e => form.value.image = e.target.result
-  reader.readAsDataURL(file)
+  form.value.image = await convertFileToBase64(file)
 }
 </script>
 
@@ -102,4 +129,5 @@ function handleFileUpload(event) {
 .btn-submit:hover { background:#2828e2; }
 .service-item { display:flex; align-items:center; gap:10px; }
 .preview-image { max-width:200px; margin-top:10px; border-radius:8px; }
+.error { color:red; font-weight:600; }
 </style>
