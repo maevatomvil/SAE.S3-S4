@@ -1,12 +1,11 @@
 <template>
-  
   <div class="titre">
     <h1>Planning des compétitions</h1>
   </div>
-  <div v-if="!auth.authUser" >
+
+  <div v-if="!auth.authUser">
     <p>Connectez vous pour voir le planning</p>
   </div>
-
 
   <div class="planning" v-if="competitions.compUser">
     <div v-for="jour in jours" :key="jour" class="jour">
@@ -16,14 +15,17 @@
         <h3>Matin</h3>
         <div class="cases">
           <template v-if="getCompetitionsMatin(competitions.compUser, jour).length">
-            <div v-for="compet in getCompetitionsMatin(competitions.compUser, jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
+            <div
+              v-for="compet in getCompetitionsMatin(competitions.compUser, jour)"
+              :key="compet.titre"
+              class="case"
+              @click="ouvrirParticipants(compet)"
+            >
               <p><strong>{{ compet.titre }}</strong></p>
-              <p v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
+              <p v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]" style="color:green;font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
-               <button v-if="auth.authUser && auth.authUser.role === 'organisateur'" @click="supprimer(compet)">
-                  Supprimer
-              </button>
+              <button v-if="canEdit" @click.stop="supprimer(compet)">Supprimer</button>
             </div>
           </template>
           <div v-else>
@@ -36,27 +38,28 @@
         <h3>Après-midi</h3>
         <div class="cases">
           <template v-if="getCompetitionsApresMidi(competitions.compUser, jour).length">
-            <div v-for="compet in getCompetitionsApresMidi(competitions.compUser, jour)" :key="compet.titre" class="case" @click="ouvrirParticipants(compet)">
+            <div
+              v-for="compet in getCompetitionsApresMidi(competitions.compUser, jour)"
+              :key="compet.titre"
+              class="case"
+              @click="ouvrirParticipants(compet)"
+            >
               <p><strong>{{ compet.titre }}</strong></p>
-              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green; font-weight:bold;">Inscrit</p>
+              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green;font-weight:bold;">Inscrit</p>
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
-              <button v-if="auth.authUser && auth.authUser.role === 'organisateur'" @click="supprimer(compet)">
-                  Supprimer
-              </button>
+              <button v-if="canEdit" @click.stop="supprimer(compet)">Supprimer</button>
             </div>
-            
           </template>
           <div v-else>
             <div class="case vide"></div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <div v-if="auth.authUser && auth.authUser.role === 'organisateur'">
+  <div v-if="canEdit">
     <h2>Ajouter une compétition</h2>
 
     <div class="ajout-compet">
@@ -81,9 +84,10 @@
           {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
         </li>
       </ul>
-      <button 
-        v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]" 
-          @click="ouvrirPopupInscription(selectedCompet)">
+      <button
+        v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]"
+        @click="ouvrirPopupInscription(selectedCompet)"
+      >
         S'inscrire
       </button>
       <button v-else @click="ouvrirPopupInscription(selectedCompet)">
@@ -96,8 +100,8 @@
   <div v-if="popupInscriptionOuvert" class="popup">
     <div class="popup-content">
       <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
-      <br></br>
-       <div class="inscriptiondiv" ::class="{ vert: getNumero(popupInscriptionOuvert.titre) }">
+      <br>
+      <div class="inscriptiondiv" :class="{ vert: getNumero(popupInscriptionOuvert.titre) }">
         <template v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
           <p>Inscrit</p>
         </template>
@@ -106,13 +110,16 @@
         </template>
       </div>
       <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
-          Vous êtes inscrit à la compétition. 
-          <br></br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
-          <br></br>Username : {{auth.authUser.username}}
-          <br></br>
-          <h4 style="color:red"> ne partagez ce numéro à personne, il vous sera demandé avec votre username sur place.</h4>
-          <button v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]" @click="desinscrire(popupInscriptionOuvert)">
-             Me désinscrire
+        Vous êtes inscrit à la compétition.
+        <br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
+        <br>Username : {{auth.authUser.username}}
+        <br>
+        <h4 style="color:red"> ne partagez ce numéro à personne.</h4>
+        <button
+          v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]"
+          @click="desinscrire(popupInscriptionOuvert)"
+        >
+          Me désinscrire
         </button>
       </div>
 
@@ -124,23 +131,39 @@
 </template>
 
 <script setup>
-import { getInscriptions, getNumero, inscrireUser ,getCompetitionsMatin, getCompetitionsApresMidi, ajouterCompetition } from '@/services/localsource.service.js'
+import {
+  getInscriptions,
+  getNumero,
+  inscrireUser,
+  getCompetitionsMatin,
+  getCompetitionsApresMidi,
+  ajouterCompetition,
+  desinscrireUser,
+  supprimerCompetition
+} from '@/services/localsource.service.js'
+
 import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
-import { desinscrireUser } from '@/services/localsource.service.js'
-import { supprimerCompetition } from '@/services/localsource.service.js'
-
+import { useRoute } from 'vue-router'
 
 const inscriptions = ref({})
 const numerosInscription = ref({})
 
 const competitions = useCompetitions()
 const auth = useAuth()
-const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+const route = useRoute()
+
+const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
 const selectedCompet = ref(null)
 
+const ownerUsername = ref('')
+const canEdit = ref(false)
+
 onMounted(async () => {
+  ownerUsername.value = route.params.ownerUsername
+  canEdit.value = auth.authUser && auth.authUser.username === ownerUsername.value
+
   await competitions.getCompetitions()
   inscriptions.value = getInscriptions()
   Object.keys(inscriptions.value).forEach(titre => {
@@ -156,87 +179,42 @@ const newCompet = ref({
 })
 
 async function ajouterCompet() {
-    ajouterCompetition(newCompet.value, competitions.compUser)
-    await competitions.getCompetitions()
-    newCompet.value.jour = ''
-    newCompet.value.titre = ''
-    newCompet.value.heure = ''
-    newCompet.value.lieu = ''
+  if (!canEdit.value) return
+  ajouterCompetition(newCompet.value, competitions.compUser)
+  await competitions.getCompetitions()
+  newCompet.value = { jour:'', titre:'', heure:'', lieu:'' }
 }
 
-const popupInscriptionOuvert = ref(null)
-
 function ouvrirParticipants(compet) {
-  selectedCompet.value = compet;
- 
+  selectedCompet.value = compet
 }
 
 function ouvrirPopupInscription(compet) {
-  selectedCompet.value = null 
+  selectedCompet.value = null
   popupInscriptionOuvert.value = compet
 }
-
-
 
 async function inscrire(compet) {
   const numero = await inscrireUser(compet, auth.authUser)
   inscriptions.value = getInscriptions()
   numerosInscription.value[compet.titre] = numero
   await competitions.getCompetitions()
-
-  // Trouver la compétition dans le store
-  const index = competitions.compUser.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
-  if (index !== -1) {
-    const comp = competitions.compUser[index]
-
-    // Ajouter l'utilisateur s'il n'existe pas déjà
-    if (!comp.joueurs.find(j => j.username === auth.authUser.username)) {
-      comp.joueurs.push({
-        username: auth.authUser.username,
-        firstname: auth.authUser.firstname,
-        surname: auth.authUser.surname
-      })
-    }
-
-    // Mettre à jour le popup
-    selectedCompet.value = { ...comp } 
-  }
 }
-
-
-
 
 async function desinscrire(compet) {
   await desinscrireUser(compet, auth.authUser)
   inscriptions.value = getInscriptions()
   delete numerosInscription.value[compet.titre]
   await competitions.getCompetitions()
-  const index = competitions.compUser.findIndex(
-    c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure
-  )
-  if (index !== -1) {
-    selectedCompet.value = { ...competitions.compUser[index] }
-  }
-
   popupInscriptionOuvert.value = null
 }
 
-
-
-
-
 async function supprimer(compet) {
-  if (!confirm(` supprimer la compétition "${compet.titre}" ?`)) return
-
-  await supprimerCompetition(compet)  
-  await competitions.getCompetitions() 
-
-  if (selectedCompet.value && selectedCompet.value.titre === compet.titre) {
-    selectedCompet.value = null
-  }
-  if (popupInscriptionOuvert.value && popupInscriptionOuvert.value.titre === compet.titre) {
-    popupInscriptionOuvert.value = null
-  }
+  if (!canEdit.value) return
+  await supprimerCompetition(compet)
+  await competitions.getCompetitions()
+  if (selectedCompet.value && selectedCompet.value.titre === compet.titre) selectedCompet.value = null
+  if (popupInscriptionOuvert.value && popupInscriptionOuvert.value.titre === compet.titre) popupInscriptionOuvert.value = null
 }
 </script>
 
@@ -263,14 +241,16 @@ async function supprimer(compet) {
 
 .jour h2 { text-align: center; color: #333; }
 .periode h3 {
-    margin-top: 10px;
-    font-size: 1em; 
-    color: #555; }
+  margin-top: 10px;
+  font-size: 1em;
+  color: #555;
+}
 
-.cases { 
-    display: flex;
-    flex-direction: column;
-    gap: 5px; }
+.cases {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 .case {
   background: white;
@@ -319,7 +299,7 @@ async function supprimer(compet) {
   margin-right: auto;
 }
 .inscriptiondiv.vert {
-  background-color: #4CAF50; 
+  background-color: #4CAF50;
 }
 
 .divCodeInscription{

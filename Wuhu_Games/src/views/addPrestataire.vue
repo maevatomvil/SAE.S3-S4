@@ -108,6 +108,7 @@ async function handleSubmit() {
     const template = await TemplateService.getCurrentTemplate()
     form.value.templateContent = template.content || ''
     form.value.pageTitle = template.pageTitle || ''
+    form.value.planning = template.planning || []
 
     if (form.value.image && typeof form.value.image !== 'string') {
       form.value.image = await convertFileToBase64(form.value.image)
