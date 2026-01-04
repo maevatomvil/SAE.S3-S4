@@ -23,7 +23,7 @@ export async function saveTemplate(data) {
       name: data.name,
       shortDescription: data.shortDescription,
       image: data.image,
-      pageTitle: data.pageTitle || '',
+      pageTitle: data.pageTitle || '',          
       templateContent: data.templateContent || '',
       planning: data.planning || [],
       type: 'prestataire',
