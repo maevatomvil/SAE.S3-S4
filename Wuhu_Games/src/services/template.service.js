@@ -30,6 +30,7 @@ export async function saveTemplate(data) {
       username: data.username,
       email: data.email,
       services: data.services,
+      locationNeeds: data.locationNeeds || ''
     }
 
     templates.push(newTemplate)

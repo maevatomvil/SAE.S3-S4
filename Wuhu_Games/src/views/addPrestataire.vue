@@ -37,11 +37,14 @@
               v-if="form.services.includes(s.id)"
               type="button"
               class="btn-template"
-              @click="openTemplate(s.id)"
-            >
+              @click="openTemplate(s.id)">
               Accéder au template
             </button>
           </div>
+        </div>
+        <div class="input-group">
+          <label>Besoins d’emplacement</label>
+          <input v-model="form.locationNeeds" placeholder="Ex : près de l'eau, près du village ..." />
         </div>
 
         <button type="submit" class="btn-submit">Envoyer la demande</button>
@@ -69,7 +72,8 @@ const form = ref({
   image: null,
   shortDescription: '',
   services: [],
-  username: auth.authUser?.username || ''
+  username: auth.authUser?.username || '',
+  locationNeeds: '',
 })
 
 const successMessage = ref('')
