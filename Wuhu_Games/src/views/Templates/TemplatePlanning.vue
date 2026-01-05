@@ -35,6 +35,8 @@
     </div>
   </div>
 
+ 
+
   <h2>Ajouter un créneau</h2>
 
   <div class="ajout-compet">
@@ -51,6 +53,8 @@
   </div>
 
   <button class="btn-save" @click="valider">Valider</button>
+  <p v-if="successMessage" style="color: green;">{{ successMessage }}</p>
+  <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
 </template>
 
 <script setup>
@@ -62,6 +66,8 @@ const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"
 
 const planning = ref([])
 const newCompet = ref({ jour:'', titre:'', heure:'', lieu:'' })
+const successMessage = ref('')
+const errorMessage = ref('')
 
 onMounted(async () => {
   const template = await TemplateService.getCurrentTemplate()
@@ -90,7 +96,11 @@ function supprimer(compet) {
 
 function valider() {
   TemplateService.saveCurrentTemplate({ planning: planning.value })
-  history.back()
+  successMessage.value = 'Planning sauvegardé !'
+  errorMessage.value = ''
+  setTimeout(() => {
+    history.back()
+  }, 500)
 }
 </script>
 
