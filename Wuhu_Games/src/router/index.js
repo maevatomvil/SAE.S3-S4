@@ -103,7 +103,13 @@ const routes = [
         path: '/prestataire/:username/edit',
         name: 'EditPrestataire',
         component: () => import('@/views/EditPrestataire.vue')
+    },
+    {
+        path: '/prestataire/:username/stats',
+        name: 'PrestataireStats',
+        component: () => import('@/views/Statistiques.vue')
     }
+
 
 
 

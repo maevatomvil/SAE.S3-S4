@@ -153,11 +153,8 @@ function finaliserCommande() {
 
   const groupe = {}
   for (const item of panier.value) {
-    if (!groupe[item.id]) {
-      groupe[item.id] = { ...item, quantite: 1 }
-    } else {
-      groupe[item.id].quantite++
-    }
+    if (!groupe[item.id]) groupe[item.id] = { ...item, quantite: 1 }
+    else groupe[item.id].quantite++
   }
 
   const commande = {
@@ -169,6 +166,10 @@ function finaliserCommande() {
 
   historiqueCommandes.value.push(commande)
   localStorage.setItem('historiqueCommandes_' + auth.authUser.username, JSON.stringify(historiqueCommandes.value))
+
+  const allOrders = JSON.parse(localStorage.getItem("allOrders") || "[]")
+  allOrders.push(commande)
+  localStorage.setItem("allOrders", JSON.stringify(allOrders))
 
   panier.value = []
   localStorage.removeItem('panier_' + auth.authUser.username)

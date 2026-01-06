@@ -28,6 +28,7 @@
         <div class="service_card modif_card" @click="goToEdit">
           <p>Modifier ma page</p>
         </div>
+        <div class="service_card modif_card" @click="goToStats"> <p>Statistiques</p> </div>
     </div>
 
     </div>
@@ -76,6 +77,11 @@ const peutModifier = computed(() =>
 
 function goToEdit() {
   router.push(`/prestataire/${prestataire.value.username}/edit`)
+}
+
+
+function goToStats() {
+  router.push(`/prestataire/${prestataire.value.username}/stats`)
 }
 
 
