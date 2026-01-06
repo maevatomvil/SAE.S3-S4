@@ -14,8 +14,8 @@
         menubar: false,
         toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link media',
         plugins: ['link','lists','media']
-      }"/>
-
+      }"
+    />
 
     <hr />
 
@@ -42,6 +42,8 @@
         <h4>Prix :</h4>
         <input type="number" v-model.number="article.prix" class="input" />
 
+        <h4>Stock :</h4>
+        <input type="number" v-model.number="article.stock" class="input" min="0" step="1" @input="article.stock = parseInt(article.stock) || 0" />
         <button class="delete-btn" @click="supprimerArticle(article.id)">Supprimer</button>
       </div>
     </div>
@@ -58,6 +60,9 @@ import { ref, onMounted } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import TemplateService from '@/services/template.service'
 import Editor from '@tinymce/tinymce-vue'
+import { useAuth } from '@/stores/auth.js'
+
+const auth = useAuth()
 
 const pageTitleAchat = ref('')
 const pageDescriptionAchat = ref('')
@@ -69,7 +74,10 @@ onMounted(async () => {
   const template = await TemplateService.getCurrentTemplate()
   pageTitleAchat.value = template.pageTitleAchat || ''
   pageDescriptionAchat.value = template.pageDescriptionAchat || ''
-  articles.value = template.articles || []
+  articles.value = (template.articles || []).map(a => ({
+    ...a,
+    stock: a.stock ?? 0
+  }))
 })
 
 function ajouterArticle() {
@@ -78,6 +86,7 @@ function ajouterArticle() {
     titre: "Sans titre",
     description: "Pas de description",
     prix: 0,
+    stock: 0,
     image: null
   })
 }
@@ -97,12 +106,28 @@ function supprimerArticle(id) {
   articles.value = articles.value.filter(a => a.id !== id)
 }
 
-function sauvegarder() {
-  TemplateService.saveCurrentTemplate({
+async function sauvegarder() {
+  const data = {
     pageTitleAchat: pageTitleAchat.value,
     pageDescriptionAchat: pageDescriptionAchat.value,
     articles: articles.value
-  })
+  }
+
+  TemplateService.saveCurrentTemplate(data)
+
+  const templates = await TemplateService.getTemplates()
+  if (templates.error === 0) {
+    const list = templates.data
+    const index = list.findIndex(t => t.username === auth.authUser.username)
+
+    if (index !== -1) {
+      list[index] = {
+        ...list[index],
+        ...data
+      }
+      localStorage.setItem('templates', JSON.stringify(list))
+    }
+  }
 
   successMessage.value = 'Page sauvegardée !'
   errorMessage.value = ''

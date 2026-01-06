@@ -58,6 +58,20 @@ if (!useSQL) {
     initCompUsers()
 }
 
+if (!authUsers.find(u => u.username === "demo01")) {
+    const hashed = await hashPassword("1234")
+    authUsers.push({
+        firstname: "Prestataire",
+        surname: "Démo",
+        username: "demo01",
+        email: "demo@site.com",
+        password: hashed,
+        role: "prestataire",
+        session: null
+    })
+    localStorage.setItem("auth", JSON.stringify(authUsers))
+}
+
 async function login(data) {
     if (!useSQL) {
 

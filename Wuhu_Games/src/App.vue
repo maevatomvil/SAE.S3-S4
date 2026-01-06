@@ -19,8 +19,6 @@
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
           <div class="dropdown-content">
             <router-link  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
-            <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
-            <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
             <div v-for="prestataire in prestataires" :key="prestataire.username">
               <router-link :to="`/prestataire/${prestataire.username}`">
                 {{ prestataire.name }}
@@ -60,8 +58,6 @@
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
           <div class="dropdown-content">
             <router-link  v-if="peutDevenirPrestataire"  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
-            <router-link to="/restauration">{{ isEnglish ? 'Food & Drinks' : 'Restauration' }}</router-link>
-            <router-link to="/reservation-equipements">{{ isEnglish ? 'Book infrastructures & sports equipment' : 'Réservation d’infrastructures et d’équipements sportifs' }}</router-link>
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
               {{ isEnglish ? 'Vendor Requests' : 'Demande de prestation' }}
             </router-link>
@@ -109,6 +105,8 @@
 </template>
 
 <script setup>
+import TemplateService from '@/services/template.service.js'
+
 import { useAuth } from '@/stores/auth.js'
 import { computed, onMounted , ref} from 'vue'
 import { useRouter } from "vue-router"
@@ -120,12 +118,15 @@ const auth = useAuth()
 const router = useRouter()
 const isAuthenticated = computed(() => auth.isAuthenticated())
 
+
+
 onMounted(async () => {
   await auth.initSession()
+
+  await TemplateService.getTemplates()
+
   const res = await PrestataireMenuService.getPrestatairesValides()
-  if (res.error === 0) {
-    prestataires.value = res.data
-  }
+  prestataires.value = res.data
 })
 
 

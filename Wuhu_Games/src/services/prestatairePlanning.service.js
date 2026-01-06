@@ -110,7 +110,6 @@ export async function inscrireUserPrestataire(event, user, username) {
     return numero
 }
 
-// Désinscrire utilisateur
 export async function desinscrireUserPrestataire(event, user, username) {
     const planning = prestatairesPlanning.find(p => p.username === username)
     if (!planning) return null
