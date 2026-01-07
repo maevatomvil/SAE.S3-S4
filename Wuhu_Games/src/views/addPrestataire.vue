@@ -10,6 +10,7 @@
           <label>Nom du service (sera visible au public)</label>
           <input v-model="form.name" placeholder="Entrez le nom de votre service" required />
         </div>
+        <div class="input-group"> <label>Nom du service (anglais)</label> <input v-model="form.name_en" placeholder="Enter your service name in English" /> </div>
 
         <div class="input-group">
           <label>Email de contact</label>
@@ -25,6 +26,7 @@
           <label>Description (sera visible au public)</label>
           <input v-model="form.shortDescription" placeholder="Paragraphe qui sera affiché sur la page de votre service" required />
         </div>
+        <div class="input-group"> <label>Description (anglais)</label> <input v-model="form.shortDescription_en" placeholder="Short description in English" /> </div>
 
         <div class="input-group">
           <label>Choisissez vos services</label>
@@ -68,9 +70,11 @@ const router = useRouter()
 
 const form = ref({
   name: '',
+  name_en: '', 
   email: '',
   image: null,
   shortDescription: '',
+  shortDescription_en: '',
   services: [],
   username: auth.authUser?.username || '',
   locationNeeds: '',
@@ -105,6 +109,8 @@ async function handleSubmit() {
     successMessage.value = ''
     return
   }
+  if (!form.value.name_en) form.value.name_en = form.value.name
+  if (!form.value.shortDescription_en) form.value.shortDescription_en = form.value.shortDescription
 
   form.value.username = auth.authUser?.username || ''
 
