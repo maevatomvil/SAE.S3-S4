@@ -27,9 +27,9 @@ export function ajouterCommandeGlobale(commande) {
   }
 }
 
-export function getPanierMoyen() {
+export function getPanierMoyen(username) {
   if (!useSQL) {
-    const all = loadAllOrders()
+    const all = loadAllOrders().filter(c => c.prestataireUsername === username)
     if (all.length === 0) return 0
     const total = all.reduce((sum, cmd) => {
       const t = cmd.articles.reduce((s, a) => s + a.prix * a.quantite, 0)
@@ -41,16 +41,22 @@ export function getPanierMoyen() {
   }
 }
 
-export function getClassementArticles() {
+export function getClassementArticles(prestataire) {
   if (!useSQL) {
     const all = loadAllOrders()
     const ventes = {}
+
+    for (const art of prestataire.articles) {
+      ventes[art.id] = { titre: art.titre, quantite: 0 }
+    }
+
     for (const cmd of all) {
+      if (cmd.prestataireUsername !== prestataire.username) continue
       for (const a of cmd.articles) {
-        if (!ventes[a.id]) ventes[a.id] = { titre: a.titre, quantite: a.quantite }
-        else ventes[a.id].quantite += a.quantite
+        if (ventes[a.id]) ventes[a.id].quantite += a.quantite
       }
     }
+
     return Object.values(ventes).sort((a, b) => b.quantite - a.quantite)
   } else {
     return []

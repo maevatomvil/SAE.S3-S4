@@ -68,7 +68,6 @@ const form = ref({
 
 const availableServices = ref([
   { id: 'achat', name: 'Page d’achat' },
-  { id: 'reservation', name: 'Réservation' },
   { id: 'planning', name: 'Planning' },
   { id: 'info', name: 'Page d’information' }
 ])

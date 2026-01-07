@@ -28,7 +28,6 @@ function initCompUsers() {
         try {
             const localComps = JSON.parse(saved)
 
-            // Fusionner les compétitions JSON avec celles du localStorage en gardant les joueurs
             compUsers = competitions.map(c => {
                 const savedComp = localComps.find(
                     s => s.titre === c.titre && s.jour === c.jour && s.heure === c.heure
@@ -36,7 +35,6 @@ function initCompUsers() {
                 return savedComp ? savedComp : c
             })
 
-            // Ajouter les compétitions locales qui n’existent pas dans le JSON
             localComps.forEach(s => {
                 if (!compUsers.some(c => c.titre === s.titre && c.jour === s.jour && c.heure === s.heure)) {
                     compUsers.push(s)

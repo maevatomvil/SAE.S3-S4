@@ -42,8 +42,8 @@ onMounted(async () => {
   prestataire.value = res.data.find(p => p.username === username)
 
   if (prestataire.value?.services?.includes('achat')) {
-    panierMoyen.value = StatistiquesService.getPanierMoyen()
-    classement.value = StatistiquesService.getClassementArticles()
+    panierMoyen.value = StatistiquesService.getPanierMoyen(prestataire.value.username)
+    classement.value = StatistiquesService.getClassementArticles(prestataire.value)
   }
 
   if (prestataire.value?.services?.includes('info')) {

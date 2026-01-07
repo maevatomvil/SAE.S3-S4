@@ -59,7 +59,7 @@
           <div class="dropdown-content">
             <router-link  v-if="peutDevenirPrestataire"  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
-              {{ isEnglish ? 'Vendor Requests' : 'Demande de prestation' }}
+              {{ isEnglish ? 'Vendor Requests' : 'Demandes de prestation' }}
             </router-link>
             
             <div v-for="prestataire in prestataires" :key="prestataire.username">
