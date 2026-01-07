@@ -22,6 +22,7 @@
         <img :src="demande.image" :alt="demande.name" class="demande-image"/>
       </div>
       <div v-if="demande.templateContent" class="template-content" v-html="demande.templateContent"></div>
+      <p><strong>Besoins d’emplacement :</strong> {{ demande.locationNeeds }}</p>
 
       <button @click="accepterDemande(demande)" style="background-color: greenyellow; border-radius: 10px;">Accepter</button>
       <button @click="refuserDemande(demande)" style="background-color: red; border-radius: 10px;">Refuser</button>

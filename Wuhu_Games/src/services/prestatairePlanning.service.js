@@ -76,14 +76,12 @@ export function supprimerEvenement(event, username) {
         e => !(e.titre === event.titre && e.jour === event.jour && e.heure === event.heure)
     )
 
-    // Supprimer les inscriptions pour cet événement
     delete inscriptions[event.titre]
     delete numerosInscription[event.titre]
 
     saveToLocalStorage()
 }
 
-// Inscription utilisateur
 export async function inscrireUserPrestataire(event, user, username) {
     const planning = prestatairesPlanning.find(p => p.username === username)
     if (!planning) return null
@@ -112,7 +110,6 @@ export async function inscrireUserPrestataire(event, user, username) {
     return numero
 }
 
-// Désinscrire utilisateur
 export async function desinscrireUserPrestataire(event, user, username) {
     const planning = prestatairesPlanning.find(p => p.username === username)
     if (!planning) return null
@@ -137,7 +134,6 @@ export async function desinscrireUserPrestataire(event, user, username) {
     saveToLocalStorage()
 }
 
-// Récupérer inscriptions et numéro
 export function getInscriptionsPrestataire() {
     return inscriptions
 }
