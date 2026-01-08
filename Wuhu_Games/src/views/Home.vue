@@ -81,7 +81,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore.js'
 import MapComponent from '@/views/Map.vue'
 import HomePageService from '@/services/homepage.service.js'
-import Editor from '@tinymce/tinymce-vue'
+//import Editor from '@tinymce/tinymce-vue'
 
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
