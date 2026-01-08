@@ -119,7 +119,9 @@ export async function deleteTemplate(id) {
 }
 
 export function saveCurrentTemplate(data) {
-  localStorage.setItem('currentTemplate', JSON.stringify(data))
+  const all = JSON.parse(localStorage.getItem('currentTemplate') || '{}')
+  const updated = { ...all, ...data }
+  localStorage.setItem('currentTemplate', JSON.stringify(updated))
 }
 
 export async function getCurrentTemplate() {

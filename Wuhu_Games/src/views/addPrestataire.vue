@@ -115,18 +115,23 @@ async function handleSubmit() {
   form.value.username = auth.authUser?.username || ''
 
   try {
-    const template = await TemplateService.getCurrentTemplate()
+    const t = await TemplateService.getCurrentTemplate()
 
     if (form.value.services.includes('achat')) {
-      form.value.pageTitleAchat = template.pageTitleAchat || ''
-      form.value.pageDescriptionAchat = template.pageDescriptionAchat || ''
-      form.value.articles = template.articles || []
+      form.value.pageTitleAchat = t.pageTitleAchat || ''
+      form.value.pageDescriptionAchat = t.pageDescriptionAchat || ''
+      form.value.articles = t.articles || []
     }
 
+    if (form.value.services.includes('info')) {
+      form.value.templateContent = t.content || ''
+      form.value.pageTitle = t.pageTitle || ''
+    }
 
-    form.value.templateContent = template.content || ''
-    form.value.pageTitle = template.pageTitle || ''
-    form.value.planning = template.planning || []
+    if (form.value.services.includes('planning')) {
+      form.value.planning = t.planning || []
+    }
+
 
     if (form.value.image && typeof form.value.image !== 'string') {
       form.value.image = await convertFileToBase64(form.value.image)
