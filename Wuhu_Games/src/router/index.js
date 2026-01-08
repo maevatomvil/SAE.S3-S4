@@ -44,6 +44,11 @@ const routes = [
         component: () => import('@/views/planning_competitions.vue')
     },
     {
+      path:'/planning-spectateurs',
+      name:'planning-spectateurs',
+      component: () => import('@/views/planning_spectateur.vue')
+    },
+    {
         path: '/login',
         name: 'login',
         component: () => import('@/views/login.vue')

@@ -7,6 +7,13 @@ const useSQL = false;
 let authUsers = JSON.parse(JSON.stringify(authData))
 let compUsers = JSON.parse(JSON.stringify(competitions))
 
+const placesParLieu = {
+    "Stadium Wuhu": 500,
+    "Golf Wuhu": 300,
+    "Terrain de tir à l'arc": 200,
+    "Piste de cyclisme": 300
+}
+
 function initAuthUsers() {
     const saved = localStorage.getItem('auth')
     if (saved) {
@@ -492,10 +499,17 @@ export async function supprimerCompetition(compet) {
     }
 }
 
+export function getPlacesMaxLieu(lieu) {
+    return placesParLieu[lieu] ?? 50
+}
 
+export function getPlacesRestantes(compet) {
+    const inscriptions = getInscriptions()[compet.titre] || {}
+    const reservees = Object.keys(inscriptions).length
+    const max = getPlacesMaxLieu(compet.lieu)
 
-
-
+    return max - reservees
+}
 
 export default {
     login,
@@ -510,6 +524,8 @@ export default {
     getCompetitionsMatin,
     getCompetitionsApresMidi,
     ajouterCompetition,
-    desinscrireUser
+    desinscrireUser,
+    getPlacesMaxLieu,
+    getPlacesRestantes
 }
  

@@ -20,9 +20,9 @@
           <p>Planning des compétitions | Inscription</p>
         </router-link>
 
-        <div class="service_card">
+        <router-link to="/planning-spectateurs" class="service_card service_link">
           <p>Réserver une place spectateur</p>
-        </div>
+        </router-link>
       </div>
     </div>
 </template>
@@ -35,6 +35,11 @@
   margin-bottom: 30px;
   font-size: 2em;
   color: #333;
+}
+
+.titre {
+  text-align: center;
+  padding: 20px;
 }
 
 .presentation {
@@ -119,5 +124,6 @@
 }
 
 .titre {
+
 }
 </style>
