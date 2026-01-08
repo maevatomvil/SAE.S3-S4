@@ -1,30 +1,48 @@
 <template>
   <div class="prestataire">
     <div class="prestataire-container">
-      <h2 class="prestataire-title">Modifier ma page prestataire</h2>
+
+      <h2 class="prestataire-title">
+        <span v-if="!isEnglish">Modifier ma page prestataire</span>
+        <span v-else>Edit my vendor page</span>
+      </h2>
 
       <p v-if="!hasAccess" class="error">
-        Vous n'avez pas accès à cette page
+        <span v-if="!isEnglish">Vous n'avez pas accès à cette page</span>
+        <span v-else>You do not have access to this page</span>
       </p>
 
       <form v-else class="prestataire-form">
+
         <div class="input-group">
-          <label>Nom du service (visible au public)</label>
-          <input v-model="form.name" placeholder="Entrez le nom de votre service" />
+          <label>
+            <span v-if="!isEnglish">Nom du service (visible au public)</span>
+            <span v-else>Service name (public)</span>
+          </label>
+          <input v-model="form.name" :placeholder="isEnglish ? 'Enter your service name' : 'Entrez le nom de votre service'" />
         </div>
+
         <div class="input-group">
-          <label>Nom du service (anglais)</label>
+          <label>
+            <span v-if="!isEnglish">Nom du service (anglais)</span>
+            <span v-else>Service name (English)</span>
+          </label>
           <input v-model="form.name_en" placeholder="Service name in English" />
         </div>
 
-
         <div class="input-group">
-          <label>Email de contact</label>
-          <input type="email" v-model="form.email" placeholder="exemple@mail.com" />
+          <label>
+            <span v-if="!isEnglish">Email de contact</span>
+            <span v-else>Contact email</span>
+          </label>
+          <input type="email" v-model="form.email" :placeholder="isEnglish ? 'example@mail.com' : 'exemple@mail.com'" />
         </div>
 
         <div class="input-group">
-          <label>Image du service (visible au public)</label>
+          <label>
+            <span v-if="!isEnglish">Image du service (visible au public)</span>
+            <span v-else>Service image (public)</span>
+          </label>
           <input type="file" @change="handleFileUpload" accept="image/*" />
           <div v-if="form.image">
             <img :src="form.image" :alt="form.name" class="preview-image" />
@@ -32,37 +50,60 @@
         </div>
 
         <div class="input-group">
-          <label>Description (visible au public)</label>
+          <label>
+            <span v-if="!isEnglish">Description (visible au public)</span>
+            <span v-else>Description (public)</span>
+          </label>
           <input v-model="form.shortDescription" />
         </div>
+
         <div class="input-group">
-          <label>Description (anglais)</label>
+          <label>
+            <span v-if="!isEnglish">Description (anglais)</span>
+            <span v-else>Description (English)</span>
+          </label>
           <input v-model="form.shortDescription_en" placeholder="Short description in English" />
         </div>
 
-        
-
         <div class="input-group">
-          <label>Choisissez vos services</label>
+          <label>
+            <span v-if="!isEnglish">Choisissez vos services</span>
+            <span v-else>Choose your services</span>
+          </label>
+
           <div v-for="s in availableServices" :key="s.id" class="service-item">
             <input type="checkbox" :id="s.id" :value="s.id" v-model="form.services" />
-            <label :for="s.id">{{ s.name }}</label>
+
+            <label :for="s.id">
+              <span v-if="!isEnglish">{{ s.name }}</span>
+              <span v-else>
+                {{ s.id === 'achat' ? 'Shop page' :
+                   s.id === 'planning' ? 'Schedule' :
+                   'Information page' }}
+              </span>
+            </label>
           </div>
         </div>
 
         <button type="button" class="btn-submit" @click="submitForm">
-          Mettre à jour
+          <span v-if="!isEnglish">Mettre à jour</span>
+          <span v-else>Update</span>
         </button>
+
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useAuth } from '@/stores/auth.js'
 import TemplateService from '@/services/template.service.js'
 import PrestataireService from '@/services/prestataire.service.js'
+import { useLanguageStore } from '@/stores/languageStore.js'
+
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 
 const auth = useAuth()
 
@@ -70,7 +111,7 @@ const hasAccess = ref(false)
 
 const form = ref({
   name: '',
-  name_en: '', 
+  name_en: '',
   email: '',
   image: null,
   shortDescription: '',
@@ -89,7 +130,7 @@ async function submitForm() {
   const res = await PrestataireService.updatePrestataire(form.value)
   window.location.reload()
   if (res.error === 0) {
-    alert('Page prestataire mise à jour')
+    alert(isEnglish.value ? "Vendor page updated" : "Page prestataire mise à jour")
   }
 }
 
@@ -103,11 +144,11 @@ onMounted(async () => {
       hasAccess.value = true
       form.value = {
         name: p.name,
-        name_en: p.name_en || p.name, 
+        name_en: p.name_en || p.name,
         email: p.email || '',
         image: p.image || null,
         shortDescription: p.shortDescription || '',
-        shortDescription_en: p.shortDescription_en || p.shortDescription, 
+        shortDescription_en: p.shortDescription_en || p.shortDescription,
         services: p.services || [],
         username: p.username
       }

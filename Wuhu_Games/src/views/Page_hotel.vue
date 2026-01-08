@@ -1,51 +1,72 @@
 <template>
     <div class="titre">
-        <h1>Présentation de l'hôtel</h1>
+        <h1>
+            <span v-if="!isEnglish">Présentation de l'hôtel</span>
+            <span v-else>Hotel presentation</span>
+        </h1>
     </div>
+
     <div class="presentation"> 
-        <p>Dans cette page, vous pourrez consulter le planning de 
-            disponibilité des chambres et en réserver une.
-            Notre hôtel allie confort et nature pour
-          accueillir les participants et les spectateurs
-           de l’événement sportif. 
-        Vous pourrez profiter d’un hébergement moderne, 
-        de services adaptés aux athlètes et d’une ambiance
-         conviviale pour vivre pleinement cette expérience
-          unique.
+        <p>
+            <span v-if="!isEnglish">
+                Dans cette page, vous pourrez consulter le planning de disponibilité des chambres et en réserver une.
+                Notre hôtel allie confort et nature pour accueillir les participants et les spectateurs de l’événement sportif.
+                Vous pourrez profiter d’un hébergement moderne, de services adaptés aux athlètes et d’une ambiance conviviale
+                pour vivre pleinement cette expérience unique.
+            </span>
+            <span v-else>
+                On this page, you can check room availability and book one.
+                Our hotel combines comfort and nature to welcome participants and spectators of the sports event.
+                You will enjoy modern accommodation, services adapted to athletes, and a friendly atmosphere
+                to fully experience this unique event.
+            </span>
         </p>
-        <img src="/public/image_chambre_hotel.jpg"
-            alt="Image d'une chambre d'hôtel"/>
+
+        <img src="/public/image_chambre_hotel.jpg" alt="Hotel room image"/>
     </div>
-  <div class="presentation_services">
-    <h3>Nos services :</h3>
 
-    <div class="services_cards">
-      <div class="service_card">
-        <p>Voir les chambres disponibles</p>
-      </div>
+    <div class="presentation_services">
+        <h3>
+            <span v-if="!isEnglish">Nos services :</span>
+            <span v-else>Our services:</span>
+        </h3>
 
-      <router-link to="/reservation-hotel" class="service_card service_link">
-        <p>Réserver</p>
-      </router-link>
+        <div class="services_cards">
 
-      <router-link to="/livre-dor" class="service_card service_link">
-        <p>Consulter le livre d'or</p>
-      </router-link>
+            <div class="service_card">
+                <p>
+                    <span v-if="!isEnglish">Voir les chambres disponibles</span>
+                    <span v-else>View available rooms</span>
+                </p>
+            </div>
+
+            <router-link to="/reservation-hotel" class="service_card service_link">
+                <p>
+                    <span v-if="!isEnglish">Réserver</span>
+                    <span v-else>Book</span>
+                </p>
+            </router-link>
+
+            <router-link to="/livre-dor" class="service_card service_link">
+                <p>
+                    <span v-if="!isEnglish">Consulter le livre d'or</span>
+                    <span v-else>View guestbook</span>
+                </p>
+            </router-link>
+
+        </div>
     </div>
-  </div>
-
-    
-
-
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguageStore } from '@/stores/languageStore.js'
 
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 </script>
 
-<style >
-  
-
+<style>
 *{
   font-family: 'Montserrat';
   text-decoration:none;
@@ -135,6 +156,4 @@
   text-decoration: none;
   color: inherit;
 }
-
-
 </style>

@@ -1,35 +1,35 @@
 <template>
   <div class="prestataire">
     <div class="prestataire-container">
-      <h2 class="prestataire-title">Devenir Prestataire</h2>
-      <h4>Important : un utilisateur ne peut posséder qu’une seule page prestataire à la fois. <br>Si une demande est déjà en attente la nouvelle ne sera pas prise en compte.</h4>
-
+      <h2 class="prestataire-title"> {{ isEnglish ? "Become a Vendor" : "Devenir Prestataire" }}</h2>
+       <span v-if="!isEnglish"> Important : un utilisateur ne peut posséder qu’une seule page prestataire à la fois. <br>Si une demande est déjà en attente la nouvelle ne sera pas prise en compte. </span> <span v-else> Important: a user can only own one vendor page at a time. <br>If a request is already pending, the new one will not be considered. </span>
+      <br>
       <form @submit.prevent="handleSubmit" class="prestataire-form">
 
         <div class="input-group">
-          <label>Nom du service (sera visible au public)</label>
-          <input v-model="form.name" placeholder="Entrez le nom de votre service" required />
+          <label>{{ isEnglish ? "Service name (public)" : "Nom du service (sera visible au public)" }}</label>
+          <input v-model="form.name" :placeholder="isEnglish ? 'Enter your service name' : 'Entrez le nom de votre service'" required />
         </div>
-        <div class="input-group"> <label>Nom du service (anglais)</label> <input v-model="form.name_en" placeholder="Enter your service name in English" /> </div>
+        <div class="input-group"> <label>{{ isEnglish ? "Service name (English)" : "Nom du service (anglais)" }}</label> <input v-model="form.name_en" placeholder="Enter your service name in English" /> </div>
 
         <div class="input-group">
-          <label>Email de contact</label>
-          <input type="email" v-model="form.email" placeholder="exemple@mail.com" required />
+          <label>{{ isEnglish ? "Contact email" : "Email de contact" }}</label>
+          <input type="email" v-model="form.email" :placeholder="isEnglish ? 'example@mail.com' : 'exemple@mail.com'" required />
         </div>
 
         <div class="input-group">
-          <label>Image du service (sera visible au public)</label>
+          <label>{{ isEnglish ? "Service image (public)" : "Image du service (sera visible au public)" }}</label>
           <input type="file" @change="handleFileUpload" accept="image/*" />
         </div>
 
         <div class="input-group">
-          <label>Description (sera visible au public)</label>
-          <input v-model="form.shortDescription" placeholder="Paragraphe qui sera affiché sur la page de votre service" required />
+          <label>{{ isEnglish ? "Description (public)" : "Description (sera visible au public)" }}</label>
+          <input v-model="form.shortDescription" :placeholder="isEnglish ? 'Short description' : 'Paragraphe affiché sur votre page'" required />
         </div>
-        <div class="input-group"> <label>Description (anglais)</label> <input v-model="form.shortDescription_en" placeholder="Short description in English" /> </div>
+        <div class="input-group"> <label>{{ isEnglish ? "Description (English)" : "Description (anglais)" }}</label><input v-model="form.shortDescription_en" placeholder="Short description in English" /> </div>
 
         <div class="input-group">
-          <label>Choisissez vos services</label>
+          <label>{{ isEnglish ? "Choose your services" : "Choisissez vos services" }}</label>
 
           <div v-for="s in availableServices" :key="s.id" class="service-item">
             <input type="checkbox" :id="s.id" :value="s.id" v-model="form.services" />
@@ -40,33 +40,46 @@
               type="button"
               class="btn-template"
               @click="openTemplate(s.id)">
-              Accéder au template
+               {{ isEnglish ? "Open template" : "Accéder au template" }}
             </button>
           </div>
         </div>
         <div class="input-group">
-          <label>Besoins d’emplacement</label>
-          <input v-model="form.locationNeeds" placeholder="Ex : près de l'eau, près du village ..." />
+          <label>{{ isEnglish ? "Location needs" : "Besoins d’emplacement" }}</label>
+          <input v-model="form.locationNeeds" :placeholder="isEnglish ? 'Ex: near water, near village...' : 'Ex : près de l\'eau, près du village ...'" />
         </div>
 
-        <button type="submit" class="btn-submit">Envoyer la demande</button>
+        <button type="submit" class="btn-submit">
+          {{ isEnglish ? "Submit request" : "Envoyer la demande" }}
+        </button>
+
 
         <p v-if="successMessage" class="success">{{ successMessage }}</p>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
-      <h5>⏳ Votre demande sera examinée sous 24 heures. Vous serez informé de la décision finale par e-mail.</h5>
+      <h5>
+        {{ isEnglish
+          ? "⏳ Your request will be reviewed within 24 hours. You will be notified by email."
+          : "⏳ Votre demande sera examinée sous 24 heures. Vous serez informé par e-mail."
+        }}
+      </h5>
+
 
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed} from 'vue'
 import { useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service'
 import { useAuth } from '@/stores/auth.js'
+import { useLanguageStore } from '@/stores/languageStore.js'
+
 const auth = useAuth()
 const router = useRouter()
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 
 const form = ref({
   name: '',
@@ -105,10 +118,12 @@ function convertFileToBase64(file) {
 
 async function handleSubmit() {
   if (!form.value.name || !form.value.shortDescription || !form.value.email) {
-    errorMessage.value = 'Tous les champs sont obligatoires'
-    successMessage.value = ''
+    errorMessage.value = isEnglish.value
+      ? "All fields are required"
+      : "Tous les champs sont obligatoires"
     return
   }
+
   if (!form.value.name_en) form.value.name_en = form.value.name
   if (!form.value.shortDescription_en) form.value.shortDescription_en = form.value.shortDescription
 
@@ -140,7 +155,10 @@ async function handleSubmit() {
     const result = await TemplateService.saveTemplate(form.value)
 
     if (result.error === 0) {
-      successMessage.value = 'Formulaire envoyé avec succès !'
+      successMessage.value = isEnglish.value
+      ? "Form submitted successfully!"
+      : "Formulaire envoyé avec succès !"
+
       errorMessage.value = ''
       form.value = { name:'', email:'', image:null, shortDescription:'', services:[], username:'' }
       TemplateService.clearCurrentTemplate()
@@ -150,16 +168,30 @@ async function handleSubmit() {
       successMessage.value = ''
     }
   } catch (err) {
-    errorMessage.value = 'Erreur lors de l’envoi du formulaire'
+    errorMessage.value = isEnglish.value
+    ? "Error while submitting the form"
+    : "Erreur lors de l’envoi du formulaire"
+
     successMessage.value = ''
   }
 }
 
-const availableServices = ref([
-  { id: 'achat', name: 'Page d’achat' },
-  { id: 'planning', name: 'Planning' },
-  { id: 'info', name: 'PageInformation' }
+
+const availableServices = computed(() => [
+  {
+    id: 'achat',
+    name: isEnglish.value ? 'Shop page' : 'Page d’achat'
+  },
+  {
+    id: 'planning',
+    name: isEnglish.value ? 'Schedule' : 'Planning'
+  },
+  {
+    id: 'info',
+    name: isEnglish.value ? 'Information page' : 'Page d’information'
+  }
 ])
+
 
 function openTemplate(serviceId) {
   localStorage.setItem('savedForm', JSON.stringify(form.value))

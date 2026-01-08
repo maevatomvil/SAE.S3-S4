@@ -1,33 +1,56 @@
 <template>
     <div class="titre">
-        <h1>Réservations et inscriptions aux compétitions</h1>
+        <h1>
+            <span v-if="!isEnglish">Réservations et inscriptions aux compétitions</span>
+            <span v-else>Reservations and competition registrations</span>
+        </h1>
     </div>
 
     <div class="presentation"> 
         <p>
-            Sur cette page vous pourrez voir les planning des compétions, vous inscrire dans une équipe pour une compétition ou réserver une place en tant que spectateur.
+            <span v-if="!isEnglish">
+                Sur cette page vous pourrez voir les planning des compétions, vous inscrire dans une équipe pour une compétition ou réserver une place en tant que spectateur.
+            </span>
+            <span v-else>
+                On this page you can view competition schedules, register in a team for a competition, or book a seat as a spectator.
+            </span>
         </p>
 
-        <img src="/public/image_basket.jpg" alt="Image d'un match de basketball"/>
+        <img src="/public/image_basket.jpg" alt="Basketball match image"/>
     </div>
 
     <div class="presentation_services">
-      <h3>Nos services :</h3>
+      <h3>
+        <span v-if="!isEnglish">Nos services :</span>
+        <span v-else>Our services:</span>
+      </h3>
 
       <div class="services_cards">
 
         <router-link to="/planning-competitions" class="service_card service_link">
-          <p>Planning des compétitions | Inscription</p>
+          <p>
+            <span v-if="!isEnglish">Planning des compétitions | Inscription</span>
+            <span v-else>Competition planning | Registration</span>
+          </p>
         </router-link>
 
         <router-link to="/planning-spectateurs" class="service_card service_link">
-          <p>Réserver une place spectateur</p>
+          <p>
+            <span v-if="!isEnglish">Réserver une place spectateur</span>
+            <span v-else>Book a spectator seat</span>
+          </p>
         </router-link>
+
       </div>
     </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguageStore } from '@/stores/languageStore.js'
+
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 </script>
 
 <style scoped>
@@ -121,9 +144,5 @@
 * {
   font-family: 'Montserrat';
   text-decoration: none;
-}
-
-.titre {
-
 }
 </style>

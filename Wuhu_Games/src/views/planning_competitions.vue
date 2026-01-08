@@ -1,18 +1,31 @@
 <template>
   <div class="titre">
-    <h1>Planning des compétitions</h1>
+    <h1>
+      <span v-if="!isEnglish">Planning des compétitions</span>
+      <span v-else>Competition schedule</span>
+    </h1>
   </div>
 
   <div v-if="!auth.authUser">
-    <p>Connectez vous pour voir le planning</p>
+    <p>
+      <span v-if="!isEnglish">Connectez-vous pour voir le planning</span>
+      <span v-else>Log in to view the schedule</span>
+    </p>
   </div>
 
   <div class="planning" v-if="competitions.compUser">
     <div v-for="jour in jours" :key="jour" class="jour">
-      <h2>{{ jour }}</h2>
+      <h2>
+        <span v-if="!isEnglish">{{ jour }}</span>
+        <span v-else>{{ joursEN[jours.indexOf(jour)] }}</span>
+      </h2>
 
       <div class="periode">
-        <h3>Matin</h3>
+        <h3>
+          <span v-if="!isEnglish">Matin</span>
+          <span v-else>Morning</span>
+        </h3>
+
         <div class="cases">
           <template v-if="getCompetitionsMatin(competitions.compUser, jour).length">
             <div
@@ -22,12 +35,25 @@
               @click="ouvrirParticipants(compet)"
             >
               <p><strong>{{ compet.titre }}</strong></p>
-              <p v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]" style="color:green;font-weight:bold;">Inscrit</p>
+
+              <p
+                v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                style="color:green;font-weight:bold;"
+              >
+                <span v-if="!isEnglish">Inscrit</span>
+                <span v-else>Registered</span>
+              </p>
+
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
-              <button v-if="canEdit" @click.stop="supprimer(compet)">Supprimer</button>
+
+              <button v-if="canEdit" @click.stop="supprimer(compet)">
+                <span v-if="!isEnglish">Supprimer</span>
+                <span v-else>Delete</span>
+              </button>
             </div>
           </template>
+
           <div v-else>
             <div class="case vide"></div>
           </div>
@@ -35,7 +61,11 @@
       </div>
 
       <div class="periode">
-        <h3>Après-midi</h3>
+        <h3>
+          <span v-if="!isEnglish">Après-midi</span>
+          <span v-else>Afternoon</span>
+        </h3>
+
         <div class="cases">
           <template v-if="getCompetitionsApresMidi(competitions.compUser, jour).length">
             <div
@@ -45,12 +75,25 @@
               @click="ouvrirParticipants(compet)"
             >
               <p><strong>{{ compet.titre }}</strong></p>
-              <p v-if="inscriptions[compet.titre]?.[auth.authUser.username]" style="color:green;font-weight:bold;">Inscrit</p>
+
+              <p
+                v-if="inscriptions[compet.titre]?.[auth.authUser.username]"
+                style="color:green;font-weight:bold;"
+              >
+                <span v-if="!isEnglish">Inscrit</span>
+                <span v-else>Registered</span>
+              </p>
+
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
-              <button v-if="canEdit" @click.stop="supprimer(compet)">Supprimer</button>
+
+              <button v-if="canEdit" @click.stop="supprimer(compet)">
+                <span v-if="!isEnglish">Supprimer</span>
+                <span v-else>Delete</span>
+              </button>
             </div>
           </template>
+
           <div v-else>
             <div class="case vide"></div>
           </div>
@@ -60,70 +103,138 @@
   </div>
 
   <div v-if="canEdit">
-    <h2>Ajouter une compétition</h2>
+    <h2>
+      <span v-if="!isEnglish">Ajouter une compétition</span>
+      <span v-else>Add a competition</span>
+    </h2>
 
     <div class="ajout-compet">
       <select v-model="newCompet.jour">
-        <option disabled value="">Choisir un jour</option>
-        <option v-for="jour in jours" :key="jour" :value="jour">{{ jour }}</option>
+        <option disabled value="">
+          <span v-if="!isEnglish">Choisir un jour</span>
+          <span v-else>Select a day</span>
+        </option>
+
+        <option v-for="jour in jours" :key="jour" :value="jour">
+          <span v-if="!isEnglish">{{ jour }}</span>
+          <span v-else>{{ joursEN[jours.indexOf(jour)] }}</span>
+        </option>
       </select>
 
-      <input v-model="newCompet.titre" type="text" placeholder="Titre de la compétition" />
-      <input v-model="newCompet.heure" type="time" />
-      <input v-model="newCompet.lieu" type="text" placeholder="Lieu" />
+      <input
+        v-model="newCompet.titre"
+        type="text"
+        :placeholder="isEnglish ? 'Competition title' : 'Titre de la compétition'"
+      />
 
-      <button @click="ajouterCompet">Ajouter</button>
+      <input v-model="newCompet.heure" type="time" />
+
+      <input
+        v-model="newCompet.lieu"
+        type="text"
+        :placeholder="isEnglish ? 'Location' : 'Lieu'"
+      />
+
+      <button @click="ajouterCompet">
+        <span v-if="!isEnglish">Ajouter</span>
+        <span v-else>Add</span>
+      </button>
     </div>
   </div>
 
   <div v-if="selectedCompet" class="popup">
     <div class="popup-content">
-      <h3>Participants: </h3>
+      <h3>
+        <span v-if="!isEnglish">Participants :</span>
+        <span v-else>Participants:</span>
+      </h3>
+
       <ul>
         <li v-for="joueur in selectedCompet.joueurs || []" :key="joueur.username">
           {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
         </li>
       </ul>
+
       <button
         v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]"
         @click="ouvrirPopupInscription(selectedCompet)"
       >
-        S'inscrire
+        <span v-if="!isEnglish">S'inscrire</span>
+        <span v-else>Register</span>
       </button>
-      <button v-else @click="ouvrirPopupInscription(selectedCompet)">
-        votre inscription
+
+      <button
+        v-else
+        @click="ouvrirPopupInscription(selectedCompet)"
+      >
+        <span v-if="!isEnglish">Votre inscription</span>
+        <span v-else>Your registration</span>
       </button>
-      <button @click="selectedCompet = null">Fermer</button>
+
+      <button @click="selectedCompet = null">
+        <span v-if="!isEnglish">Fermer</span>
+        <span v-else>Close</span>
+      </button>
     </div>
   </div>
 
   <div v-if="popupInscriptionOuvert" class="popup">
     <div class="popup-content">
-      <h3>S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ? </h3>
+      <h3>
+        <span v-if="!isEnglish">
+          S'inscrire dans la compétition de {{ popupInscriptionOuvert.titre }} du {{ popupInscriptionOuvert.jour }} ?
+        </span>
+        <span v-else>
+          Register for the {{ popupInscriptionOuvert.titre }} competition on {{ joursEN[jours.indexOf(popupInscriptionOuvert.jour)] }}?
+        </span>
+      </h3>
+
       <br>
+
       <div class="inscriptiondiv" :class="{ vert: getNumero(popupInscriptionOuvert.titre) }">
         <template v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
-          <p>Inscrit</p>
+          <p>
+            <span v-if="!isEnglish">Inscrit</span>
+            <span v-else>Registered</span>
+          </p>
         </template>
+
         <template v-else>
-          <button @click="inscrire(popupInscriptionOuvert)">M'inscrire</button>
+          <button @click="inscrire(popupInscriptionOuvert)">
+            <span v-if="!isEnglish">M'inscrire</span>
+            <span v-else>Register me</span>
+          </button>
         </template>
       </div>
+
       <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
-        Vous êtes inscrit à la compétition.
-        <br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
-        <br>Username : {{auth.authUser.username}}
-        <br>
-        <h4 style="color:red"> ne partagez ce numéro à personne.</h4>
+        <span v-if="!isEnglish">
+          Vous êtes inscrit à la compétition.
+          <br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
+          <br>Username : {{auth.authUser.username}}
+          <br><h4 style="color:red">Ne partagez ce numéro à personne.</h4>
+        </span>
+
+        <span v-else>
+          You are registered for the competition.
+          <br>Registration number: {{ getNumero(popupInscriptionOuvert.titre) }}
+          <br>Username: {{auth.authUser.username}}
+          <br><h4 style="color:red">Do not share this number with anyone.</h4>
+        </span>
+
         <button
           v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]"
           @click="desinscrire(popupInscriptionOuvert)"
         >
-          Me désinscrire
+          <span v-if="!isEnglish">Me désinscrire</span>
+          <span v-else>Unregister</span>
         </button>
       </div>
 
-      <button @click="popupInscriptionOuvert = null">Fermer</button>
+      <button @click="popupInscriptionOuvert = null">
+        <span v-if="!isEnglish">Fermer</span>
+        <span v-else>Close</span>
+      </button>
     </div>
   </div>
 
@@ -143,9 +254,13 @@ import {
 } from '@/services/localsource.service.js'
 
 import { useAuth } from '@/stores/auth.js'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 import { useRoute } from 'vue-router'
+import { useLanguageStore } from '@/stores/languageStore.js'
+
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 
 const inscriptions = ref({})
 const numerosInscription = ref({})
@@ -155,6 +270,8 @@ const auth = useAuth()
 const route = useRoute()
 
 const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+const joursEN = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
 const selectedCompet = ref(null)
 
 const ownerUsername = ref('')
