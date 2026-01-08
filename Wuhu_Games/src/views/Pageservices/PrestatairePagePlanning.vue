@@ -3,7 +3,7 @@
     <h1>Planning</h1>
   </div>
 
-  <div class="planning" v-if="planning.length">
+  <div class="planning" v-if="hasPlanning">
     <div v-for="jour in jours" :key="jour" class="jour">
       <h2>{{ jour }}</h2>
 
@@ -73,19 +73,21 @@ const paramKey = Object.keys(route.params)[0]
 const owner = route.params[paramKey]
 
 const canEdit = ref(false)
+const hasPlanning = ref(false)
+
 
 onMounted(async () => {
   canEdit.value = auth.authUser && auth.authUser.username === owner
 
   const all = await TemplateService.getTemplates()
-  const template = all.data.find(t =>
-    t.username === owner &&
-    t.services &&
-    t.services.includes('planning')
-  )
+  const template = all.data.find(t => t.username === owner)
 
-  planning.value = template?.planning || []
+  if (template?.services?.includes('planning')) {
+    hasPlanning.value = true
+    planning.value = template.planning || []
+  }
 })
+
 
 function getMatin(jour) {
   return planning.value.filter(c => parseInt(c.heure.split(':')[0]) < 12 && c.jour === jour)
