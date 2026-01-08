@@ -11,7 +11,8 @@ const placesParLieu = {
     "Stadium Wuhu": 500,
     "Golf Wuhu": 300,
     "Terrain de tir à l'arc": 200,
-    "Piste de cyclisme": 300
+    "Piste de cyclisme": 300,
+    "Rivière Wuhu": 1
 }
 
 function initAuthUsers() {

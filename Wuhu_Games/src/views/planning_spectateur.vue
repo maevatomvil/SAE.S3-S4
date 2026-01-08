@@ -11,90 +11,100 @@
     <div v-for="jour in jours" :key="jour" class="jour">
       <h2>{{ jour }}</h2>
 
-      <div
-          v-for="compet in getCompetitionsMatin(competitions.compUser, jour)"
-          :key="compet.titre"
-          class="case"
-      >
-        <p><strong>{{ compet.titre }}</strong></p>
+      <div class="periode">
+        <h3>Matin</h3>
 
-        <p
-            v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
-            style="color:green;font-weight:bold;"
-        >
-          Réservé
-        </p>
+        <div class="cases">
+          <template v-if="getCompetitionsMatin(competitions.compUser, jour).length">
+            <div
+                v-for="compet in getCompetitionsMatin(competitions.compUser, jour)"
+                :key="compet.titre"
+                class="case"
+            >
+              <p><strong>{{ compet.titre }}</strong></p>
 
-        <p>{{ compet.heure }}</p>
-        <p>{{ compet.lieu }}</p>
+              <p>{{ compet.heure }}</p>
+              <p>{{ compet.lieu }}</p>
 
-        <button
-            v-if="!getInscriptions()[compet.titre]?.[auth.authUser.username]"
-            @click="ouvrirPopupReservation(compet)"
-        >
-          Réserver
-        </button>
+              <p>
+                Places restantes :
+                <strong>{{ getPlacesRestantes(compet) }}</strong>
+              </p>
 
-        <button
-            v-else
-            @click="ouvrirPopupReservation(compet)"
-        >
-          Ma réservation
-        </button>
+              <button
+                  v-if="getPlacesRestantes(compet) > 0 && !getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  @click="ouvrirPopupReservation(compet)"
+              >
+                Réserver
+              </button>
+
+              <button
+                  v-else-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  @click="ouvrirPopupReservation(compet)"
+              >
+                Ma réservation
+              </button>
+
+              <p v-else style="color:red;font-weight:bold;">
+                Complet
+              </p>
+            </div>
+          </template>
+
+          <div v-else>
+            <div class="case vide"></div>
+          </div>
+        </div>
       </div>
 
-      <div
-          v-for="compet in getCompetitionsApresMidi(competitions.compUser, jour)"
-          :key="compet.titre"
-          class="case"
-      >
-        <p><strong>{{ compet.titre }}</strong></p>
+      <div class="periode">
+        <h3>Après-midi</h3>
 
-        <p
-            v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
-            style="color:green;font-weight:bold;"
-        >
-          Réservé
-        </p>
+        <div class="cases">
+          <template v-if="getCompetitionsApresMidi(competitions.compUser, jour).length">
+            <div
+                v-for="compet in getCompetitionsApresMidi(competitions.compUser, jour)"
+                :key="compet.titre"
+                class="case"
+            >
+              <p><strong>{{ compet.titre }}</strong></p>
 
-        <p>{{ compet.heure }}</p>
-        <p>{{ compet.lieu }}</p>
+              <p
+                  v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  style="color:green;font-weight:bold;"
+              >
+                Réservé
+              </p>
 
-        <button
-            v-if="!getInscriptions()[compet.titre]?.[auth.authUser.username]"
-            @click="ouvrirPopupReservation(compet)"
-        >
-          Réserver
-        </button>
+              <p>{{ compet.heure }}</p>
+              <p>{{ compet.lieu }}</p>
 
-        <button
-            v-else
-            @click="ouvrirPopupReservation(compet)"
-        >
-          Ma réservation
-        </button>
+              <p>
+                Places restantes :
+                <strong>{{ getPlacesRestantes(compet) }}</strong>
+              </p>
+
+              <button
+                  v-if="!getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  @click="ouvrirPopupReservation(compet)"
+              >
+                Réserver
+              </button>
+
+              <button
+                  v-else
+                  @click="ouvrirPopupReservation(compet)"
+              >
+                Ma réservation
+              </button>
+            </div>
+          </template>
+
+          <div v-else>
+            <div class="case vide"></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div v-if="selectedCompet" class="popup">
-    <div class="popup-content">
-      <h3>Participants: </h3>
-      <ul>
-        <li v-for="joueur in selectedCompet.joueurs || []" :key="joueur.username">
-          {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
-        </li>
-      </ul>
-      <button
-          v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]"
-          @click="ouvrirPopupInscription(selectedCompet)"
-      >
-        S'inscrire
-      </button>
-      <button v-else @click="ouvrirPopupInscription(selectedCompet)">
-        votre inscription
-      </button>
-      <button @click="selectedCompet = null">Fermer</button>
     </div>
   </div>
 
@@ -102,7 +112,7 @@
     <div class="popup-content">
       <h3>
         Réserver une place pour
-        {{ popupReservationOuvert.titre }} – {{ popupReservationOuvert.jour }}
+        {{ popupReservationOuvert.titre }} — {{ popupReservationOuvert.jour }}
       </h3>
 
       <div class="inscriptiondiv" :class="{ vert: getNumero(popupReservationOuvert.titre) }">
@@ -120,7 +130,7 @@
           class="divCodeInscription"
           :class="{ visibility: numerosInscription[popupReservationOuvert.titre] }"
       >
-        ✔ Réservation confirmée
+        ✓ Réservation confirmée
         <br>
         Numéro : {{ getNumero(popupReservationOuvert.titre) }}
         <br>
@@ -151,7 +161,8 @@ import {
   getCompetitionsApresMidi,
   ajouterCompetition,
   desinscrireUser,
-  supprimerCompetition
+  supprimerCompetition,
+  getPlacesRestantes
 } from '@/services/localsource.service.js'
 
 import { useAuth } from '@/stores/auth.js'
@@ -168,7 +179,6 @@ const auth = useAuth()
 const route = useRoute()
 
 const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
-const selectedCompet = ref(null)
 
 const ownerUsername = ref('')
 const canEdit = ref(false)
@@ -184,15 +194,13 @@ onMounted(async () => {
   })
 })
 
-function ouvrirParticipants(compet) {
-  selectedCompet.value = compet
-}
-
 function ouvrirPopupReservation(compet) {
   popupReservationOuvert.value = compet
 }
 
 async function reserver(compet) {
+  if (getPlacesRestantes(compet) <= 0) return
+
   const numero = await inscrireUser(compet, auth.authUser)
   inscriptions.value = getInscriptions()
   numerosInscription.value[compet.titre] = numero
