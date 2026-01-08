@@ -40,8 +40,16 @@ export async function saveTemplate(data) {
       services: data.services,
       locationNeeds: data.locationNeeds || ''
     }
-
+    const existed = templates.some(t => t.username === data.username)
     templates.push(newTemplate)
+    if (!existed) {
+      localStorage.removeItem('views_' + data.username)
+
+      const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]')
+      const filtered = allOrders.filter(o => o.prestataireUsername !== data.username)
+      localStorage.setItem('allOrders', JSON.stringify(filtered))
+    }
+
     saveTemplates(templates)
 
     return { error: 0, status: 200, data: newTemplate }

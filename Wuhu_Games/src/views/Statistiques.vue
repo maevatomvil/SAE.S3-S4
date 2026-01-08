@@ -28,6 +28,8 @@ import { useRoute } from 'vue-router'
 import TemplateService from '@/services/template.service.js'
 import StatistiquesService from '@/services/statistiques.service.js'
 import Chart from 'chart.js/auto'
+import { useAuth } from '@/stores/auth.js'
+const auth = useAuth()
 
 const route = useRoute()
 const username = route.params.username
@@ -38,6 +40,11 @@ const classement = ref([])
 const vues = ref([])
 
 onMounted(async () => {
+  if (!auth.authUser || auth.authUser.username !== username) {
+    window.location.href = '/'
+    return
+  }
+
   const res = await TemplateService.getTemplates()
   prestataire.value = res.data.find(p => p.username === username)
 
@@ -63,11 +70,22 @@ onMounted(async () => {
           data: vues.value.map(v => v.count),
           borderColor: 'blue'
         }]
+      },
+      options: {
+        scales: {
+          y: {
+            ticks: {
+              stepSize: 1,
+              precision: 0
+            }
+          }
+        }
       }
     })
   }
 })
 </script>
+
 
 <style scoped>
 .stats {

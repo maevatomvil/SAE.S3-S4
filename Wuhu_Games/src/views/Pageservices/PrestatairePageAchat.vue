@@ -113,8 +113,10 @@ onMounted(async () => {
     }))
   }
 
-  panier.value = JSON.parse(localStorage.getItem('panier_' + auth.authUser?.username) || '[]')
-  historiqueCommandes.value = JSON.parse(localStorage.getItem('historiqueCommandes_' + auth.authUser?.username) || '[]')
+  panier.value = JSON.parse(localStorage.getItem('panier_' + auth.authUser?.username + '_' + prestataire.value.username) || '[]')
+
+  historiqueCommandes.value = JSON.parse(localStorage.getItem('historiqueCommandes_' + auth.authUser?.username + '_' + prestataire.value.username) || '[]')
+
 })
 
 const peutModifier = computed(() =>
@@ -133,7 +135,8 @@ async function ajouterPanier(article) {
   article.stock--
 
   panier.value.push(article)
-  localStorage.setItem('panier_' + auth.authUser.username, JSON.stringify(panier.value))
+  localStorage.setItem('panier_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(panier.value))
+
 
   await TemplateService.updateTemplate(prestataire.value.username, {
     articles: prestataire.value.articles
@@ -144,7 +147,8 @@ function supprimerDuPanier(id) {
   const index = panier.value.findIndex(a => a.id === id)
   if (index !== -1) {
     panier.value.splice(index, 1)
-    localStorage.setItem('panier_' + auth.authUser.username, JSON.stringify(panier.value))
+    localStorage.setItem('panier_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(panier.value))
+
   }
 }
 
@@ -166,14 +170,15 @@ function finaliserCommande() {
   }
 
   historiqueCommandes.value.push(commande)
-  localStorage.setItem('historiqueCommandes_' + auth.authUser.username, JSON.stringify(historiqueCommandes.value))
+  localStorage.setItem('historiqueCommandes_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(historiqueCommandes.value))
 
   const allOrders = JSON.parse(localStorage.getItem("allOrders") || "[]")
   allOrders.push(commande)
   localStorage.setItem("allOrders", JSON.stringify(allOrders))
 
   panier.value = []
-  localStorage.removeItem('panier_' + auth.authUser.username)
+  localStorage.removeItem('panier_' + auth.authUser.username + '_' + prestataire.value.username)
+
 
   messageCommande.value =
     `Votre commande est envoyée. Vous devrez la récupérer et payer sur place en donnant votre username : ${auth.authUser.username}`
