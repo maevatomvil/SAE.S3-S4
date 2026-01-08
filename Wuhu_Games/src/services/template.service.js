@@ -21,7 +21,9 @@ export async function saveTemplate(data) {
     const newTemplate = {
       id: uuidv4(),
       name: data.name,
+      name_en: data.name_en || data.name, 
       shortDescription: data.shortDescription,
+      shortDescription_en: data.shortDescription_en || data.shortDescription,
       image: data.image,
 
       pageTitle: data.pageTitle || '',
@@ -54,28 +56,54 @@ export async function getTemplates() {
       id: "prestataire-demo",
       username: "demo01",
       type: "prestataireValide",
-      name: "Prestataire Démo",
-      shortDescription: "Exemple de prestataire déjà présent",
+
+      name: "Boutique Sport Wuhu",
+      name_en: "Wuhu Sports Shop",
+
+      shortDescription: "Boutique officielle proposant gourdes, t-shirts, serviettes et accessoires sportifs.",
+      shortDescription_en: "Official shop offering water bottles, t-shirts, towels and sports accessories.",
+
       image: "",
+
       pageTitle: "",
       templateContent: "",
       planning: [],
-      pageTitleAchat: "Boutique Démo",
-      pageDescriptionAchat: "<p>Bienvenue dans la boutique démo</p>",
+
+      pageTitleAchat: "Boutique Sport Wuhu",
+      pageDescriptionAchat: "<p>Découvrez notre sélection de produits officiels : gourdes, t-shirts, serviettes et accessoires pour les Wuhu Games.</p>",
+
       articles: [
         {
-          id: "article-demo",
-          titre: "Article Démo",
-          description: "Un article d'exemple",
-          prix: 5,
-          stock: 10,
+          id: "article-demo-1",
+          titre: "Gourde officielle Wuhu",
+          description: "Gourde légère et résistante, idéale pour les activités sportives.",
+          prix: 12,
+          stock: 25,
+          image: null
+        },
+        {
+          id: "article-demo-2",
+          titre: "T-shirt Wuhu Games",
+          description: "T-shirt respirant avec le logo officiel des Wuhu Games.",
+          prix: 20,
+          stock: 15,
+          image: null
+        },
+        {
+          id: "article-demo-3",
+          titre: "Serviette microfibre Wuhu",
+          description: "Serviette absorbante et compacte, parfaite pour le sport.",
+          prix: 10,
+          stock: 30,
           image: null
         }
       ],
+
       services: ["achat"],
       email: "demo@site.com",
       locationNeeds: ""
     })
+
 
     saveTemplates(templates)
   }

@@ -1,11 +1,11 @@
 <template>
   <div v-if="prestataire">
     <div class="titre">
-      <h1>{{ prestataire.name }}</h1>
+      <h1>{{ isEnglish ? prestataire.name_en : prestataire.name }}</h1>
     </div>
 
     <div class="presentation">
-      <p>{{ prestataire.shortDescription }}</p>
+      <p>{{ isEnglish ? prestataire.shortDescription_en : prestataire.shortDescription }}</p>
       <img
         :src="prestataire.image || '/public/image_basket.jpg'"
         :alt="`Image de ${prestataire.name}`"
@@ -26,9 +26,9 @@
      <div :style="peutModifier ? 'margin-top: 40px;' : ''"></div>
       <div class="modif_container" v-if="peutModifier">
         <div class="service_card modif_card" @click="goToEdit">
-          <p>Modifier ma page</p>
+          <p>{{ isEnglish ? "Edit my page" : "Modifier ma page" }}</p>
         </div>
-        <div class="service_card modif_card" @click="goToStats"> <p>Statistiques</p> </div>
+        <div class="service_card modif_card" @click="goToStats"> <p>{{ isEnglish ? "Statistics" : "Statistiques" }}</p></div>
     </div>
 
     </div>
@@ -46,20 +46,33 @@ import { useRoute,useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service.js'
 import { useAuth } from '@/stores/auth.js'
 import PrestataireMenuService from '@/services/prestataireMenu.service.js'
+import { useLanguageStore } from '@/stores/languageStore.js'
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
+
 const router = useRouter()
 const auth = useAuth()
 
 const route = useRoute()
 const prestataire = ref(null)
 
+
 function serviceLabel(id) {
-  const labels = {
-    achat: 'Page d’achat',
-    reservation: 'Réservation',
-    planning: 'Planning',
-    info: 'Page d’information'
+  if (!isEnglish.value) {
+    return {
+      achat: 'Page d’achat',
+      reservation: 'Réservation',
+      planning: 'Planning',
+      info: 'Page d’information'
+    }[id] || id
   }
-  return labels[id] || id
+
+  return {
+    achat: 'Shop',
+    reservation: 'Booking',
+    planning: 'Schedule',
+    info: 'Information page'
+  }[id] || id
 }
 
 onMounted(async () => {

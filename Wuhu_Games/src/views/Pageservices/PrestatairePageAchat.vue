@@ -161,6 +161,7 @@ function finaliserCommande() {
     id: uuidv4(),
     date: new Date().toLocaleString(),
     username: auth.authUser.username,
+    prestataireUsername: prestataire.value.username,
     articles: Object.values(groupe)
   }
 

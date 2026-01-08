@@ -5,10 +5,11 @@
       Aucune demande pour le moment.
     </div>
     <div v-for="demande in demandes" :key="demande.id" class="demande-card">
-      <h2>{{ demande.name }}</h2>
+      <h2>{{ demande.name }} / {{ demande.name_en }} </h2>
       <p><strong>Utilisateur :</strong> {{ demande.username }}</p> 
       <p><strong>Email :</strong> {{ demande.email }}</p>
       <p><strong>Description courte :</strong> {{ demande.shortDescription }}</p>
+      <p><strong>Description courte (anglais) :</strong> {{ demande.shortDescription_en }}</p>
       <p><strong>Titre de la page :</strong> {{ demande.pageTitle }}</p>
       <div>
         <strong>Services choisis :</strong>

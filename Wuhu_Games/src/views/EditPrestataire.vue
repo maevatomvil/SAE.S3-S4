@@ -12,6 +12,11 @@
           <label>Nom du service (visible au public)</label>
           <input v-model="form.name" placeholder="Entrez le nom de votre service" />
         </div>
+        <div class="input-group">
+          <label>Nom du service (anglais)</label>
+          <input v-model="form.name_en" placeholder="Service name in English" />
+        </div>
+
 
         <div class="input-group">
           <label>Email de contact</label>
@@ -30,6 +35,12 @@
           <label>Description (visible au public)</label>
           <input v-model="form.shortDescription" />
         </div>
+        <div class="input-group">
+          <label>Description (anglais)</label>
+          <input v-model="form.shortDescription_en" placeholder="Short description in English" />
+        </div>
+
+        
 
         <div class="input-group">
           <label>Choisissez vos services</label>
@@ -59,16 +70,17 @@ const hasAccess = ref(false)
 
 const form = ref({
   name: '',
+  name_en: '', 
   email: '',
   image: null,
   shortDescription: '',
+  shortDescription_en: '',
   services: [],
   username: auth.authUser?.username || ''
 })
 
 const availableServices = ref([
   { id: 'achat', name: 'Page d’achat' },
-  { id: 'reservation', name: 'Réservation' },
   { id: 'planning', name: 'Planning' },
   { id: 'info', name: 'Page d’information' }
 ])
@@ -91,9 +103,11 @@ onMounted(async () => {
       hasAccess.value = true
       form.value = {
         name: p.name,
+        name_en: p.name_en || p.name, 
         email: p.email || '',
         image: p.image || null,
         shortDescription: p.shortDescription || '',
+        shortDescription_en: p.shortDescription_en || p.shortDescription, 
         services: p.services || [],
         username: p.username
       }
