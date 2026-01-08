@@ -268,6 +268,7 @@ const numerosInscription = ref({})
 const competitions = useCompetitions()
 const auth = useAuth()
 const route = useRoute()
+const popupInscriptionOuvert = ref(null)
 
 const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
 const joursEN = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -278,8 +279,8 @@ const ownerUsername = ref('')
 const canEdit = ref(false)
 
 onMounted(async () => {
-  ownerUsername.value = route.params.ownerUsername
-  canEdit.value = auth.authUser && auth.authUser.username === ownerUsername.value
+
+  canEdit.value = auth.authUser && auth.authUser.role === 'organisateur'
 
   await competitions.getCompetitions()
   inscriptions.value = getInscriptions()
