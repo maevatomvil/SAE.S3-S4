@@ -57,7 +57,7 @@
         <div class="section dropdown">
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
           <div class="dropdown-content">
-            <router-link v-if="isAuthenticated" to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
+            <router-link v-if="isAuthenticated && peutDevenirPrestataire"  to="/addPrestataire">{{ isEnglish ? 'Become a Vendor' : 'Devenir Prestataire' }}</router-link>
             <router-link v-if="auth.authUser?.role === 'organisateur'" to="/prestataire-demandes">
               {{ isEnglish ? 'Vendor Requests' : 'Demandes de prestations' }}
             </router-link>
