@@ -67,6 +67,9 @@
 
       <div v-html="isEnglish ? afterEn : afterFr"></div>
 
+      <div style="height:800px">
+        <MapComponent/>
+      </div>
 
     </div>
 
@@ -76,6 +79,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore.js'
+import MapComponent from '@/views/Map.vue'
 import HomePageService from '@/services/homepage.service.js'
 import Editor from '@tinymce/tinymce-vue'
 

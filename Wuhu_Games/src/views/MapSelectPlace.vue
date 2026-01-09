@@ -127,16 +127,13 @@
     fill-opacity: 0.5;
     fill: #fff;
     stroke : #fff;
+}
+
+#bowlingCenter, #cityHall, #basketballCourt {
     visibility: hidden;
 }
 </style>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-const selectedPlace = ref(null)
-
-onMounted(() => {
-    const pinpoints = document.getElementsByTagName('path')
-    console.log(pinpoints)
-})
+    
 </script>
