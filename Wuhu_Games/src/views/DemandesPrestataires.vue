@@ -25,6 +25,20 @@
       <div v-if="demande.templateContent" class="template-content" v-html="demande.templateContent"></div>
       <p><strong>Besoins d’emplacement :</strong> {{ demande.locationNeeds }}</p>
 
+      <div v-if="selectedDemande && selectedDemande.id === demande.id" class="map-zone">
+        <div class="map-wrapper">
+          <MapComponent @map-click="setPosition" />
+        </div>
+
+        <p v-if="pendingPosition">
+          Position : {{ pendingPosition.x.toFixed(2) }}% / {{ pendingPosition.y.toFixed(2) }}%
+        </p>
+
+        <button @click="savePosition(demande)" style="background-color: orange; border-radius: 10px;">
+          Sauvegarder la position
+        </button>
+      </div>
+
       <button @click="accepterDemande(demande)" style="background-color: greenyellow; border-radius: 10px;">Accepter</button>
       <button @click="refuserDemande(demande)" style="background-color: red; border-radius: 10px;">Refuser</button>
     </div>
@@ -35,8 +49,12 @@
 import { ref, onMounted } from 'vue'
 import { getPrestataireDemandes } from '@/services/template.service.js'
 import PrestataireService from '@/services/prestataire.service.js'
+import MapComponent from '@/views/Map.vue'
+import TemplateService from '@/services/template.service.js'
 
 const demandes = ref([])
+const selectedDemande = ref(null)
+const pendingPosition = ref(null)
 
 function serviceName(id) {
   const mapping = {
@@ -48,6 +66,22 @@ function serviceName(id) {
   return mapping[id] || id
 }
 
+function setPosition(pos) {
+  pendingPosition.value = pos
+}
+
+async function savePosition(demande) {
+  if (!pendingPosition.value) return
+  await TemplateService.updateTemplate(demande.username, {
+    x: pendingPosition.value.x,
+    y: pendingPosition.value.y
+  })
+
+  await PrestataireService.accepterDemande(demande)
+  window.location.reload()
+  demandes.value = demandes.value.filter(d => d.id !== demande.id)
+}
+
 onMounted(async () => {
   const res = await getPrestataireDemandes()
   if (res.error === 0) {
@@ -56,10 +90,9 @@ onMounted(async () => {
 })
 
 async function accepterDemande(demande) {
-  await PrestataireService.accepterDemande(demande)
-  window.location.reload()
-  demandes.value = demandes.value.filter(d => d.id !== demande.id)
+  selectedDemande.value = demande
 }
+
 async function refuserDemande(demande) {
   await PrestataireService.refuserDemande(demande)
   demandes.value = demandes.value.filter(d => d.id !== demande.id)
@@ -92,4 +125,15 @@ h1 {
   border-top: 1px solid #ccc;
   padding-top: 10px;
 }
+
+
+
+.map-wrapper {
+  width: 900px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+
 </style>

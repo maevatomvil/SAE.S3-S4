@@ -97,6 +97,10 @@ const successMessage = ref('')
 const errorMessage = ref('')
 
 onMounted(() => {
+  if (!auth.authUser) { 
+    router.push('/login')
+    return
+  }
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
   if (savedForm.name) form.value = savedForm
   if (!form.value.services) form.value.services = []

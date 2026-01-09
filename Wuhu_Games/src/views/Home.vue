@@ -67,9 +67,20 @@
 
       <div v-html="isEnglish ? afterEn : afterFr"></div>
 
-      <div style="height:800px">
-        <MapComponent/>
+      <div style="width:100%; aspect-ratio:1/1;">
+        <MapComponent>
+          <div
+            v-for="p in prestataires"
+            :key="p.id"
+            class="pin"
+            :style="pinStyle(p)"
+            @click="goToPrestataire(p)">
+            <span class="pin-label">{{ p.name }}</span>
+          </div>
+        </MapComponent>
       </div>
+
+
 
     </div>
 
@@ -82,9 +93,17 @@ import { useLanguageStore } from '@/stores/languageStore.js'
 import MapComponent from '@/views/Map.vue'
 import HomePageService from '@/services/homepage.service.js'
 import Editor from '@tinymce/tinymce-vue'
+import TemplateService from '@/services/template.service.js'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+function goToPrestataire(p) {
+  router.push(`/prestataire/${p.username}`)
+}
 
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
+const prestataires = ref([])
 
 const editMode = ref(false)
 const isOrganizer = ref(false)
@@ -179,6 +198,11 @@ onMounted(async () => {
   const auth = JSON.parse(localStorage.getItem('auth') || '[]')
   const session = auth.find(u => u.session)
   isOrganizer.value = session?.role === "organisateur"
+  const res2 = await TemplateService.getTemplates()
+  console.log("TEMPLATES =", res2.data)
+
+  prestataires.value = res2.data.filter(t => t.type === 'prestataireValide' && t.x !== undefined && t.y !== undefined)
+  console.log("prestataires =", prestataires.value)
 })
 
 async function savePage() {
@@ -194,6 +218,20 @@ async function savePage() {
   await HomePageService.saveHomePage(data)
   editMode.value = false
 }
+
+
+
+
+function pinStyle(p) {
+  return {
+    left: p.x + '%',
+    top: p.y + '%'
+  }
+}
+
+
+
+
 </script>
 
 <style scoped>
@@ -313,4 +351,38 @@ async function savePage() {
   width:100%;
   margin-bottom:10px;
 }
+
+
+
+.pin {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.pin-label {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.pin:hover .pin-label {
+  opacity: 1;
+}
+
+
 </style>

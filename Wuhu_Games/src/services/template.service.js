@@ -38,7 +38,9 @@ export async function saveTemplate(data) {
       username: data.username,
       email: data.email,
       services: data.services,
-      locationNeeds: data.locationNeeds || ''
+      locationNeeds: data.locationNeeds || '',
+      x: data.x,
+      y: data.y 
     }
     const existed = templates.some(t => t.username === data.username)
     templates.push(newTemplate)
@@ -109,7 +111,10 @@ export async function getTemplates() {
 
       services: ["achat"],
       email: "demo@site.com",
-      locationNeeds: ""
+      locationNeeds: "",
+      x: 30,
+      y: 60,
+
     })
 
 

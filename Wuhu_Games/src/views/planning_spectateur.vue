@@ -1,7 +1,10 @@
 <template>
   <div class="titre">
-    <h1>Planning des compétitions</h1>
+    <h1>
+      {{ isEnglish ? "Competition Schedule" : "Planning des compétitions" }}
+    </h1>
   </div>
+
 
   <div v-if="!auth.authUser">
     <p>Connectez vous pour voir le planning</p>
@@ -26,8 +29,9 @@
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
 
+            
               <p>
-                Places restantes :
+                {{ isEnglish ? "Remaining spots:" : "Places restantes :" }}
                 <strong>{{ getPlacesRestantes(compet) }}</strong>
               </p>
 
@@ -79,10 +83,12 @@
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
 
+              
               <p>
-                Places restantes :
+                {{ isEnglish ? "Remaining spots:" : "Places restantes :" }}
                 <strong>{{ getPlacesRestantes(compet) }}</strong>
               </p>
+
 
               <button
                   v-if="!getInscriptions()[compet.titre]?.[auth.authUser.username]"
@@ -120,9 +126,11 @@
           <p>Place réservée</p>
         </template>
         <template v-else>
+         
           <button @click="reserver(popupReservationOuvert)">
-            Réserver ma place
+            {{ isEnglish ? "Reserve my spot" : "Réserver ma place" }}
           </button>
+
         </template>
       </div>
 
@@ -130,18 +138,20 @@
           class="divCodeInscription"
           :class="{ visibility: numerosInscription[popupReservationOuvert.titre] }"
       >
-        ✓ Réservation confirmée
+        
+        {{ isEnglish ? "✓ Reservation confirmed" : "✓ Réservation confirmée" }}
         <br>
         Numéro : {{ getNumero(popupReservationOuvert.titre) }}
         <br>
-        <strong>Ne partagez pas ce numéro</strong>
+        <strong> {{ isEnglish ? "Do not share this number" : "Ne partagez pas ce numéro" }}</strong>
+        
 
         <br><br>
         <button
             v-if="getInscriptions()[popupReservationOuvert.titre]?.[auth.authUser.username]"
             @click="desinscrire(popupReservationOuvert)"
         >
-          Annuler ma réservation
+          {{ isEnglish ? "Cancel my reservation" : "Annuler ma réservation" }}
         </button>
       </div>
 
@@ -169,6 +179,11 @@ import { useAuth } from '@/stores/auth.js'
 import { ref, onMounted } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 import { useRoute } from 'vue-router'
+import { useLanguageStore } from '@/stores/languageStore.js'
+import { computed } from 'vue'
+
+const languageStore = useLanguageStore()
+const isEnglish = computed(() => languageStore.isEnglish)
 
 const popupReservationOuvert = ref(null)
 const inscriptions = ref({})

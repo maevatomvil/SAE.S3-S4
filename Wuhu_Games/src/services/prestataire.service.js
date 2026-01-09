@@ -26,7 +26,6 @@ async function accepterDemande(demande) {
       const sqlUpdateUser = "UPDATE users SET role = 'prestataire' WHERE username = ?"
       await executeSQL(sqlUpdateUser, [demande.username])
 
-      
       return { error: 0, status: 200, data: demande }
     } catch (err) {
       return { error: 1, status: 500, data: 'Erreur lors de la validation de la demande' }
@@ -51,8 +50,6 @@ async function refuserDemande(demande) {
     }
   }
 }
-
-
 
 async function supprimerPrestataire(username) {
   if (!useSQL) {
@@ -79,9 +76,6 @@ async function supprimerPrestataire(username) {
   }
 }
 
-
-
-
 async function updatePrestataire(updatedPrestataire) {
   if (!useSQL) {
     const templates = JSON.parse(localStorage.getItem('templates') || '[]')
@@ -92,7 +86,9 @@ async function updatePrestataire(updatedPrestataire) {
     if (index !== -1) {
       templates[index] = {
         ...templates[index],
-        ...updatedPrestataire
+        ...updatedPrestataire,
+        x: updatedPrestataire.x ?? templates[index].x,
+        y: updatedPrestataire.y ?? templates[index].y
       }
       localStorage.setItem('templates', JSON.stringify(templates))
       return { error: 0, status: 200 }
@@ -107,7 +103,9 @@ async function updatePrestataire(updatedPrestataire) {
           email = ?,
           image = ?,
           shortDescription = ?,
-          services = ?
+          services = ?,
+          x = ?,
+          y = ?
         WHERE username = ? AND type = 'prestataireValide'
       `
       await executeSQL(sqlUpdate, [
@@ -116,6 +114,8 @@ async function updatePrestataire(updatedPrestataire) {
         updatedPrestataire.image,
         updatedPrestataire.shortDescription,
         JSON.stringify(updatedPrestataire.services),
+        updatedPrestataire.x,
+        updatedPrestataire.y,
         updatedPrestataire.username
       ])
       return { error: 0, status: 200 }
@@ -125,8 +125,4 @@ async function updatePrestataire(updatedPrestataire) {
   }
 }
 
-
-
-export default { accepterDemande, refuserDemande, supprimerPrestataire , updatePrestataire}
-
-
+export default { accepterDemande, refuserDemande, supprimerPrestataire, updatePrestataire }
