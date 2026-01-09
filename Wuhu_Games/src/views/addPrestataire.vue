@@ -45,8 +45,10 @@
           </div>
         </div>
         <div class="input-group">
-          <label>{{ isEnglish ? "Location needs" : "Besoins d’emplacement" }}</label>
-          <input v-model="form.locationNeeds" :placeholder="isEnglish ? 'Ex: near water, near village...' : 'Ex : près de l\'eau, près du village ...'" />
+          <label>{{ isEnglish ? "Desired building" : "Emplacement désiré" }}</label>
+          <div style="height:800px">
+            <MapSelectPlace v-model="form.locationNeeds" />
+          </div>
         </div>
 
         <button type="submit" class="btn-submit">
@@ -70,11 +72,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed} from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service'
 import { useAuth } from '@/stores/auth.js'
 import { useLanguageStore } from '@/stores/languageStore.js'
+import MapSelectPlace from '@/views/MapSelectPlace.vue'
 
 const auth = useAuth()
 const router = useRouter()
@@ -202,8 +205,8 @@ function openTemplate(serviceId) {
 </script>
 
 <style scoped>
-.prestataire { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; background: linear-gradient(to right, #5858d8, #0080ff); z-index:0; }
-.prestataire-container { background:white; padding:40px 60px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; }
+.prestataire { display:flex; justify-content:center; align-items:center; background: linear-gradient(to right, #5858d8, #0080ff); z-index:0; }
+.prestataire-container { width: 1200px; background:white; padding:40px 60px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; }
 .prestataire-title { font-size:24px; font-weight:bold; margin-bottom:20px; color:#0000f5; }
 .prestataire-form { width:100%; display:flex; flex-direction:column; gap:16px; }
 .input-group { display:flex; flex-direction:column; }
