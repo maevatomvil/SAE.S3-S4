@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^6.3.0",
+    "axios": "^1.13.4",
     "chart.js": "^4.5.1",
     "pinia": "^3.0.3",
     "tinymce": "^8.2.2",

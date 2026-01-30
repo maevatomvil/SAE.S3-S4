@@ -1,6 +1,7 @@
 const useSQL = false
 
 import LocalSource from "@/services/localsource.service.js"
+import api from "@/services/axios.service.js"
 
 async function loginFromLocalSource(data) {
   return LocalSource.login(data)
@@ -19,35 +20,23 @@ async function logoutFromLocalSource() {
 }
 
 async function loginFromSQL(data) {
-  const sql = "SELECT username, email, role FROM users WHERE username = ? AND password = ?"
-  const hashed = await hashPassword(data.password)
-  const rows = await executeSQL(sql, [data.username, hashed])
-  if (!rows.length) return { error: 1, status: 404, data: "login/password incorrect" }
-  return { error: 0, status: 200, data: rows[0] }
+  const res = await api.post("/auth/login", data)
+  return res.data
 }
 
 async function signupFromSQL(data) {
-  const hashed = await hashPassword(data.password)
-  const sql = "INSERT INTO users (firstname, surname, username, email, password, role) VALUES (?, ?, ?, ?, ?, ?)"
-  await executeSQL(sql, [data.firstname, data.surname, data.username, data.email, hashed, "visiteur"])
-  return { error: 0, status: 200, data }
+  const res = await api.post("/auth/signup", data)
+  return res.data
 }
 
 async function checkSessionFromSQL() {
-  const current = JSON.parse(localStorage.getItem("currentUser") || "null")
-  if (!current) return { error: 1, status: 401, data: "Non connecté" }
-  const sql = "SELECT username FROM users WHERE username = ? AND session = ?"
-  const rows = await executeSQL(sql, [current.username, current.session])
-  if (!rows.length) return { error: 1, status: 401, data: "Session invalide" }
-  return { error: 0, status: 200, data: current }
+  const res = await api.get("/auth/session")
+  return res.data
 }
 
 async function logoutFromSQL() {
-  const current = JSON.parse(localStorage.getItem("currentUser") || "null")
-  if (!current) return { error: 0, status: 200, data: "Déconnecté" }
-  const sql = "UPDATE users SET session = NULL WHERE username = ?"
-  await executeSQL(sql, [current.username])
-  return { error: 0, status: 200, data: "Déconnecté" }
+  const res = await api.post("/auth/logout")
+  return res.data
 }
 
 export async function login(data) {
