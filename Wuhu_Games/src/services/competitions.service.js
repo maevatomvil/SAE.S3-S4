@@ -1,26 +1,27 @@
 const useSQL = false
 
 import LocalSource from "@/services/localsource.service.js"
+import api from "@/services/axios.service.js"
 
 async function getCompetitionsLocal(data) {
   return await LocalSource.getCompetitions(data)
 }
 
-async function getCompetitionsSQL(data) {
-  const sql = "SELECT jour, heure, titre, lieu FROM competitions"
-  const rows = await executeSQL(sql)
-  return { error: 0, status: 200, data: rows }
+async function getCompetitionsSQL() {
+  const res = await api.get("/competitions")
+  return res.data
 }
 
 export async function getCompetitions(data) {
   if (!useSQL) {
     try {
       return await getCompetitionsLocal(data)
-    } catch (err) {
+    } catch {
       return { error: 1, status: 404, data: "erreur réseau, impossible de récupérer les compétitions" }
     }
   }
-  return await getCompetitionsSQL(data)
+
+  return await getCompetitionsSQL()
 }
 
 export default {
