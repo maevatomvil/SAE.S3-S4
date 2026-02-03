@@ -1,4 +1,4 @@
-import * as service from "..backend/services/auth.service.js"
+import * as service from "../services/auth.services.js"
 
 export async function login(req, res, next) {
   try {

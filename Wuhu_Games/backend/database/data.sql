@@ -1,31 +1,31 @@
 CREATE TABLE users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  firstname TEXT,
-  surname TEXT,
-  username TEXT UNIQUE,
-  email TEXT UNIQUE,
-  password TEXT,
-  role TEXT,
-  session TEXT
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  firstname VARCHAR(255),
+  surname VARCHAR(255),
+  username VARCHAR(255) UNIQUE,
+  email VARCHAR(255) UNIQUE,
+  password VARCHAR(255),
+  role VARCHAR(255),
+  session VARCHAR(255)
 );
 
 CREATE TABLE competitions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  jour TEXT,
-  heure TEXT,
-  titre TEXT,
-  lieu TEXT
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  jour VARCHAR(255),
+  heure VARCHAR(255),
+  titre VARCHAR(255),
+  lieu VARCHAR(255)
 );
 
 CREATE TABLE inscriptions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  titre TEXT,
-  username TEXT,
-  numero INTEGER
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  titre VARCHAR(255),
+  username VARCHAR(255),
+  numero INT
 );
 
 CREATE TABLE homepage (
-  id INTEGER PRIMARY KEY,
+  id INT PRIMARY KEY,
   subtitleFr TEXT,
   subtitleEn TEXT,
   contentFr TEXT,
@@ -36,11 +36,11 @@ INSERT INTO homepage (id, subtitleFr, subtitleEn, contentFr, contentEn)
 VALUES (1, '', '', '', '');
 
 CREATE TABLE templates (
-  id TEXT PRIMARY KEY,
-  username TEXT,
-  type TEXT,
-  name TEXT,
-  name_en TEXT,
+  id VARCHAR(255) PRIMARY KEY,
+  username VARCHAR(255),
+  type VARCHAR(255),
+  name VARCHAR(255),
+  name_en VARCHAR(255),
   shortDescription TEXT,
   shortDescription_en TEXT,
   image TEXT,
@@ -51,24 +51,24 @@ CREATE TABLE templates (
   pageDescriptionAchat TEXT,
   articles TEXT,
   services TEXT,
-  email TEXT,
+  email VARCHAR(255),
   locationNeeds TEXT,
-  x REAL,
-  y REAL
+  x FLOAT,
+  y FLOAT
 );
 
 CREATE TABLE panier (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   article TEXT
 );
 
 CREATE TABLE historique (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   commande TEXT
 );
 
 CREATE TABLE livreDor (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   message TEXT
 );
 
@@ -99,14 +99,14 @@ INSERT INTO inscriptions (titre, username, numero) VALUES
 ('Cyclisme','jdupont',1);
 
 CREATE TABLE availability (
-  date TEXT PRIMARY KEY,
-  simple INTEGER,
-  double INTEGER,
-  priceSimple INTEGER,
-  priceDouble INTEGER
+  date DATE PRIMARY KEY,
+  simple INT,
+  doubleRoom INT,
+  priceSimple INT,
+  priceDouble INT
 );
 
-INSERT INTO availability (date, simple, double, priceSimple, priceDouble) VALUES
+INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VALUES
 ('2025-05-11',5,3,50,80),
 ('2025-05-12',4,2,50,80),
 ('2025-05-13',6,4,50,80),
@@ -122,8 +122,8 @@ INSERT INTO availability (date, simple, double, priceSimple, priceDouble) VALUES
 ('2025-05-23',2,1,50,80),
 ('2025-05-24',3,2,50,80);
 
-INSERT INTO users (id, firstname, surname, username, email, password, role) VALUES
-(1,'Bernadette','Buche','vis01','vis01@example.com','0c6cba853348a88915bd8f708dadaba441b1c832a8e25aca0ef12146e3a0ac75','visiteur'),
-(2,'Chloé','Buche','org01','org02@example.com','728b252625ebcddcea74d61760866080a10196087c340a57a88ba511bd387921','organisateur'), -- mdp = ouioui
-(3,'Arthur','Buche','vis02','vis03@example.com','4b979e04599fd0c70c5b421f9ca8abb88ee9daebc4759aea9ff5ae24d2a89d01','visiteur'),
-(4,'Benoît','Buche','pres01','pres01@example.com','443b42ac37dde8dc73aa08b5df626bdc5a56ff3df95bd6d1d228eda94d15bdab','prestataire');
+INSERT INTO users (firstname, surname, username, email, password, role) VALUES
+('Bernadette','Buche','vis01','vis01@example.com','0c6cba853348a88915bd8f708dadaba441b1c832a8e25aca0ef12146e3a0ac75','visiteur'),
+('Chloé','Buche','org01','org02@example.com','728b252625ebcddcea74d61760866080a10196087c340a57a88ba511bd387921','organisateur'),
+('Arthur','Buche','vis02','vis03@example.com','4b979e04599fd0c70c5b421f9ca8abb88ee9daebc4759aea9ff5ae24d2a89d01','visiteur'),
+('Benoît','Buche','pres01','pres01@example.com','443b42ac37dde8dc73aa08b5df626bdc5a56ff3df95bd6d1d228eda94d15bdab','prestataire');

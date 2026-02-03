@@ -1,4 +1,4 @@
-import { getCompetitionsSQL } from "../services/competitions.services.js"
+import { getCompetitionsSQL } from "../services/competitions.service.js"
 
 export async function getCompetitions(req, res) {
   try {
