@@ -124,6 +124,6 @@ INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VA
 
 INSERT INTO users (firstname, surname, username, email, password, role) VALUES
 ('Bernadette','Buche','vis01','vis01@example.com','0c6cba853348a88915bd8f708dadaba441b1c832a8e25aca0ef12146e3a0ac75','visiteur'),
-('Chloé','Buche','org01','org02@example.com','728b252625ebcddcea74d61760866080a10196087c340a57a88ba511bd387921','organisateur'),
+('Chloé','Buche','org01','org02@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','organisateur'), /*mdp = ouioui */
 ('Arthur','Buche','vis02','vis03@example.com','4b979e04599fd0c70c5b421f9ca8abb88ee9daebc4759aea9ff5ae24d2a89d01','visiteur'),
 ('Benoît','Buche','pres01','pres01@example.com','443b42ac37dde8dc73aa08b5df626bdc5a56ff3df95bd6d1d228eda94d15bdab','prestataire');

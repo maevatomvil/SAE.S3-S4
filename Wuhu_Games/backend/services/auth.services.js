@@ -38,20 +38,26 @@ export async function signup(data) {
 
   return { error: 0, status: 200, data }
 }
+export async function checkSession(cookies) {
+  if (!cookies.session) {
+    return { error: 1, status: 200, data: null }
+  }
 
-export async function checkSession(session) {
-  const sql = "SELECT username FROM users WHERE username = ? AND session = ?"
-  const rows = await executeSQL(sql, [session.username, session.session])
+  const sql = "SELECT username, email, role FROM users WHERE session = ?"
+  const rows = await executeSQL(sql, [cookies.session])
 
   if (!rows.length)
-    return { error: 1, status: 401, data: "Session invalide" }
+    return { error: 1, status: 200, data: null }
 
-  return { error: 0, status: 200, data: session }
+  return { error: 0, status: 200, data: rows[0] }
 }
 
-export async function logout(username) {
-  const sql = "UPDATE users SET session = NULL WHERE username = ?"
-  await executeSQL(sql, [username])
+export async function logout(session) {
+  if (!session) {
+    return { error: 0, status: 200, data: "Déjà déconnecté" }
+  }
+  const sql = "UPDATE users SET session = NULL WHERE session = ?"
+  await executeSQL(sql, [session])
 
   return { error: 0, status: 200, data: "Déconnecté" }
 }

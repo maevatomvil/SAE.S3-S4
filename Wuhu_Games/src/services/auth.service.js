@@ -1,4 +1,4 @@
-const useSQL = false
+const useSQL = true
 
 import LocalSource from "@/services/localsource.service.js"
 import api from "@/services/axios.service.js"
@@ -20,22 +20,30 @@ async function logoutFromLocalSource() {
 }
 
 async function loginFromSQL(data) {
-  const res = await api.post("/auth/login", data)
+  const res = await api.post("/auth/login", data, {
+    withCredentials: true
+  })
   return res.data
 }
 
 async function signupFromSQL(data) {
-  const res = await api.post("/auth/signup", data)
+  const res = await api.post("/auth/signup", data, {
+    withCredentials: true
+  })
   return res.data
 }
 
 async function checkSessionFromSQL() {
-  const res = await api.get("/auth/session")
+  const res = await api.get("/auth/session", {
+    withCredentials: true
+  })
   return res.data
 }
 
 async function logoutFromSQL() {
-  const res = await api.post("/auth/logout")
+  const res = await api.post("/auth/logout", {}, {
+    withCredentials: true
+  })
   return res.data
 }
 
