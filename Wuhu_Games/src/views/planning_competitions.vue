@@ -255,7 +255,9 @@ import {
   getCompetitionsApresMidi,
   ajouterCompetition,
   desinscrireUser,
-  supprimerCompetition
+  supprimerCompetition,
+  syncNumeroWithBackend
+
 } from '@/services/localsource.service.js'
 
 import { useAuth } from '@/stores/auth.js'
@@ -289,12 +291,21 @@ onMounted(async () => {
 
   await competitions.getCompetitions()
   inscriptions.value = await getInscriptions()
-  competitions.compUser.forEach(async compet => {
-    const numero = await getNumero(compet.titre, compet.jour, compet.heure)
-    if (numero) {
-      numerosInscription.value[`${compet.titre}-${compet.jour}-${compet.heure}`] = numero
+  const current = auth.authUser?.username
+
+  Object.keys(inscriptions.value).forEach(titre => {
+    const users = inscriptions.value[titre]
+    if (current && users[current]) {
+      numerosInscription.value[titre] = users[current]
     }
   })
+
+  for (const compet of competitions.compUser || []) {
+    const numero = await syncNumeroWithBackend(compet, current)
+    if (numero) {
+      numerosInscription.value[compet.titre] = numero
+    }
+  }
 
 })
 
@@ -325,7 +336,7 @@ function ouvrirPopupInscription(compet) {
 async function inscrire(compet) {
   const numero = await inscrireUser(compet, auth.authUser)
   inscriptions.value = await getInscriptions()
-  numerosInscription.value[`${compet.titre}-${compet.jour}-${compet.heure}`] = numero
+  numerosInscription.value[compet.titre] = numero
   await competitions.getCompetitions()
 }
 
@@ -334,7 +345,6 @@ async function desinscrire(compet) {
   inscriptions.value = await getInscriptions()
   delete numerosInscription.value[compet.titre]
   await competitions.getCompetitions()
-  popupInscriptionOuvert.value = null
 }
 
 async function supprimer(compet) {

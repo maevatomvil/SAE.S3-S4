@@ -3,7 +3,7 @@ import authData from '@/datasource/auth.json'
 import competitions from '@/datasource/competitions.json'
 import api from "@/services/axios.service.js"
 
-const useSQL = true; //doit etre pareil que le usql de competitions.service.js
+const useSQL = false; //doit etre pareil que le usql de competitions.service.js
 
 let authUsers = JSON.parse(JSON.stringify(authData))
 let compUsers = JSON.parse(JSON.stringify(competitions))
@@ -440,6 +440,17 @@ export async function getPlacesRestantes(compet) {
 }
 
 
+
+
+export async function syncNumeroWithBackend(compet, username) {
+  if (!useSQL) {
+    return null
+  }
+
+  return await getNumero(compet.titre, compet.jour, compet.heure)
+}
+
+
 export default {
     login,
     checkSession,
@@ -455,6 +466,7 @@ export default {
     ajouterCompetition,
     desinscrireUser,
     getPlacesMaxLieu,
-    getPlacesRestantes
+    getPlacesRestantes,
+    syncNumeroWithBackend
 }
  
