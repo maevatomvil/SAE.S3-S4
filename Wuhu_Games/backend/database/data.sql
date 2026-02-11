@@ -20,6 +20,8 @@ CREATE TABLE competitions (
 CREATE TABLE inscriptions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   titre VARCHAR(255),
+  jour VARCHAR(255),
+  heure VARCHAR(255),
   username VARCHAR(255),
   numero INT
 );
@@ -87,16 +89,16 @@ INSERT INTO competitions (jour, heure, titre, lieu) VALUES
 ('Vendredi','09:30','Basketball','Stadium Wuhu'),
 ('Samedi','16:00','Cyclisme','Piste de cyclisme ');
 
-INSERT INTO inscriptions (titre, username, numero) VALUES
-('Tir à l''arc','jdupont',1),
-('Canoë-Kayak','jdupont',1),
-('Bowling','jdupont',1),
-('Golf Demi-Finale','jdupont',1),
-('Golf Finale','jdupont',1),
-('Tennis de table','jdupont',1),
-('Tennis','jdupont',1),
-('Basketball','jdupont',1),
-('Cyclisme','jdupont',1);
+INSERT INTO inscriptions (titre, jour, heure, username, numero) VALUES
+('Tir à l''arc','Lundi','09:00','jdupont',1),
+('Canoë-Kayak','Lundi','14:30','jdupont',1),
+('Bowling','Mardi','10:00','jdupont',1),
+('Golf Demi-Finale','Mardi','15:00','jdupont',1),
+('Golf Finale','Mardi','20:00','jdupont',1),
+('Tennis de table','Mercredi','11:00','jdupont',1),
+('Tennis','Jeudi','14:00','jdupont',1),
+('Basketball','Vendredi','09:30','jdupont',1),
+('Cyclisme','Samedi','16:00','jdupont',1);
 
 CREATE TABLE availability (
   date DATE PRIMARY KEY,

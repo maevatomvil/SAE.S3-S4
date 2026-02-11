@@ -37,7 +37,8 @@
               <p><strong>{{ compet.titre }}</strong></p>
 
               <p
-                v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                v-if="inscriptions[compet.titre]?.[auth.authUser.username]
+"
                 style="color:green;font-weight:bold;"
               >
                 <span v-if="!isEnglish">Inscrit</span>
@@ -157,7 +158,8 @@
       </ul>
 
       <button
-        v-if="!getInscriptions()[selectedCompet.titre]?.[auth.authUser.username]"
+        v-if="!inscriptions[selectedCompet.titre]?.[auth.authUser.username]"
+
         @click="ouvrirPopupInscription(selectedCompet)"
       >
         <span v-if="!isEnglish">S'inscrire</span>
@@ -192,8 +194,9 @@
 
       <br>
 
-      <div class="inscriptiondiv" :class="{ vert: getNumero(popupInscriptionOuvert.titre) }">
-        <template v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
+      <div class="inscriptiondiv" :class="{ vert: numerosInscription[popupInscriptionOuvert.titre] }">
+        <template v-if="inscriptions[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
+
           <p>
             <span v-if="!isEnglish">Inscrit</span>
             <span v-else>Registered</span>
@@ -211,20 +214,21 @@
       <div class="divCodeInscription" :class="{ visibility: numerosInscription[popupInscriptionOuvert.titre] }">
         <span v-if="!isEnglish">
           Vous êtes inscrit à la compétition.
-          <br>Numéro d'inscription : {{ getNumero(popupInscriptionOuvert.titre) }}
+          <br>Numéro d'inscription : {{ numerosInscription[popupInscriptionOuvert.titre] }}
           <br>Username : {{auth.authUser.username}}
           <br><h4 style="color:red">Ne partagez ce numéro à personne.</h4>
         </span>
 
         <span v-else>
           You are registered for the competition.
-          <br>Registration number: {{ getNumero(popupInscriptionOuvert.titre) }}
+          <br>Registration number: {{ numerosInscription[popupInscriptionOuvert.titre] }}
           <br>Username: {{auth.authUser.username}}
           <br><h4 style="color:red">Do not share this number with anyone.</h4>
         </span>
 
         <button
-          v-if="getInscriptions()[popupInscriptionOuvert.titre]?.[auth.authUser.username]"
+          v-if="inscriptions[popupInscriptionOuvert.titre]?.[auth.authUser.username]"
+
           @click="desinscrire(popupInscriptionOuvert)"
         >
           <span v-if="!isEnglish">Me désinscrire</span>
@@ -284,11 +288,16 @@ onMounted(async () => {
   canEdit.value = auth.authUser && auth.authUser.role === 'organisateur'
 
   await competitions.getCompetitions()
-  inscriptions.value = getInscriptions()
-  Object.keys(inscriptions.value).forEach(titre => {
-    numerosInscription.value[titre] = Object.values(inscriptions.value[titre])[0]
+  inscriptions.value = await getInscriptions()
+  competitions.compUser.forEach(async compet => {
+    const numero = await getNumero(compet.titre, compet.jour, compet.heure)
+    if (numero) {
+      numerosInscription.value[`${compet.titre}-${compet.jour}-${compet.heure}`] = numero
+    }
   })
+
 })
+
 
 const newCompet = ref({
   jour: '',
@@ -315,14 +324,14 @@ function ouvrirPopupInscription(compet) {
 
 async function inscrire(compet) {
   const numero = await inscrireUser(compet, auth.authUser)
-  inscriptions.value = getInscriptions()
-  numerosInscription.value[compet.titre] = numero
+  inscriptions.value = await getInscriptions()
+  numerosInscription.value[`${compet.titre}-${compet.jour}-${compet.heure}`] = numero
   await competitions.getCompetitions()
 }
 
 async function desinscrire(compet) {
   await desinscrireUser(compet, auth.authUser)
-  inscriptions.value = getInscriptions()
+  inscriptions.value = await getInscriptions()
   delete numerosInscription.value[compet.titre]
   await competitions.getCompetitions()
   popupInscriptionOuvert.value = null

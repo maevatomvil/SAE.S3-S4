@@ -1,8 +1,9 @@
 import {v4 as uuidv4} from 'uuid'
 import authData from '@/datasource/auth.json'
 import competitions from '@/datasource/competitions.json'
+import api from "@/services/axios.service.js"
 
-const useSQL = false;
+const useSQL = true; //doit etre pareil que le usql de competitions.service.js
 
 let authUsers = JSON.parse(JSON.stringify(authData))
 let compUsers = JSON.parse(JSON.stringify(competitions))
@@ -105,16 +106,7 @@ async function login(data) {
         }
         localStorage.setItem('currentUser', JSON.stringify(u))
         return {error: 0, status: 200, data: u}
-    } else {
-        const sql = 'SELECT username, email, role FROM users WHERE username = ? AND password = ?'
-        const datas = await executeSQL(sql, [data.username, hashPassword(data.password)])
-        if (datas.length === 0) {
-            return {error: 1, status: 404, data: 'Login/password incorrect'}
-        }
-        const userData = {...datas[0], session: uuidv4()}
-        localStorage.setItem('currentUser', JSON.stringify(userData))
-        return {error: 0, status: 200, data: userData}
-    }
+    } 
 }
 
 async function checkSession() {
@@ -214,27 +206,7 @@ async function signup(data) {
         localStorage.setItem('currentUser', JSON.stringify(userData))
         return {error: 0, status: 200, data: userData}
 
-    } else {
-        const sql = 'INSERT INTO users (firstname, surname, username, email, password, role) VALUES (?, ?, ?, ?, ?, ?)'
-        const hashedPassword = hashPassword(authData.password)
-        const role = 'visiteur'
-
-        try {
-            await executeSQL(sql, [authData.firstname, authData.surname, authData.username, authData.email, hashedPassword, role])
-            const userData = {
-                firstname: authData.firstname,
-                surname: authData.surname,
-                username: authData.username,
-                email: authData.email,
-                role: role,
-                session: uuidv4()
-            }
-            localStorage.setItem('currentUser', JSON.stringify(userData))
-            return {error: 0, status: 201, data: userData}
-        } catch (err) {
-            return {error: 1, status: 500, data: 'Erreur lors de la création du compte'}
-        }
-    }
+    } 
 }
 
 export async function getUsers() {
@@ -244,11 +216,7 @@ export async function getUsers() {
             email: u.email,
             role: u.role
         }))
-    } else {
-        const sql = 'SELECT username, email, role FROM users'
-        const datas = await executeSQL(sql)
-        return datas
-    }
+    } 
 }
 
 export async function getCompetitions() {
@@ -264,11 +232,11 @@ export async function getCompetitions() {
             }
         })
         return {error: 0, status: 200, data: merged}
-    } else {
-        const sql = 'SELECT jour, heure, titre, lieu FROM competitions'
-        const datas = await executeSQL(sql)
-        return {error: 0, status: 200, data: datas}
-    }
+    }else {
+        const res = await api.get("/competitions")
+        return res.data
+}
+
 }
 
 
@@ -311,23 +279,18 @@ function saveToLocalStorage() {
     localStorage.setItem("numerosInscription", JSON.stringify(numerosInscription))
 }
 
-export function getInscriptions() {
+export async function getInscriptions() {
     if (!useSQL) {
         return inscriptions
     } else {
-        return executeSQL('SELECT titre, username, numero FROM inscriptions')
-            .then(rows => {
-                const result = {}
-                rows.forEach(r => {
-                    if (!result[r.titre]) result[r.titre] = {}
-                    result[r.titre][r.username] = r.numero
-                })
-                return result
-            })
+        const res = await api.get("/inscriptions")
+        return res.data
     }
 }
 
-export function getNumero(titre) {
+
+
+export async function getNumero(titre, jour, heure) {
     if (!useSQL) {
         try {
             const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
@@ -341,11 +304,12 @@ export function getNumero(titre) {
         }
     } else {
         const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
-        if (!current) return Promise.resolve(null)
-        return executeSQL('SELECT numero FROM inscriptions WHERE titre = ? AND username = ? LIMIT 1', [titre, current.username])
-            .then(rows => rows.length ? rows[0].numero : null)
+        if (!current) return null
+        const res = await api.get(`/inscriptions/${titre}/${jour}/${heure}/numero/${current.username}`)
+        return res.data.data
     }
 }
+
 
 
 export async function inscrireUser(compet, user) {
@@ -379,37 +343,16 @@ export async function inscrireUser(compet, user) {
 
         return numero
     } else {
-        let numero
-        let rows
-        do {
-            numero = Math.floor(Math.random() * 99999) + 1
-            rows = await executeSQL('SELECT numero FROM inscriptions WHERE titre = ? AND numero = ?', [compet.titre, numero])
-        } while (rows.length > 0)
+        const res = await api.post("/inscriptions", {
+            titre: compet.titre,
+            jour: compet.jour,
+            heure: compet.heure,
+            username: user.username
+        })
 
-        await executeSQL(
-            'INSERT INTO inscriptions (titre, username, numero) VALUES (?, ?, ?)',
-            [compet.titre, user.username, numero]
-        )
-
-        numerosInscription[compet.titre] = numero
-
-        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
-        if (index !== -1) {
-            const comp = compUsers[index]
-            if (!comp.joueurs) comp.joueurs = []
-            if (!comp.joueurs.find(j => j.username === user.username)) {
-                comp.joueurs.push({
-                    username: user.username,
-                    firstname: user.firstname,
-                    surname: user.surname
-                })
-            }
-            compUsers[index] = comp
-            localStorage.setItem('competitions', JSON.stringify(compUsers))
-        }
-
-        return numero
+        return res.data.data
     }
+
 }
 
 
@@ -437,31 +380,17 @@ export async function desinscrireUser(compet, user) {
     localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
     return true
   } else {
-    const sqlDelete = 'DELETE FROM inscriptions WHERE titre = ? AND username = ?'
-    await executeSQL(sqlDelete, [compet.titre, user.username])
-
-    const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
-    if (index !== -1) {
-      const comp = compUsers[index]
-      if (comp.joueurs) {
-        comp.joueurs = comp.joueurs.filter(j => j.username !== user.username)
-      }
-      compUsers[index] = comp
-      localStorage.setItem('competitions', JSON.stringify(compUsers))
+       await api.delete("/inscriptions", {
+            data: {
+                titre: compet.titre,
+                jour: compet.jour,
+                heure: compet.heure,
+                username: user.username
+            }
+        })
+        return true
     }
 
-    if (inscriptions[compet.titre]) {
-      delete inscriptions[compet.titre][user.username]
-      if (Object.keys(inscriptions[compet.titre]).length === 0) {
-        delete inscriptions[compet.titre]
-      }
-    }
-    delete numerosInscription[compet.titre]
-    localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
-    localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
-    
-    return true
-  }
 }
 
 
@@ -482,35 +411,34 @@ export async function supprimerCompetition(compet) {
         localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
         localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
     } else {
-        const sqlDeleteInscriptions = 'DELETE FROM inscriptions WHERE titre = ?'
-        await executeSQL(sqlDeleteInscriptions, [compet.titre])
-
-        const sqlDeleteCompet = 'DELETE FROM competitions WHERE titre = ? AND jour = ? AND heure = ?'
-        await executeSQL(sqlDeleteCompet, [compet.titre, compet.jour, compet.heure])
-
-        const index = compUsers.findIndex(c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure)
-        if (index !== -1) {
-            compUsers.splice(index, 1)
-        }
-        if (inscriptions[compet.titre]) delete inscriptions[compet.titre]
-        if (numerosInscription[compet.titre]) delete numerosInscription[compet.titre]
-        localStorage.setItem('competitions', JSON.stringify(compUsers))
-        localStorage.setItem('inscriptions', JSON.stringify(inscriptions))
-        localStorage.setItem('numerosInscription', JSON.stringify(numerosInscription))
+        await api.delete("/competitions", {
+            data: {
+                titre: compet.titre,
+                jour: compet.jour,
+                heure: compet.heure
+            }
+        })
+        return true
     }
+
 }
 
 export function getPlacesMaxLieu(lieu) {
     return placesParLieu[lieu] ?? 50
 }
 
-export function getPlacesRestantes(compet) {
-    const inscriptions = getInscriptions()[compet.titre] || {}
-    const reservees = Object.keys(inscriptions).length
-    const max = getPlacesMaxLieu(compet.lieu)
-
-    return max - reservees
+export async function getPlacesRestantes(compet) {
+    if (!useSQL) {
+        const inscriptions = getInscriptions()[compet.titre] || {}
+        const reservees = Object.keys(inscriptions).length
+        const max = getPlacesMaxLieu(compet.lieu)
+        return max - reservees
+    } else {
+        const res = await api.get(`/competitions/${compet.titre}/places-restantes`)
+        return res.data.data
+    }
 }
+
 
 export default {
     login,
