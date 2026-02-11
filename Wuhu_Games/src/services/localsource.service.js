@@ -6,7 +6,7 @@ import api from "@/services/axios.service.js"
 const useSQL = true; //doit etre pareil que le usql de competitions.service.js
 
 let authUsers = JSON.parse(JSON.stringify(authData))
-let compUsers = JSON.parse(JSON.stringify(competitions))
+let compUsers = useSQL ? [] : JSON.parse(JSON.stringify(competitions))
 
 const placesParLieu = {
     "Stadium Wuhu": 500,
@@ -255,18 +255,23 @@ export function getCompetitionsApresMidi(competitions, jour) {
 }
 
 
-export function ajouterCompetition(newCompet, competitionsParam) {
+export async function ajouterCompetition(newCompet, competitionsParam) {
     if (!newCompet.titre || !newCompet.heure || !newCompet.lieu || !newCompet.jour) return
-    const competToAdd = {
-        ...newCompet,
-        joueurs: []
-    }
 
-    competitionsParam.push(competToAdd)
+    if (!useSQL) {
+        const competToAdd = {
+            ...newCompet,
+            joueurs: []
+        }
 
-    if (!compUsers.some(c => c.titre === competToAdd.titre && c.jour === competToAdd.jour && c.heure === competToAdd.heure)) {
-        compUsers.push(competToAdd)
-        localStorage.setItem('competitions', JSON.stringify(compUsers))
+        competitionsParam.push(competToAdd)
+
+        if (!compUsers.some(c => c.titre === competToAdd.titre && c.jour === competToAdd.jour && c.heure === competToAdd.heure)) {
+            compUsers.push(competToAdd)
+            localStorage.setItem('competitions', JSON.stringify(compUsers))
+        }
+    } else {
+        await api.post("/competitions", newCompet)
     }
 }
 
@@ -290,7 +295,8 @@ export async function getInscriptions() {
 
 
 
-export async function getNumero(titre, jour, heure) {
+export async function getNumero(titre, jour, heure, username) {
+
     if (!useSQL) {
         try {
             const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
@@ -303,9 +309,8 @@ export async function getNumero(titre, jour, heure) {
             return null
         }
     } else {
-        const current = JSON.parse(localStorage.getItem('currentUser') || 'null')
-        if (!current) return null
-        const res = await api.get(`/inscriptions/${titre}/${jour}/${heure}/numero/${current.username}`)
+        const res = await api.get(`/inscriptions/${titre}/${jour}/${heure}/numero/${username}`)
+
         return res.data.data
     }
 }
@@ -443,11 +448,19 @@ export async function getPlacesRestantes(compet) {
 
 
 export async function syncNumeroWithBackend(compet, username) {
+  console.log("SYNC CALL:", compet.titre, compet.jour, compet.heure, username)
+   console.log("COMPET OBJ:", compet)
+
+
   if (!useSQL) {
     return null
   }
 
-  return await getNumero(compet.titre, compet.jour, compet.heure)
+  const numero = await getNumero(compet.titre, compet.jour, compet.heure, username)
+
+  console.log("SYNC RESULT:", numero)
+  
+  return numero
 }
 
 

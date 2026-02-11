@@ -262,7 +262,7 @@ import {
 } from '@/services/localsource.service.js'
 
 import { useAuth } from '@/stores/auth.js'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
 import { useRoute } from 'vue-router'
 import { useLanguageStore } from '@/stores/languageStore.js'
@@ -287,11 +287,11 @@ const ownerUsername = ref('')
 const canEdit = ref(false)
 
 onMounted(async () => {
-
   canEdit.value = auth.authUser && auth.authUser.role === 'organisateur'
 
   await competitions.getCompetitions()
   inscriptions.value = await getInscriptions()
+
   const current = auth.authUser?.username
 
   Object.keys(inscriptions.value).forEach(titre => {
@@ -301,13 +301,16 @@ onMounted(async () => {
     }
   })
 
-  for (const compet of competitions.compUser || []) {
+  await nextTick()
+
+  for (const compet of competitions.compUser) {
     const numero = await syncNumeroWithBackend(compet, current)
-    if (numero) {
+    if (numero !== null && numero !== undefined) {
       numerosInscription.value[compet.titre] = numero
+      inscriptions.value[compet.titre] = inscriptions.value[compet.titre] || {}
+      inscriptions.value[compet.titre][current] = numero
     }
   }
-
 })
 
 

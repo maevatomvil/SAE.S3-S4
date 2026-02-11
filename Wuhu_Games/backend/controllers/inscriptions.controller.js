@@ -20,7 +20,12 @@ export async function getInscriptions(req, res) {
 
 export async function getNumero(req, res) {
   try {
-    const result = await getNumeroSQL(req.params.titre, req.params.username)
+    const result = await getNumeroSQL(
+      req.params.titre,
+      req.params.jour,
+      req.params.heure,
+      req.params.username
+    )
     res.status(result.status).json(result)
   } catch {
     res.status(500).json({
