@@ -1,4 +1,4 @@
-const useSQL = false //doit etre pareil que le usql de localsource.service.js
+const useSQL = true //doit etre pareil que le usql de localsource.service.js
 
 import LocalSource from "@/services/localsource.service.js"
 import api from "@/services/axios.service.js"

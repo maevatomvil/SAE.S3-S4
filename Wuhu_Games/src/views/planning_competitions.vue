@@ -37,10 +37,10 @@
               <p><strong>{{ compet.titre }}</strong></p>
 
               <p
-                v-if="inscriptions[compet.titre]?.[auth.authUser.username]
-"
+                v-if="numerosInscription[compet.titre]"
                 style="color:green;font-weight:bold;"
               >
+
                 <span v-if="!isEnglish">Inscrit</span>
                 <span v-else>Registered</span>
               </p>
@@ -78,7 +78,8 @@
               <p><strong>{{ compet.titre }}</strong></p>
 
               <p
-                v-if="inscriptions[compet.titre]?.[auth.authUser.username]"
+                v-if="numerosInscription[compet.titre]"
+
                 style="color:green;font-weight:bold;"
               >
                 <span v-if="!isEnglish">Inscrit</span>
@@ -158,7 +159,7 @@
       </ul>
 
       <button
-        v-if="!inscriptions[selectedCompet.titre]?.[auth.authUser.username]"
+        v-if="!numerosInscription[selectedCompet.titre]"
 
         @click="ouvrirPopupInscription(selectedCompet)"
       >
@@ -195,7 +196,7 @@
       <br>
 
       <div class="inscriptiondiv" :class="{ vert: numerosInscription[popupInscriptionOuvert.titre] }">
-        <template v-if="inscriptions[popupInscriptionOuvert.titre]?.[auth.authUser.username]">
+        <template v-if="numerosInscription[popupInscriptionOuvert.titre]">
 
           <p>
             <span v-if="!isEnglish">Inscrit</span>
@@ -227,7 +228,7 @@
         </span>
 
         <button
-          v-if="inscriptions[popupInscriptionOuvert.titre]?.[auth.authUser.username]"
+          v-if="numerosInscription[popupInscriptionOuvert.titre]"
 
           @click="desinscrire(popupInscriptionOuvert)"
         >
