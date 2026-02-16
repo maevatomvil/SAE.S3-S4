@@ -464,6 +464,126 @@ export async function syncNumeroWithBackend(compet, username) {
 }
 
 
+
+
+
+
+
+
+function getSpectateursLocal() {
+  return JSON.parse(localStorage.getItem("spectateurs") || "{}")
+}
+
+function saveSpectateursLocal(data) {
+  localStorage.setItem("spectateurs", JSON.stringify(data))
+}
+
+export async function getSpectateurs() {
+  if (!useSQL) {
+    return getSpectateursLocal()
+  }
+  const res = await api.get("/spectateurs")
+  return res.data.data
+}
+
+export async function inscrireSpectateur(compet, user) {
+  if (!useSQL) {
+    const spectateurs = getSpectateursLocal()
+    const key = compet.titre
+
+    if (!spectateurs[key]) spectateurs[key] = {}
+    let numero
+    do {
+      numero = Math.floor(Math.random() * 99999) + 1
+    } while (Object.values(spectateurs[key]).includes(numero))
+    spectateurs[key][user.username] = numero
+    saveSpectateursLocal(spectateurs)
+    return numero
+  }
+  const res = await api.post("/spectateurs", {
+    titre: compet.titre,
+    jour: compet.jour,
+    heure: compet.heure,
+    username: user.username
+  })
+  return res.data.data
+}
+
+export async function desinscrireSpectateur(compet, user) {
+  if (!useSQL) {
+    const spectateurs = getSpectateursLocal()
+    const key = compet.titre
+
+    if (spectateurs[key]) {
+      delete spectateurs[key][user.username]
+      saveSpectateursLocal(spectateurs)
+    }
+    return true
+  }
+  await api.delete("/spectateurs", {
+    data: {
+      titre: compet.titre,
+      jour: compet.jour,
+      heure: compet.heure,
+      username: user.username
+    }
+  })
+  return true
+}
+
+export async function syncNumeroSpectateurWithBackend(compet, username) {
+  if (!useSQL) return null
+  const res = await api.get(
+  `/spectateurs/${encodeURIComponent(compet.titre)}/${compet.jour}/${compet.heure}/numero/${username}`
+    )
+
+  
+  return res.data.data
+}
+
+
+
+
+
+
+
+
+export async function getSpectateursForCompet(compet) {
+  if (!useSQL) {
+    const all = getSpectateursLocal()
+    return all[compet.titre] || {}
+  }
+  const res = await api.get(`/spectateurs/${encodeURIComponent(compet.titre)}/${compet.jour}/${compet.heure}`)
+  return res.data.data
+}
+
+
+export async function getSpectateursList(compet) {
+  if (!useSQL) {
+    const all = getSpectateursLocal()
+    const data = all[compet.titre] || {}
+    return Object.entries(data).map(([username, numero]) => ({
+      username,
+      numero
+    }))
+  }
+  const res = await api.get(`/spectateurs/${encodeURIComponent(compet.titre)}/${compet.jour}/${compet.heure}`)
+  return res.data.data
+}
+
+
+export async function getSpectateursCount(compet) {
+  if (!useSQL) {
+    const all = getSpectateursLocal()
+    return Object.keys(all[compet.titre] || {}).length
+  }
+  const res = await api.get(`/spectateurs/${compet.titre}/${compet.jour}/${compet.heure}/count`)
+  return res.data.data
+}
+
+
+
+
 export default {
     login,
     checkSession,
@@ -474,12 +594,20 @@ export default {
     getInscriptions,
     getNumero,
     inscrireUser,
+    desinscrireUser,
     getCompetitionsMatin,
     getCompetitionsApresMidi,
     ajouterCompetition,
-    desinscrireUser,
+    supprimerCompetition,
     getPlacesMaxLieu,
     getPlacesRestantes,
-    syncNumeroWithBackend
+    syncNumeroWithBackend,
+    getSpectateurs,
+    inscrireSpectateur,
+    desinscrireSpectateur,
+    syncNumeroSpectateurWithBackend,
+    getSpectateursForCompet,
+    getSpectateursList,
+    getSpectateursCount
+
 }
- 

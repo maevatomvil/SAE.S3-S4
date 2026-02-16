@@ -5,7 +5,6 @@
     </h1>
   </div>
 
-
   <div v-if="!auth.authUser">
     <p>Connectez vous pour voir le planning</p>
   </div>
@@ -29,29 +28,20 @@
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
 
-            
-              <p>
-                {{ isEnglish ? "Remaining spots:" : "Places restantes :" }}
-                <strong>{{ getPlacesRestantes(compet) }}</strong>
-              </p>
-
               <button
-                  v-if="getPlacesRestantes(compet) > 0 && !getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  v-if="!numerosInscription[compet.titre]"
                   @click="ouvrirPopupReservation(compet)"
               >
                 Réserver
               </button>
 
               <button
-                  v-else-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  v-else-if="numerosInscription[compet.titre]"
                   @click="ouvrirPopupReservation(compet)"
               >
                 Ma réservation
               </button>
 
-              <p v-else style="color:red;font-weight:bold;">
-                Complet
-              </p>
             </div>
           </template>
 
@@ -74,8 +64,8 @@
               <p><strong>{{ compet.titre }}</strong></p>
 
               <p
-                  v-if="getInscriptions()[compet.titre]?.[auth.authUser.username]"
-                  style="color:green;font-weight:bold;"
+                v-if="numerosInscription[compet.titre]"
+                style="color:green;font-weight:bold;"
               >
                 Réservé
               </p>
@@ -83,15 +73,8 @@
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
 
-              
-              <p>
-                {{ isEnglish ? "Remaining spots:" : "Places restantes :" }}
-                <strong>{{ getPlacesRestantes(compet) }}</strong>
-              </p>
-
-
               <button
-                  v-if="!getInscriptions()[compet.titre]?.[auth.authUser.username]"
+                  v-if="!numerosInscription[compet.titre]"
                   @click="ouvrirPopupReservation(compet)"
               >
                 Réserver
@@ -120,9 +103,29 @@
         Réserver une place pour
         {{ popupReservationOuvert.titre }} — {{ popupReservationOuvert.jour }}
       </h3>
+      <div v-if="auth.authUser?.role === 'organisateur'">
+        <h4>Liste des spectateurs inscrits :</h4>
 
-      <div class="inscriptiondiv" :class="{ vert: getNumero(popupReservationOuvert.titre) }">
-        <template v-if="getInscriptions()[popupReservationOuvert.titre]?.[auth.authUser.username]">
+        <div v-if="!popupReservationOuvert.spectateurs || Object.keys(popupReservationOuvert.spectateurs).length === 0">
+          Aucun spectateur inscrit pour cette compétition.
+        </div>
+
+        <ul v-else>
+        <li
+          v-for="s in popupReservationOuvert.spectateurs"
+          :key="s.username"
+        >
+          {{ s.username }} — Numéro : {{ s.numero }}
+        </li>
+      </ul>
+
+
+        <hr>
+      </div>
+
+      <div class="inscriptiondiv" :class="{ vert: numerosInscription[popupReservationOuvert.titre] }">
+        <template v-if="numerosInscription[popupReservationOuvert.titre]">
+
           <p>Place réservée</p>
         </template>
         <template v-else>
@@ -141,14 +144,16 @@
         
         {{ isEnglish ? "✓ Reservation confirmed" : "✓ Réservation confirmée" }}
         <br>
-        Numéro : {{ getNumero(popupReservationOuvert.titre) }}
+        Numéro : {{ numerosInscription[popupReservationOuvert.titre] }}
+
         <br>
         <strong> {{ isEnglish ? "Do not share this number" : "Ne partagez pas ce numéro" }}</strong>
         
 
         <br><br>
         <button
-            v-if="getInscriptions()[popupReservationOuvert.titre]?.[auth.authUser.username]"
+           v-if="numerosInscription[popupReservationOuvert.titre]"
+
             @click="desinscrire(popupReservationOuvert)"
         >
           {{ isEnglish ? "Cancel my reservation" : "Annuler ma réservation" }}
@@ -161,72 +166,87 @@
 
   <br><br><br>
 </template>
-
 <script setup>
 import {
-  getInscriptions,
-  getNumero,
-  inscrireUser,
   getCompetitionsMatin,
   getCompetitionsApresMidi,
-  ajouterCompetition,
-  desinscrireUser,
-  supprimerCompetition,
-  getPlacesRestantes
+  inscrireSpectateur,
+  desinscrireSpectateur,
+  syncNumeroSpectateurWithBackend
 } from '@/services/localsource.service.js'
 
 import { useAuth } from '@/stores/auth.js'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useCompetitions } from '@/stores/competitions.js'
-import { useRoute } from 'vue-router'
+import { useSpectateurs } from '@/stores/spectateurs.store.js'
 import { useLanguageStore } from '@/stores/languageStore.js'
-import { computed } from 'vue'
 
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
 
-const popupReservationOuvert = ref(null)
 const inscriptions = ref({})
 const numerosInscription = ref({})
 
 const competitions = useCompetitions()
+const spectateursStore = useSpectateurs()
 const auth = useAuth()
-const route = useRoute()
+
+const popupReservationOuvert = ref(null)
 
 const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
 
-const ownerUsername = ref('')
-const canEdit = ref(false)
-
 onMounted(async () => {
-  ownerUsername.value = route.params.ownerUsername
-  canEdit.value = auth.authUser && auth.authUser.username === ownerUsername.value
-
   await competitions.getCompetitions()
-  inscriptions.value = getInscriptions()
-  Object.keys(inscriptions.value).forEach(titre => {
-    numerosInscription.value[titre] = Object.values(inscriptions.value[titre])[0]
-  })
-})
+  await spectateursStore.getSpectateurs()
 
+  inscriptions.value = JSON.parse(localStorage.getItem('spectateurs')) || {}
+
+  const current = auth.authUser?.username
+
+  Object.keys(inscriptions.value).forEach(titre => {
+    const users = inscriptions.value[titre]
+    if (current && users[current]) {
+      numerosInscription.value[titre] = users[current]
+    }
+  })
+
+  await nextTick()
+
+  for (const compet of competitions.compUser) {
+    const numero = await syncNumeroSpectateurWithBackend(compet, current)
+    if (numero !== null && numero !== undefined) {
+      numerosInscription.value[compet.titre] = numero
+      inscriptions.value[compet.titre] = inscriptions.value[compet.titre] || {}
+      inscriptions.value[compet.titre][current] = numero
+    }
+  }
+})
 function ouvrirPopupReservation(compet) {
-  popupReservationOuvert.value = compet
+  const spectateurs = spectateursStore.spectateursUser.find(
+    c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.jour
+  )
+
+  popupReservationOuvert.value = {
+    ...compet,
+    spectateurs: spectateurs?.spectateurs || []
+  }
 }
 
-async function reserver(compet) {
-  if (getPlacesRestantes(compet) <= 0) return
 
-  const numero = await inscrireUser(compet, auth.authUser)
-  inscriptions.value = getInscriptions()
+async function reserver(compet) {
+  const numero = await inscrireSpectateur(compet, auth.authUser)
+  inscriptions.value = JSON.parse(localStorage.getItem('spectateurs')) || {}
   numerosInscription.value[compet.titre] = numero
   await competitions.getCompetitions()
+  await spectateursStore.getSpectateurs()
 }
 
 async function desinscrire(compet) {
-  await desinscrireUser(compet, auth.authUser)
-  inscriptions.value = getInscriptions()
+  await desinscrireSpectateur(compet, auth.authUser)
+  inscriptions.value = JSON.parse(localStorage.getItem('spectateurs')) || {}
   delete numerosInscription.value[compet.titre]
   await competitions.getCompetitions()
+  await spectateursStore.getSpectateurs()
   popupReservationOuvert.value = null
 }
 </script>

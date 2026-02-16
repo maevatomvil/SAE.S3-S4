@@ -3,7 +3,7 @@ import {defineStore} from 'pinia'
 
 import CompetitionsService from "@/services/competitions.service";
 
-const useSQL = true
+const useSQL = false
 
 export const useCompetitions = defineStore('competitions', () => {
     const compUser = ref(null)

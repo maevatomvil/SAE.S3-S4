@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: API Wuhu
+  version: 1.0.0
+  description: >
+    API REST pour la gestion des compétitions, inscriptions et authentification
+    dans le projet Wuhu.
+
+servers:
+  - url: http://localhost:3000
+    description: Serveur local
+
+tags:
+  - name: Auth
+    description: Routes d'authentification
+  - name: Competitions
+    description: Gestion des compétitions
+  - name: Inscriptions
+    description: Gestion des inscriptions aux compétitions
+
+paths:
+
+  ##############################
+  #         AUTH
+  ##############################
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required: [username, password]
+      responses:
+        '200':
+          description: Connexion réussie
+        '404':
+          description: Identifiants incorrects
+
+  /signup:
+    post:
+      tags: [Auth]
+      summary: Création d'un compte utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                surname:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required: [firstname, surname, username, email, password]
+      responses:
+        '200':
+          description: Compte créé
+        '409':
+          description: Email ou username déjà utilisé
+
+  /session:
+    get:
+      tags: [Auth]
+      summary: Vérifie la session utilisateur
+      responses:
+        '200':
+          description: Session valide
+        '401':
+          description: Session invalide
+
+  /logout:
+    post:
+      tags: [Auth]
+      summary: Déconnexion utilisateur
+      responses:
+        '200':
+          description: Déconnexion réussie
+
+
+  ##############################
+  #     COMPETITIONS
+  ##############################
+
+  /competitions:
+    get:
+      tags: [Competitions]
+      summary: Récupère toutes les compétitions
+      responses:
+        '200':
+          description: Liste des compétitions
+
+    post:
+      tags: [Competitions]
+      summary: Ajoute une nouvelle compétition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                jour:
+                  type: string
+                heure:
+                  type: string
+                lieu:
+                  type: string
+              required: [titre, jour, heure, lieu]
+      responses:
+        '200':
+          description: Compétition ajoutée
+
+    delete:
+      tags: [Competitions]
+      summary: Supprime une compétition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                jour:
+                  type: string
+                heure:
+                  type: string
+              required: [titre, jour, heure]
+      responses:
+        '200':
+          description: Compétition supprimée
+
+  /competitions/{titre}/places-restantes:
+    get:
+      tags: [Competitions]
+      summary: Récupère le nombre de places restantes pour une compétition
+      parameters:
+        - name: titre
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nombre de places restantes
+
+
+  ##############################
+  #     INSCRIPTIONS
+  ##############################
+
+  /inscriptions:
+    get:
+      tags: [Inscriptions]
+      summary: Récupère toutes les inscriptions
+      responses:
+        '200':
+          description: Liste des inscriptions
+
+    post:
+      tags: [Inscriptions]
+      summary: Inscrit un utilisateur à une compétition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                jour:
+                  type: string
+                heure:
+                  type: string
+                username:
+                  type: string
+              required: [titre, jour, heure, username]
+      responses:
+        '200':
+          description: Inscription réussie (numéro généré)
+        '409':
+          description: Déjà inscrit
+
+    delete:
+      tags: [Inscriptions]
+      summary: Désinscrit un utilisateur d'une compétition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titre:
+                  type: string
+                jour:
+                  type: string
+                heure:
+                  type: string
+                username:
+                  type: string
+              required: [titre, jour, heure, username]
+      responses:
+        '200':
+          description: Désinscription réussie
+
+  /inscriptions/{titre}/{jour}/{heure}/numero/{username}:
+    get:
+      tags: [Inscriptions]
+      summary: Récupère le numéro d'inscription d'un utilisateur
+      parameters:
+        - name: titre
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: jour
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: heure
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Numéro d'inscription
+        '404':
+          description: Non inscrit

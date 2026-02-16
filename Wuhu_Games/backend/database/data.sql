@@ -100,6 +100,18 @@ INSERT INTO inscriptions (titre, jour, heure, username, numero) VALUES
 ('Basketball','Vendredi','09:30','jdupont',1),
 ('Cyclisme','Samedi','16:00','jdupont',1);
 
+
+
+CREATE TABLE spectateurs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  titre VARCHAR(255),
+  jour VARCHAR(255),
+  heure VARCHAR(255),
+  username VARCHAR(255),
+  numero INT
+);
+
+
 CREATE TABLE availability (
   date DATE PRIMARY KEY,
   simple INT,
