@@ -3,7 +3,7 @@ import {defineStore} from 'pinia'
 
 import CompetitionsService from "@/services/competitions.service";
 
-const useSQL = false
+const useSQL = true // mettre a true si localsource.service.js et competitions.service.js sont a true
 
 export const useCompetitions = defineStore('competitions', () => {
     const compUser = ref(null)

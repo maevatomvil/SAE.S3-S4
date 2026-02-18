@@ -24,6 +24,12 @@
                 class="case"
             >
               <p><strong>{{ compet.titre }}</strong></p>
+              <p
+                v-if="numerosInscription[compet.titre]"
+                style="color:green;font-weight:bold;"
+              >
+                Réservé
+              </p>
 
               <p>{{ compet.heure }}</p>
               <p>{{ compet.lieu }}</p>
@@ -223,7 +229,8 @@ onMounted(async () => {
 })
 function ouvrirPopupReservation(compet) {
   const spectateurs = spectateursStore.spectateursUser.find(
-    c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.jour
+    c => c.titre === compet.titre && c.jour === compet.jour && c.heure === compet.heure
+
   )
 
   popupReservationOuvert.value = {
