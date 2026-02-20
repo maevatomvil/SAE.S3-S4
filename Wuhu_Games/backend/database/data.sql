@@ -120,6 +120,35 @@ CREATE TABLE availability (
   priceDouble INT
 );
 
+
+
+
+
+CREATE TABLE prestataireDemandes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255),
+  serviceName VARCHAR(255),
+  serviceName_en VARCHAR(255),
+  email VARCHAR(255),
+  image TEXT,
+  descriptionFr TEXT,
+  descriptionEn TEXT,
+  pageAchat TEXT,
+  planning TEXT,
+  pageInfo TEXT,
+  locationNeeds TEXT,
+  status VARCHAR(50) DEFAULT 'pending',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE prestataireDemandesServices (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  demandeId INT,
+  serviceType VARCHAR(255),
+  FOREIGN KEY (demandeId) REFERENCES prestataireDemandes(id) ON DELETE CASCADE
+);
+
 INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VALUES
 ('2025-05-11',5,3,50,80),
 ('2025-05-12',4,2,50,80),

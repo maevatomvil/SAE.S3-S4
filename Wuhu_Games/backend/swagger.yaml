@@ -254,3 +254,146 @@ paths:
           description: Numéro d'inscription
         '404':
           description: Non inscrit
+
+
+
+
+
+
+  ##############################
+  #        TEMPLATES
+  ##############################
+
+  /templates/demande:
+    post:
+      tags: [Templates]
+      summary: Envoie une demande de création de prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                name_en:
+                  type: string
+                email:
+                  type: string
+                image:
+                  type: string
+                shortDescription:
+                  type: string
+                shortDescription_en:
+                  type: string
+                pageTitleAchat:
+                  type: string
+                planning:
+                  type: array
+                  items:
+                    type: object
+                templateContent:
+                  type: string
+                locationNeeds:
+                  type: string
+                services:
+                  type: array
+                  items:
+                    type: string
+              required: [username, name, email]
+      responses:
+        '200':
+          description: Demande envoyée
+
+  /templates:
+    get:
+      tags: [Templates]
+      summary: Récupère tous les templates
+      responses:
+        '200':
+          description: Liste des templates
+
+  /templates/demandes:
+    get:
+      tags: [Templates]
+      summary: Récupère toutes les demandes de prestataires
+      responses:
+        '200':
+          description: Liste des demandes
+
+  /templates/{id}:
+    delete:
+      tags: [Templates]
+      summary: Supprime un template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Template supprimé
+
+  /templates/{username}:
+    put:
+      tags: [Templates]
+      summary: Met à jour un template existant
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                name_en:
+                  type: string
+                shortDescription:
+                  type: string
+                shortDescription_en:
+                  type: string
+                image:
+                  type: string
+                pageTitle:
+                  type: string
+                templateContent:
+                  type: string
+                planning:
+                  type: array
+                  items:
+                    type: object
+                pageTitleAchat:
+                  type: string
+                pageDescriptionAchat:
+                  type: string
+                articles:
+                  type: array
+                  items:
+                    type: object
+                services:
+                  type: array
+                  items:
+                    type: string
+                email:
+                  type: string
+                locationNeeds:
+                  type: string
+                x:
+                  type: number
+                y:
+                  type: number
+      responses:
+        '200':
+          description: Template mis à jour
+

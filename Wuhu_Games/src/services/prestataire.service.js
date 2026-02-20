@@ -1,4 +1,5 @@
 import TemplateService from './template.service.js'
+import api from "@/services/axios.service.js"
 
 const useSQL = false
 
@@ -19,17 +20,8 @@ async function accepterDemande(demande) {
     }
     return { error: 0, status: 200, data: demande }
   } else {
-    try {
-      const sqlUpdateTemplate = "UPDATE templates SET type = 'prestataireValide' WHERE id = ?"
-      await executeSQL(sqlUpdateTemplate, [demande.id])
-
-      const sqlUpdateUser = "UPDATE users SET role = 'prestataire' WHERE username = ?"
-      await executeSQL(sqlUpdateUser, [demande.username])
-
-      return { error: 0, status: 200, data: demande }
-    } catch (err) {
-      return { error: 1, status: 500, data: 'Erreur lors de la validation de la demande' }
-    }
+    const res = await api.post("/prestataire/accepter", demande)
+    return res.data
   }
 }
 
@@ -41,13 +33,8 @@ async function refuserDemande(demande) {
     localStorage.setItem('templates', JSON.stringify(updatedTemplates))
     return { error: 0, status: 200 }
   } else {
-    try {
-      const sqlDelete = "DELETE FROM templates WHERE id = ?"
-      await executeSQL(sqlDelete, [demande.id])
-      return { error: 0, status: 200 }
-    } catch (err) {
-      return { error: 1, status: 500, data: 'Erreur lors du refus de la demande' }
-    }
+    const res = await api.post("/prestataire/refuser", demande)
+    return res.data
   }
 }
 
@@ -64,15 +51,8 @@ async function supprimerPrestataire(username) {
     }
     return { error: 0, status: 200 }
   } else {
-    try {
-      const sqlDeleteTemplate = 'DELETE FROM templates WHERE username = ?'
-      await executeSQL(sqlDeleteTemplate, [username])
-      const sqlUpdateUser = "UPDATE users SET role = 'visiteur' WHERE username = ?"
-      await executeSQL(sqlUpdateUser, [username])
-      return { error: 0, status: 200 }
-    } catch (err) {
-      return { error: 1, status: 500, data: 'Erreur lors de la suppression du prestataire' }
-    }
+    const res = await api.delete(`/prestataire/${username}`)
+    return res.data
   }
 }
 
@@ -95,33 +75,8 @@ async function updatePrestataire(updatedPrestataire) {
     }
     return { error: 1, status: 404 }
   } else {
-    try {
-      const sqlUpdate = `
-        UPDATE templates
-        SET 
-          name = ?,
-          email = ?,
-          image = ?,
-          shortDescription = ?,
-          services = ?,
-          x = ?,
-          y = ?
-        WHERE username = ? AND type = 'prestataireValide'
-      `
-      await executeSQL(sqlUpdate, [
-        updatedPrestataire.name,
-        updatedPrestataire.email,
-        updatedPrestataire.image,
-        updatedPrestataire.shortDescription,
-        JSON.stringify(updatedPrestataire.services),
-        updatedPrestataire.x,
-        updatedPrestataire.y,
-        updatedPrestataire.username
-      ])
-      return { error: 0, status: 200 }
-    } catch (err) {
-      return { error: 1, status: 500 }
-    }
+    const res = await api.put("/prestataire/update", updatedPrestataire)
+    return res.data
   }
 }
 
