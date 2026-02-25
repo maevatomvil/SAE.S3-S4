@@ -28,7 +28,7 @@ app.use("/inscriptions", inscriptionsRoutes)
 app.use("/spectateurs", spectateursRoutes)
 app.use("/templates", templateRoutes)
 
-app.use("/api/prestataire", prestataireRoutes)
+app.use("/prestataire", prestataireRoutes)
 
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))

@@ -1,9 +1,33 @@
 import { executeSQL } from "../database/db.js"
 
 export async function accepterDemandeSQL(data) {
+
   await executeSQL(
-    "UPDATE templates SET type = 'prestataireValide' WHERE username = ?",
-    [data.username]
+    `
+    INSERT INTO templates 
+    (username, name, name_en, shortDescription, shortDescription_en, image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat, articles, services, email, locationNeeds, type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prestataireValide')
+    `,
+    [
+      
+    data.username ?? null,
+    data.name ?? null,
+    data.name_en ?? null,
+    data.shortDescription ?? null,
+    data.shortDescription_en ?? null,
+    data.image ?? null,
+    data.pageTitle ?? null,
+    data.templateContent ?? null,
+    JSON.stringify(data.planning || []),
+    data.pageTitleAchat ?? null,
+    data.pageDescriptionAchat ?? null,
+    JSON.stringify(data.articles || []),
+    JSON.stringify(data.services || []),
+    data.email ?? null,
+    data.locationNeeds ?? null
+  ]
+
+    
   )
 
   await executeSQL(
@@ -23,6 +47,8 @@ export async function accepterDemandeSQL(data) {
 
   return { error: 0, status: 200 }
 }
+
+
 
 export async function refuserDemandeSQL(data) {
   await executeSQL(
@@ -64,7 +90,7 @@ export async function updatePrestataireSQL(data) {
       services = ?,
       x = ?,
       y = ?
-    WHERE username = ? AND type = 'prestataireValide'
+    WHERE username = ? 
     `,
     [
       data.name,
@@ -81,9 +107,32 @@ export async function updatePrestataireSQL(data) {
   return { error: 0, status: 200 }
 }
 
+
+
+
+
+export async function accepterDemande(data) {
+  return await accepterDemandeSQL(data)
+}
+
+export async function refuserDemande(data) {
+  return await refuserDemandeSQL(data)
+}
+
+export async function supprimerPrestataire(username) {
+  return await supprimerPrestataireSQL(username)
+}
+
+export async function updatePrestataire(data) {
+  return await updatePrestataireSQL(data)
+}
+
+
+
+
 export default {
-  accepterDemandeSQL,
-  refuserDemandeSQL,
-  supprimerPrestataireSQL,
-  updatePrestataireSQL
+  accepterDemande,
+  refuserDemande,
+  supprimerPrestataire,
+  updatePrestataire
 }
