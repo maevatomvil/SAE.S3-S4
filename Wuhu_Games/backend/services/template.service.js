@@ -39,7 +39,12 @@ export async function savePrestataireDemandeSQL(data) {
 export async function getTemplatesSQL() {
   const sql = "SELECT * FROM templates"
   const templates = await executeSQL(sql)
-  return templates
+  return templates.map(t => ({
+    ...t,
+    services: JSON.parse(t.services || '[]'),
+    articles: JSON.parse(t.articles || '[]'),
+    planning: JSON.parse(t.planning || '[]')
+  }))
 }
 
 export async function getPrestataireDemandesSQL() {

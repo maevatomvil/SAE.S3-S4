@@ -86,8 +86,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service'
+import PrestatairePageAchatService from '@/services/prestatairePageAchat.service'
 import { useAuth } from '@/stores/auth.js'
-import { v4 as uuidv4 } from 'uuid'
 
 const route = useRoute()
 const router = useRouter()
@@ -113,10 +113,8 @@ onMounted(async () => {
     }))
   }
 
-  panier.value = JSON.parse(localStorage.getItem('panier_' + auth.authUser?.username + '_' + prestataire.value.username) || '[]')
-
-  historiqueCommandes.value = JSON.parse(localStorage.getItem('historiqueCommandes_' + auth.authUser?.username + '_' + prestataire.value.username) || '[]')
-
+  panier.value = await PrestatairePageAchatService.getPanier(auth.authUser?.username, prestataire.value.username)
+  historiqueCommandes.value = await PrestatairePageAchatService.getHistorique(auth.authUser?.username, prestataire.value.username)
 })
 
 const peutModifier = computed(() =>
@@ -133,65 +131,36 @@ async function ajouterPanier(article) {
   if (article.stock <= 0) return
 
   article.stock--
-
   panier.value.push(article)
-  localStorage.setItem('panier_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(panier.value))
 
-
-  await TemplateService.updateTemplate(prestataire.value.username, {
-    articles: prestataire.value.articles
-  })
+  await PrestatairePageAchatService.savePanier(auth.authUser.username, prestataire.value.username, panier.value)
+  await TemplateService.updateTemplate(prestataire.value.username, { articles: prestataire.value.articles })
 }
 
-function supprimerDuPanier(id) {
+async function supprimerDuPanier(id) {
   const index = panier.value.findIndex(a => a.id === id)
   if (index !== -1) {
     panier.value.splice(index, 1)
-    localStorage.setItem('panier_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(panier.value))
-
+    await PrestatairePageAchatService.savePanier(auth.authUser.username, prestataire.value.username, panier.value)
   }
 }
 
-function finaliserCommande() {
+async function finaliserCommande() {
   if (panier.value.length === 0) return
 
-  const groupe = {}
-  for (const item of panier.value) {
-    if (!groupe[item.id]) groupe[item.id] = { ...item, quantite: 1 }
-    else groupe[item.id].quantite++
-  }
-
-  const commande = {
-    id: uuidv4(),
-    date: new Date().toLocaleString(),
-    username: auth.authUser.username,
-    prestataireUsername: prestataire.value.username,
-    articles: Object.values(groupe)
-  }
-
-  historiqueCommandes.value.push(commande)
-  localStorage.setItem('historiqueCommandes_' + auth.authUser.username + '_' + prestataire.value.username,JSON.stringify(historiqueCommandes.value))
-
-  const allOrders = JSON.parse(localStorage.getItem("allOrders") || "[]")
-  allOrders.push(commande)
-  localStorage.setItem("allOrders", JSON.stringify(allOrders))
+  await PrestatairePageAchatService.finaliserCommande(panier.value, auth.authUser.username, prestataire.value.username)
 
   panier.value = []
-  localStorage.removeItem('panier_' + auth.authUser.username + '_' + prestataire.value.username)
+  historiqueCommandes.value = await PrestatairePageAchatService.getHistorique(auth.authUser.username, prestataire.value.username)
 
-
-  messageCommande.value =
-    `Votre commande est envoyée. Vous devrez la récupérer et payer sur place en donnant votre username : ${auth.authUser.username}`
+  messageCommande.value = `Votre commande est envoyée. Vous devrez la récupérer et payer sur place en donnant votre username : ${auth.authUser.username}`
 }
 
 const panierGroupe = computed(() => {
   const map = {}
   for (const item of panier.value) {
-    if (!map[item.id]) {
-      map[item.id] = { ...item, quantite: 1 }
-    } else {
-      map[item.id].quantite++
-    }
+    if (!map[item.id]) map[item.id] = { ...item, quantite: 1 }
+    else map[item.id].quantite++
   }
   return Object.values(map)
 })

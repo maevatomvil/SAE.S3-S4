@@ -87,7 +87,7 @@ export async function updatePrestataireSQL(data) {
       email = ?,
       image = ?,
       shortDescription = ?,
-      services = ?,
+      services = ?,                                                         
       x = ?,
       y = ?
     WHERE username = ? 
@@ -105,6 +105,12 @@ export async function updatePrestataireSQL(data) {
   )
 
   return { error: 0, status: 200 }
+}
+
+
+
+export async function getPrestataireDemandes() {
+  return await executeSQL("SELECT * FROM prestataireDemandes")
 }
 
 
@@ -134,5 +140,6 @@ export default {
   accepterDemande,
   refuserDemande,
   supprimerPrestataire,
-  updatePrestataire
+  updatePrestataire,
+  getPrestataireDemandes
 }

@@ -17,6 +17,8 @@ tags:
     description: Gestion des compétitions
   - name: Inscriptions
     description: Gestion des inscriptions aux compétitions
+  - name: PrestatairesValides
+    description: Gestion des prestataires validés
 
 paths:
 
@@ -397,3 +399,17 @@ paths:
         '200':
           description: Template mis à jour
 
+
+
+##############################
+  #     PRESTATAIRES VALIDES
+  ##############################
+
+  /prestataires-valides:
+    get:
+      tags: [PrestatairesValides]
+      summary: Récupère tous les prestataires validés
+      responses:
+        '200':
+          description: Liste des prestataires validés
+          

@@ -114,6 +114,7 @@ const routes = [
         name: 'PrestataireStats',
         component: () => import('@/views/Statistiques.vue')
     }
+    
 
 
 

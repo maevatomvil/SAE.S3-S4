@@ -8,6 +8,7 @@ import inscriptionsRoutes from "./routes/inscriptions.routes.js"
 import spectateursRoutes from "./routes/spectateurs.routes.js"
 import templateRoutes from "./routes/template.routes.js"
 import prestataireRoutes from "./routes/prestataire.routes.js"
+import prestataireMenuRoutes from "./routes/prestataireMenu.routes.js"
 
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
@@ -22,16 +23,27 @@ app.use(express.json({ limit: "10mb" }))
 app.use(express.urlencoded({ limit: "10mb", extended: true }))
 
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`)
+  next()
+})
+
+
 app.use("/auth", authRoutes)
 app.use("/competitions", competitionsRoutes)
 app.use("/inscriptions", inscriptionsRoutes)
 app.use("/spectateurs", spectateursRoutes)
 app.use("/templates", templateRoutes)
+app.use("/prestataires-valides", prestataireMenuRoutes)
+
 
 app.use("/prestataire", prestataireRoutes)
 
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
+
+
 
 
 app.listen(3000, () => {
