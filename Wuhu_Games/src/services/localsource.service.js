@@ -3,7 +3,7 @@ import authData from '@/datasource/auth.json'
 import competitions from '@/datasource/competitions.json'
 import api from "@/services/axios.service.js"
 
-const useSQL = true; //doit etre pareil que le usql de competitions.service.js et competitions.js
+const useSQL = false; //doit etre pareil que le usql de competitions.service.js et competitions.js
 
 let authUsers = JSON.parse(JSON.stringify(authData))
 let compUsers = useSQL ? [] : JSON.parse(JSON.stringify(competitions))

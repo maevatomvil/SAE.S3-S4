@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import api from "@/services/axios.service.js"
 
-const useSQL = true
+const useSQL = false
 console.log("TEMPLATE SERVICE LOADED, useSQL =", useSQL)
 
 function loadTemplates() {

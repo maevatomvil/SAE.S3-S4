@@ -69,6 +69,25 @@ CREATE TABLE historique (
   commande TEXT
 );
 
+
+
+
+
+CREATE TABLE panier (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255),
+  prestataireUsername VARCHAR(255),
+  article TEXT
+);
+
+CREATE TABLE historique (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255),
+  prestataireUsername VARCHAR(255),
+  commande TEXT
+);
+
+
 CREATE TABLE livreDor (
   id INT AUTO_INCREMENT PRIMARY KEY,
   message TEXT

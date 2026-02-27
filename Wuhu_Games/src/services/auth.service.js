@@ -1,4 +1,4 @@
-const useSQL = true
+const useSQL = false
 
 import LocalSource from "@/services/localsource.service.js"
 import api from "@/services/axios.service.js"
