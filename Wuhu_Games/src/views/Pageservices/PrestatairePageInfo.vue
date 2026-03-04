@@ -39,11 +39,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Editor from '@tinymce/tinymce-vue'
 import TemplateService from '@/services/template.service.js'
+import { useAuth } from '@/stores/auth.js'
 
 const route = useRoute()
 const prestataire = ref(null)
 const editMode = ref(false)
 const isOwner = ref(false)
+  const authStore = useAuth()
 
 const pageTitle = ref('')
 const content = ref('')
@@ -55,10 +57,7 @@ onMounted(async () => {
          p.type === 'prestataireValide'
   ) || null
 
-  const auth = JSON.parse(localStorage.getItem('auth') || '[]')
-  const session = auth.find(u => u.session)
-  isOwner.value = session && session.username === prestataire.value?.username
-
+  isOwner.value = authStore.authUser?.username === prestataire.value?.username
   if (prestataire.value) {
     pageTitle.value = prestataire.value.pageTitle
     content.value = prestataire.value.templateContent
