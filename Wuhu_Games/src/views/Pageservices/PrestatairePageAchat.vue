@@ -140,11 +140,15 @@ async function ajouterPanier(article) {
 async function supprimerDuPanier(id) {
   const index = panier.value.findIndex(a => a.id === id)
   if (index !== -1) {
+    const articleDansPanier = panier.value[index]
+    const articleDansListe = prestataire.value.articles.find(a => a.id === articleDansPanier.id)
+    if (articleDansListe) articleDansListe.stock++
+
     panier.value.splice(index, 1)
     await PrestatairePageAchatService.savePanier(auth.authUser.username, prestataire.value.username, panier.value)
+    await TemplateService.updateTemplate(prestataire.value.username, { articles: prestataire.value.articles })
   }
 }
-
 async function finaliserCommande() {
   if (panier.value.length === 0) return
 

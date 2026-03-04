@@ -1,6 +1,6 @@
 import api from "@/services/axios.service.js"
 import { v4 as uuidv4 } from 'uuid'
-const useSQL = false
+const useSQL = true
 export async function getPanier(username, prestataireUsername) {
   if (!useSQL) {
     return JSON.parse(localStorage.getItem('panier_' + username + '_' + prestataireUsername) || '[]')

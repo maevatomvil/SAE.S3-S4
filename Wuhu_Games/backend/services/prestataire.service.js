@@ -80,35 +80,32 @@ export async function supprimerPrestataireSQL(username) {
 
 export async function updatePrestataireSQL(data) {
   await executeSQL(
-    `
-    UPDATE templates
-    SET 
+    `UPDATE templates SET 
       name = ?,
+      name_en = ?,
       email = ?,
       image = ?,
       shortDescription = ?,
-      services = ?,                                                         
-      x = ?,
-      y = ?
-    WHERE username = ? 
-    `,
+      shortDescription_en = ?,
+      services = ?,
+      x = COALESCE(?, x),
+      y = COALESCE(?, y)
+    WHERE username = ?`,
     [
-      data.name,
-      data.email,
-      data.image,
-      data.shortDescription,
-      JSON.stringify(data.services),
-      data.x,
-      data.y,
+      data.name ?? null,
+      data.name_en ?? null,
+      data.email ?? null,
+      data.image ?? null,
+      data.shortDescription ?? null,
+      data.shortDescription_en ?? null,
+      JSON.stringify(data.services || []),
+      data.x ?? null,
+      data.y ?? null,
       data.username
     ]
   )
-
   return { error: 0, status: 200 }
 }
-
-
-
 export async function getPrestataireDemandes() {
   return await executeSQL("SELECT * FROM prestataireDemandes")
 }

@@ -74,46 +74,29 @@ export async function deleteTemplateSQL(id) {
 }
 
 export async function updateTemplateSQL(username, data) {
-  const sql = `
-    UPDATE templates SET 
-      name = ?, 
-      name_en = ?, 
-      shortDescription = ?, 
-      shortDescription_en = ?, 
-      image = ?, 
-      pageTitle = ?, 
-      templateContent = ?, 
-      planning = ?, 
-      pageTitleAchat = ?, 
-      pageDescriptionAchat = ?, 
-      articles = ?, 
-      services = ?, 
-      email = ?, 
-      locationNeeds = ?, 
-      x = ?, 
-      y = ?
-    WHERE username = ?
-  `
+  const fields = []
+  const params = []
 
-  const params = [
-    data.name,
-    data.name_en,
-    data.shortDescription,
-    data.shortDescription_en,
-    data.image,
-    data.pageTitle,
-    data.templateContent,
-    JSON.stringify(data.planning || []),
-    data.pageTitleAchat,
-    data.pageDescriptionAchat,
-    JSON.stringify(data.articles || []),
-    JSON.stringify(data.services || []),
-    data.email,
-    data.locationNeeds,
-    data.x,
-    data.y,
-    username
-  ]
+  if (data.name !== undefined) { fields.push('name = ?'); params.push(data.name) }
+  if (data.name_en !== undefined) { fields.push('name_en = ?'); params.push(data.name_en) }
+  if (data.shortDescription !== undefined) { fields.push('shortDescription = ?'); params.push(data.shortDescription) }
+  if (data.shortDescription_en !== undefined) { fields.push('shortDescription_en = ?'); params.push(data.shortDescription_en) }
+  if (data.image !== undefined) { fields.push('image = ?'); params.push(data.image) }
+  if (data.pageTitle !== undefined) { fields.push('pageTitle = ?'); params.push(data.pageTitle) }
+  if (data.templateContent !== undefined) { fields.push('templateContent = ?'); params.push(data.templateContent) }
+  if (data.planning !== undefined) { fields.push('planning = ?'); params.push(JSON.stringify(data.planning)) }
+  if (data.pageTitleAchat !== undefined) { fields.push('pageTitleAchat = ?'); params.push(data.pageTitleAchat) }
+  if (data.pageDescriptionAchat !== undefined) { fields.push('pageDescriptionAchat = ?'); params.push(data.pageDescriptionAchat) }
+  if (data.articles !== undefined) { fields.push('articles = ?'); params.push(JSON.stringify(data.articles)) }
+  if (data.services !== undefined) { fields.push('services = ?'); params.push(JSON.stringify(data.services)) }
+  if (data.email !== undefined) { fields.push('email = ?'); params.push(data.email) }
+  if (data.locationNeeds !== undefined) { fields.push('locationNeeds = ?'); params.push(data.locationNeeds) }
+  if (data.x !== undefined) { fields.push('x = ?'); params.push(data.x) }
+  if (data.y !== undefined) { fields.push('y = ?'); params.push(data.y) }
 
+  if (fields.length === 0) return
+
+  params.push(username)
+  const sql = `UPDATE templates SET ${fields.join(', ')} WHERE username = ?`
   await executeSQL(sql, params)
 }

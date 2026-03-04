@@ -72,12 +72,12 @@ function setPosition(pos) {
 
 async function savePosition(demande) {
   if (!pendingPosition.value) return
+  await PrestataireService.accepterDemande(demande)
   await TemplateService.updateTemplate(demande.username, {
     x: pendingPosition.value.x,
     y: pendingPosition.value.y
   })
 
-  await PrestataireService.accepterDemande(demande)
   window.location.reload()
   demandes.value = demandes.value.filter(d => d.id !== demande.id)
 }

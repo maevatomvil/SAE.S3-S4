@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 //fichier a supprimer
-const useSQL = false
+const useSQL = true
 
 function loadPanier() {
   if (!useSQL) {

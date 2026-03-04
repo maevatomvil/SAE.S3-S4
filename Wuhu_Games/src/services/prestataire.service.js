@@ -1,7 +1,7 @@
 import TemplateService from './template.service.js'
 import api from "@/services/axios.service.js"
 
-const useSQL = false
+const useSQL = true
 
 async function accepterDemande(demande) {
   if (!useSQL) {

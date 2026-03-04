@@ -105,37 +105,24 @@ function changerImage(event, article) {
 function supprimerArticle(id) {
   articles.value = articles.value.filter(a => a.id !== id)
 }
-
 async function sauvegarder() {
   const data = {
     pageTitleAchat: pageTitleAchat.value,
     pageDescriptionAchat: pageDescriptionAchat.value,
     articles: articles.value
   }
-
+  console.log("DATA ENVOYÉE:", data)
+  console.log("USERNAME:", auth.authUser.username)
   TemplateService.saveCurrentTemplate(data)
-
-  const templates = await TemplateService.getTemplates()
-  if (templates.error === 0) {
-    const list = templates.data
-    const index = list.findIndex(t => t.username === auth.authUser.username)
-
-    if (index !== -1) {
-      list[index] = {
-        ...list[index],
-        ...data
-      }
-      localStorage.setItem('templates', JSON.stringify(list))
-    }
-  }
+  await TemplateService.updateTemplate(auth.authUser.username, data)
 
   successMessage.value = 'Page sauvegardée !'
   errorMessage.value = ''
 
-  setTimeout(() => {
-    history.back()
-  }, 500)
-}
+    setTimeout(() => {
+      history.back()
+    }, 500)
+  }
 </script>
 
 <style scoped>

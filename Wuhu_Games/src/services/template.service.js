@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import api from "@/services/axios.service.js"
 
-const useSQL = false
+const useSQL = true
 console.log("TEMPLATE SERVICE LOADED, useSQL =", useSQL)
 
 function loadTemplates() {
@@ -136,6 +136,7 @@ export async function getPrestataireDemandes() {
 
 export async function updateTemplate(username, data) {
   if (useSQL) {
+    
     const res = await api.put(`/templates/${username}`, data)
     return res.data
   }

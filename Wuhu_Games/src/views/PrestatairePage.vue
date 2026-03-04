@@ -41,7 +41,7 @@
 
 
 <script setup>
-import { ref, onMounted,computed } from 'vue'
+import { ref, onMounted,computed , watch} from 'vue'
 import { useRoute,useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service.js'
 import { useAuth } from '@/stores/auth.js'
@@ -75,14 +75,18 @@ function serviceLabel(id) {
   }[id] || id
 }
 
-onMounted(async () => {
+async function chargerPrestataire() {
   const res = await TemplateService.getTemplates()
   if (res.error === 0) {
-    prestataire.value =
-      res.data.find(p =>p.username === route.params.username &&p.type === 'prestataireValide' ) || null
+    prestataire.value = res.data.find(
+      p => p.username === route.params.username && p.type === 'prestataireValide'
+    ) || null
   }
-})
+}
 
+onMounted(chargerPrestataire)
+
+watch(() => route.params.username, chargerPrestataire)
 const peutModifier = computed(() =>
   auth.authUser?.username === prestataire.value?.username
 )
