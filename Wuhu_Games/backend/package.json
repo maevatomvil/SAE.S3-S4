@@ -13,8 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "mysql2": "^3.16.2"
+    "mysql2": "^3.16.2",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   }
 }

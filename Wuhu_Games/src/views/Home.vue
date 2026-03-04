@@ -90,6 +90,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore.js'
+import { useAuth } from '@/stores/auth.js'
 import MapComponent from '@/views/Map.vue'
 import HomePageService from '@/services/homepage.service.js'
 import Editor from '@tinymce/tinymce-vue'
@@ -102,11 +103,12 @@ function goToPrestataire(p) {
 }
 
 const languageStore = useLanguageStore()
+const auth = useAuth()
 const isEnglish = computed(() => languageStore.isEnglish)
 const prestataires = ref([])
 
 const editMode = ref(false)
-const isOrganizer = ref(false)
+const isOrganizer = computed(() => auth.authUser?.role === "organisateur")
 
 const subtitleFr = ref("Faites du sport dans un environnement tropical")
 const subtitleEn = ref("Practice sport in a tropical environment")
@@ -195,9 +197,9 @@ onMounted(async () => {
   if (data.afterFr) afterFr.value = data.afterFr
   if (data.afterEn) afterEn.value = data.afterEn
 
-  const auth = JSON.parse(localStorage.getItem('auth') || '[]')
-  const session = auth.find(u => u.session)
-  isOrganizer.value = session?.role === "organisateur"
+  if (!auth.authUser) {
+    await auth.initSession()
+  }
   const res2 = await TemplateService.getTemplates()
   console.log("TEMPLATES =", res2.data)
 
@@ -215,8 +217,16 @@ async function savePage() {
     afterEn: afterEn.value
   }
 
-  await HomePageService.saveHomePage(data)
-  editMode.value = false
+  try {
+    const res = await HomePageService.saveHomePage(data)
+    if (res?.error === 0) {
+      editMode.value = false
+      return
+    }
+    alert("Erreur lors de la sauvegarde de la page d'accueil")
+  } catch {
+    alert("Erreur réseau/API lors de la sauvegarde")
+  }
 }
 
 
