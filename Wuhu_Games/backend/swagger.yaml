@@ -19,6 +19,14 @@ tags:
     description: Gestion des inscriptions aux compétitions
   - name: PrestatairesValides
     description: Gestion des prestataires validés
+  - name: Prestataire
+    description: Gestion des prestataires
+  - name: Boutique
+    description: Gestion du panier et des commandes
+  - name: Statistiques
+    description: Statistiques des prestataires
+
+
 
 paths:
 
@@ -413,3 +421,216 @@ paths:
         '200':
           description: Liste des prestataires validés
           
+
+
+
+  /prestataire/accepter:
+    post:
+      tags: [Prestataire]
+      summary: Accepte une demande de prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Demande acceptée
+
+  /prestataire/refuser:
+    post:
+      tags: [Prestataire]
+      summary: Refuse une demande de prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Demande refusée
+
+  /prestataire/{username}:
+    delete:
+      tags: [Prestataire]
+      summary: Supprime un prestataire
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prestataire supprimé
+
+  /prestataire/update:
+    put:
+      tags: [Prestataire]
+      summary: Met à jour un prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Prestataire mis à jour
+
+  /boutique/panier/{username}/{prestataireUsername}:
+    get:
+      tags: [Boutique]
+      summary: Récupère le panier
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Panier récupéré
+    post:
+      tags: [Boutique]
+      summary: Sauvegarde le panier
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Panier sauvegardé
+    delete:
+      tags: [Boutique]
+      summary: Supprime le panier
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Panier supprimé
+
+  /boutique/historique/{username}/{prestataireUsername}:
+    get:
+      tags: [Boutique]
+      summary: Récupère l'historique
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historique récupéré
+    post:
+      tags: [Boutique]
+      summary: Sauvegarde l'historique
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Historique sauvegardé
+
+  /boutique/commandes:
+    post:
+      tags: [Boutique]
+      summary: Finalise une commande
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Commande finalisée
+
+  /statistiques/views/{username}:
+    get:
+      tags: [Statistiques]
+      summary: Récupère les vues d'un prestataire
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vues récupérées
+    post:
+      tags: [Statistiques]
+      summary: Incrémente les vues du jour
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vue ajoutée
+
+  /statistiques/commandes/{username}:
+    get:
+      tags: [Statistiques]
+      summary: Récupère les commandes d'un prestataire
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Commandes récupérées

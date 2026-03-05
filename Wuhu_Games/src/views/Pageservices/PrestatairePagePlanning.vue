@@ -81,10 +81,14 @@ onMounted(async () => {
 
   const all = await TemplateService.getTemplates()
   const template = all.data.find(t => t.username === owner)
-
+  console.log("OWNER:", owner)
+  console.log("TEMPLATE:", template)
+  console.log("PLANNING:", template?.planning)
   if (template?.services?.includes('planning')) {
     hasPlanning.value = true
-    planning.value = template.planning || []
+    planning.value = typeof template.planning === 'string' 
+    ? JSON.parse(template.planning) 
+    : (template.planning || [])
   }
 })
 
@@ -97,38 +101,17 @@ function getApresMidi(jour) {
   return planning.value.filter(c => parseInt(c.heure.split(':')[0]) >= 12 && c.jour === jour)
 }
 
-function ajouterCompet() {
+async function ajouterCompet() {
   if (!canEdit.value) return
   planning.value.push({ id: uuidv4(), ...newCompet.value, joueurs: [] })
-
-  const all = JSON.parse(localStorage.getItem('templates') || '[]')
-  const index = all.findIndex(t =>
-    t.username === owner &&
-    t.services &&
-    t.services.includes('planning')
-  )
-  if (index !== -1) {
-    all[index].planning = planning.value
-    localStorage.setItem('templates', JSON.stringify(all))
-  }
-
+  await TemplateService.updateTemplate(owner, { planning: planning.value })
   newCompet.value = { jour:'', titre:'', heure:'', lieu:'' }
 }
 
-function supprimer(compet) {
+async function supprimer(compet) {
   if (!canEdit.value) return
   planning.value = planning.value.filter(c => c.id !== compet.id)
-
-  const all = JSON.parse(localStorage.getItem('templates') || '[]')
-  const index = all.findIndex(t =>
-    t.username === owner &&
-    t.services &&
-    t.services.includes('planning')
-  )
-  if (index !== -1) {
-    all[index].planning = planning.value
-    localStorage.setItem('templates', JSON.stringify(all))
-  }
+  await TemplateService.updateTemplate(owner, { planning: planning.value })
 }
 </script>
 

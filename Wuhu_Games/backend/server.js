@@ -11,6 +11,7 @@ import prestataireRoutes from "./routes/prestataire.routes.js"
 import prestataireMenuRoutes from "./routes/prestataireMenu.routes.js"
 import prestatairePageAchatRoutes from "./routes/prestatairePageAchat.routes.js"
 import homepageRoutes from "./routes/homepage.routes.js"
+import statistiquesRoutes from "./routes/statistiques.routes.js"
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
 
@@ -38,7 +39,7 @@ app.use("/templates", templateRoutes)
 app.use("/prestataires-valides", prestataireMenuRoutes)
 app.use("/boutique", prestatairePageAchatRoutes)
 app.use("/homepage", homepageRoutes)
-
+app.use("/statistiques", statistiquesRoutes)
 
 app.use("/prestataire", prestataireRoutes)
 

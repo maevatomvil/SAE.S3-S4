@@ -59,15 +59,6 @@ CREATE TABLE templates (
   y FLOAT
 );
 
-CREATE TABLE panier (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  article TEXT
-);
-
-CREATE TABLE historique (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  commande TEXT
-);
 
 
 
@@ -96,6 +87,15 @@ CREATE TABLE livreDor (
 INSERT INTO livreDor (message) VALUES
 ('Message1 '),
 ('Message2 ');
+
+
+
+CREATE TABLE views (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255),
+  date VARCHAR(255),
+  count INT DEFAULT 0
+);
 
 INSERT INTO competitions (jour, heure, titre, lieu) VALUES
 ('Lundi','09:00','Tir à l''arc','Terrain de tir à l''arc'),

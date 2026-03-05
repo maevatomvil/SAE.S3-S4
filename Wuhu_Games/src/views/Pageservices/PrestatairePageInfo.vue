@@ -40,7 +40,7 @@ import { useRoute } from 'vue-router'
 import Editor from '@tinymce/tinymce-vue'
 import TemplateService from '@/services/template.service.js'
 import { useAuth } from '@/stores/auth.js'
-
+import StatistiquesService from '@/services/statistiques.service.js'
 const route = useRoute()
 const prestataire = ref(null)
 const editMode = ref(false)
@@ -68,6 +68,7 @@ onMounted(async () => {
     const v = vues.find(v => v.date === today)
     v ? v.count++ : vues.push({ date: today, count: 1 })
     localStorage.setItem(key, JSON.stringify(vues))
+    await StatistiquesService.addView(prestataire.value.username)
   }
 })
 

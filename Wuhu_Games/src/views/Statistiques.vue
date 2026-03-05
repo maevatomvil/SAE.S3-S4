@@ -49,12 +49,12 @@ onMounted(async () => {
   prestataire.value = res.data.find(p => p.username === username)
 
   if (prestataire.value?.services?.includes('achat')) {
-    panierMoyen.value = StatistiquesService.getPanierMoyen(prestataire.value.username)
-    classement.value = StatistiquesService.getClassementArticles(prestataire.value)
+    panierMoyen.value = await StatistiquesService.getPanierMoyen(prestataire.value.username)
+    classement.value = await StatistiquesService.getClassementArticles(prestataire.value)
   }
 
   if (prestataire.value?.services?.includes('info')) {
-    vues.value = StatistiquesService.getVuesPageInfo(username)
+    vues.value = await StatistiquesService.getVuesPageInfo(username)
 
     await nextTick()
 
