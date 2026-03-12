@@ -36,7 +36,7 @@
             <label :for="s.id">{{ s.name }}</label>
 
             <button
-              v-if="form.services.includes(s.id)"
+              v-if="form.services.includes(s.id) && s.id !== 'livre-dor'"
               type="button"
               class="btn-template"
               @click="openTemplate(s.id)">
@@ -182,18 +182,10 @@ async function handleSubmit() {
 
 
 const availableServices = computed(() => [
-  {
-    id: 'achat',
-    name: isEnglish.value ? 'Shop page' : 'Page d’achat'
-  },
-  {
-    id: 'planning',
-    name: isEnglish.value ? 'Schedule' : 'Planning'
-  },
-  {
-    id: 'info',
-    name: isEnglish.value ? 'Information page' : 'Page d’information'
-  }
+  { id: 'achat', name: isEnglish.value ? 'Shop page' : "Page d'achat" },
+  { id: 'planning', name: isEnglish.value ? 'Schedule' : 'Planning' },
+  { id: 'info', name: isEnglish.value ? 'Information page' : "Page d'information" },
+  { id: 'livre-dor', name: isEnglish.value ? 'Guest book' : "Livre d'or" }
 ])
 
 
@@ -202,12 +194,33 @@ function openTemplate(serviceId) {
   if (serviceId === 'achat') router.push('/AddAchats')
   else if (serviceId === 'planning') router.push('/AddPlanning')
   else if (serviceId === 'info') router.push('/PageInformation')
+
 }
 </script>
 
 <style scoped>
-.prestataire { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; background: linear-gradient(to right, #5858d8, #0080ff); z-index:0; }
-.prestataire-container { background:white; padding:40px 60px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; }
+.prestataire { 
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(to right, #5858d8, #0080ff);
+  padding: 40px 20px;
+}
+.prestataire-container { 
+  background: white;
+  padding: 40px 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+
+
 .prestataire-title { font-size:24px; font-weight:bold; margin-bottom:20px; color:#0000f5; }
 .prestataire-form { width:100%; display:flex; flex-direction:column; gap:16px; }
 .input-group { display:flex; flex-direction:column; }

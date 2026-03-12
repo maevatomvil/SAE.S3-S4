@@ -113,6 +113,12 @@ const routes = [
         path: '/prestataire/:username/stats',
         name: 'PrestataireStats',
         component: () => import('@/views/Statistiques.vue')
+    },
+    {
+        path: '/prestataire/:username/livre-dor',
+        name: 'PrestatairePageLivreDor',
+        component: () => import('@/views/LivreDorView.vue'),
+        props: true
     }
     
 

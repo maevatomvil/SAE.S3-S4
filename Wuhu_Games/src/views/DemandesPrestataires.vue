@@ -61,7 +61,8 @@ function serviceName(id) {
     achat: 'Page d’achat',
     reservation: 'Réservation',
     planning: 'Planning',
-    info: 'Page d’information'
+    info: 'Page d’information',
+    'livre-dor': "Livre d'or"
   }
   return mapping[id] || id
 }

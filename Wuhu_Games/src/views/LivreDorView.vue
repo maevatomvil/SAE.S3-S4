@@ -10,7 +10,7 @@
     <h2>Messages :</h2>
     <ul>
       <li v-for="(msg, index) in messages" :key="index">
-        {{ msg }}
+        {{ msg }} <small>{{ store.dates[index] ? new Date(store.dates[index]).toLocaleDateString('fr-FR') : '' }}</small>
         <button @click="deleteMessage(index)">Supprimer</button>
         <br></br><p>----------------------------------------</p><br></br>
       </li>
@@ -19,20 +19,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useLivreDorStore } from '@/stores/livreDor.js'
-
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const prestataireUsername = computed(() => route.params.username)
 const newMessage = ref('')
 const store = useLivreDorStore()
-const messages = store.messages
+const { messages } = storeToRefs(store)
+
+onMounted(() => {
+  store.loadMessages(prestataireUsername.value)
+})
 
 function addMessage(msg) {
-  store.addMessage(msg)
+  store.addMessage(msg, prestataireUsername.value)
   newMessage.value = ''
 }
 
 function deleteMessage(index) {
-  store.deleteMessage(index)
+  store.deleteMessage(index, prestataireUsername.value)
 }
 </script>
 

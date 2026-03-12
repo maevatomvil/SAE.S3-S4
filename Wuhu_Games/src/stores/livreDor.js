@@ -1,42 +1,57 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import initialMessages from '@/datasource/livreDor.json'
+import api from "@/services/axios.service.js"
 
-export const useLivreDorStore = defineStore('livreDor', () => {
+const useSQL = true
+
+export const useLivreDorStore = defineStore('livreDor', (prestataireUsername) => {
   const messages = ref([])
-
-  function loadMessages() {
-    const saved = localStorage.getItem('livreDor')
-    const localMessages = saved ? JSON.parse(saved) : []
-    messages.value = [...initialMessages, ...localMessages]
-  }
-
-  function addMessage(newMessage) {
-    if (!newMessage || newMessage.trim() === '') return
-    const saved = localStorage.getItem('livreDor')
-    const localMessages = saved ? JSON.parse(saved) : []
-    localMessages.push(newMessage.trim())
-    localStorage.setItem('livreDor', JSON.stringify(localMessages))
-    messages.value.push(newMessage.trim())
-  }
-
-  function deleteMessage(index) {
-    const saved = localStorage.getItem('livreDor')
-    let localMessages = saved ? JSON.parse(saved) : []
-    if (index >= initialMessages.length) {
-      localMessages.splice(index - initialMessages.length, 1)
-      localStorage.setItem('livreDor', JSON.stringify(localMessages))
-      messages.value.splice(index, 1)
-    }else{
-           const warning = document.createElement('p')
-           warning.textContent = "Impossible de supprimer un message provenant du JSON initial"
-           warning.style.color = 'red'
-           document.body.appendChild(warning)
-           setTimeout(() => warning.remove(), 3000)
+  const ids = ref([])
+  const dates = ref([])
+  async function loadMessages(prestataireUsername) {
+    if (!useSQL) {
+      const saved = localStorage.getItem(`livreDor_${prestataireUsername}`)
+      const localMessages = saved ? JSON.parse(saved) : []
+      messages.value = [...initialMessages, ...localMessages]
+    } else {
+      const res = await api.get(`/livre-dor/${prestataireUsername}`)
+      messages.value = res.data.data.map(m => m.message)
+      ids.value = res.data.data.map(m => m.id)
+      dates.value = res.data.data.map(m => m.createdAt)
     }
   }
 
-  loadMessages()
+  async function addMessage(newMessage, prestataireUsername) {
+    if (!newMessage || newMessage.trim() === '') return
+    if (!useSQL) {
+      const saved = localStorage.getItem(`livreDor_${prestataireUsername}`)
+      const localMessages = saved ? JSON.parse(saved) : []
+      localMessages.push(newMessage.trim())
+      localStorage.setItem(`livreDor_${prestataireUsername}`, JSON.stringify(localMessages))
+      messages.value.push(newMessage.trim())
+    } else {
+      await api.post(`/livre-dor/${prestataireUsername}`, { message: newMessage })
+      await loadMessages(prestataireUsername)
+    }
+  }
 
-  return { messages, addMessage, deleteMessage }
+  async function deleteMessage(index, prestataireUsername) {
+    if (!useSQL) {
+      const saved = localStorage.getItem(`livreDor_${prestataireUsername}`)
+      let localMessages = saved ? JSON.parse(saved) : []
+      if (index < initialMessages.length) {
+        alert("Impossible de supprimer un message provenant du JSON initial")
+        return
+      }
+      localMessages.splice(index - initialMessages.length, 1)
+      localStorage.setItem(`livreDor_${prestataireUsername}`, JSON.stringify(localMessages))
+      messages.value.splice(index, 1)
+    } else {
+      await api.delete(`/livre-dor/${ids.value[index]}`)
+      await loadMessages(prestataireUsername)
+    }
+  }
+
+  return { messages, ids, dates, loadMessages, addMessage, deleteMessage }
 })

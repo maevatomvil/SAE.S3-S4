@@ -63,7 +63,8 @@ function serviceLabel(id) {
       achat: 'Page d’achat',
       reservation: 'Réservation',
       planning: 'Planning',
-      info: 'Page d’information'
+      info: 'Page d’information',
+      'livre-dor': "Livre d'or"
     }[id] || id
   }
 
@@ -71,7 +72,8 @@ function serviceLabel(id) {
     achat: 'Shop',
     reservation: 'Booking',
     planning: 'Schedule',
-    info: 'Information page'
+    info: 'Information page',
+    'livre-dor': 'Guest book'
   }[id] || id
 }
 

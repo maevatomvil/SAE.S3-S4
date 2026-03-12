@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { useAuth } from '@/stores/auth.js'
 
-const useSQL = false
+const useSQL = true
 
 let prestatairesPlanning = JSON.parse(localStorage.getItem('prestatairesPlanning') || '[]')
 

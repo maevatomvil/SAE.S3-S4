@@ -73,10 +73,21 @@
             v-for="p in prestataires"
             :key="p.id"
             class="pin"
-            :style="pinStyle(p)"
-            @click="goToPrestataire(p)">
-            <span class="pin-label">{{ p.name }}</span>
+            :style="pinStyle(p)">
+          <div class="pin-label">
+            <strong style="text-align: center;">{{ p.name }}</strong>
+            <br>
+            <button class="pin-btn" @click="goToPrestataire(p)">
+              Accéder
+            </button>
+
+            <ul class="services-list">
+              <li v-for="s in p.services" :key="s">{{ s }}</li>
+            </ul>
           </div>
+        </div>
+
+          
         </MapComponent>
       </div>
 
@@ -387,12 +398,34 @@ function pinStyle(p) {
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.2s;
-  pointer-events: none;
+  pointer-events: auto;
 }
+
 
 .pin:hover .pin-label {
   opacity: 1;
 }
+
+.pin:hover .pin-label,
+.pin-label:hover {
+  opacity: 1;
+}
+
+
+.pin-btn {
+  width: 100%;
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 6px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+  display: block;
+}
+
+
 
 
 </style>
