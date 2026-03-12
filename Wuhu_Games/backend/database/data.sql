@@ -79,10 +79,15 @@ CREATE TABLE historique (
 );
 
 
+
+
 CREATE TABLE livreDor (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  message TEXT
+  prestataireUsername VARCHAR(255),
+  message TEXT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 INSERT INTO livreDor (message) VALUES
 ('Message1 '),

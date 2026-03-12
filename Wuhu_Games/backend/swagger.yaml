@@ -25,6 +25,14 @@ tags:
     description: Gestion du panier et des commandes
   - name: Statistiques
     description: Statistiques des prestataires
+  - name: Templates
+    description: Gestion des templates prestataires
+  - name: Homepage
+    description: Gestion de la page d'accueil
+  - name: Spectateurs
+    description: Gestion des spectateurs
+  - name: LivreDor
+    description: Gestion du livre d'or des prestataires
 
 
 
@@ -634,3 +642,161 @@ paths:
       responses:
         '200':
           description: Commandes récupérées
+
+  /homepage:
+    get:
+      tags: [Homepage]
+      summary: Récupère le contenu de la page d'accueil
+      responses:
+        '200':
+          description: Contenu récupéré
+    put:
+      tags: [Homepage]
+      summary: Met à jour la page d'accueil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Page mise à jour
+
+  /spectateurs:
+    get:
+      tags: [Spectateurs]
+      summary: Récupère tous les spectateurs
+      responses:
+        '200':
+          description: Liste des spectateurs
+    post:
+      tags: [Spectateurs]
+      summary: Inscrit un spectateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Inscription réussie
+    delete:
+      tags: [Spectateurs]
+      summary: Désinscrit un spectateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Désinscription réussie
+
+  /spectateurs/{titre}/{jour}/{heure}:
+    get:
+      tags: [Spectateurs]
+      summary: Récupère les spectateurs d'une compétition
+      parameters:
+        - name: titre
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: jour
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: heure
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des spectateurs
+
+  /spectateurs/{titre}/{jour}/{heure}/numero/{username}:
+    get:
+      tags: [Spectateurs]
+      summary: Récupère le numéro d'un spectateur
+      parameters:
+        - name: titre
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: jour
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: heure
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Numéro récupéré
+
+
+
+
+  /livre-dor/{prestataireUsername}:
+    get:
+      tags: [LivreDor]
+      summary: Récupère les messages du livre d'or
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des messages
+    post:
+      tags: [LivreDor]
+      summary: Ajoute un message dans le livre d'or
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        '201':
+          description: Message ajouté
+
+  /livre-dor/{id}:
+    delete:
+      tags: [LivreDor]
+      summary: Supprime un message du livre d'or
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Message supprimé
+

@@ -12,9 +12,10 @@ import prestataireMenuRoutes from "./routes/prestataireMenu.routes.js"
 import prestatairePageAchatRoutes from "./routes/prestatairePageAchat.routes.js"
 import homepageRoutes from "./routes/homepage.routes.js"
 import statistiquesRoutes from "./routes/statistiques.routes.js"
+import livreDorRoutes from "./routes/livreDor.routes.js"
+
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
-
 
 const app = express()
 const swaggerDocument = YAML.load("./swagger.yaml")
@@ -40,6 +41,7 @@ app.use("/prestataires-valides", prestataireMenuRoutes)
 app.use("/boutique", prestatairePageAchatRoutes)
 app.use("/homepage", homepageRoutes)
 app.use("/statistiques", statistiquesRoutes)
+app.use("/livre-dor", livreDorRoutes)
 
 app.use("/prestataire", prestataireRoutes)
 
