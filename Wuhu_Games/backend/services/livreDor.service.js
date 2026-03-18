@@ -20,3 +20,17 @@ export async function deleteMessageSQL(id) {
   await executeSQL("DELETE FROM livreDor WHERE id = ?", [id])
   return { error: 0, status: 200, data: "Message supprimé" }
 }
+
+
+
+export async function getStatsSQL(prestataireUsername) {
+  const rows = await executeSQL(
+    `SELECT DATE(createdAt) as date, COUNT(*) as count 
+     FROM livreDor 
+     WHERE prestataireUsername = ? 
+     GROUP BY DATE(createdAt) 
+     ORDER BY date ASC`,
+    [prestataireUsername]
+  )
+  return { error: 0, status: 200, data: rows }
+}

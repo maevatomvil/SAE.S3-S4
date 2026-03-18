@@ -1,7 +1,8 @@
 import {
   getMessagesSQL,
   addMessageSQL,
-  deleteMessageSQL
+  deleteMessageSQL,
+  getStatsSQL
 } from "../services/livreDor.service.js"
 
 export async function getMessages(req, res) {
@@ -30,3 +31,17 @@ export async function deleteMessage(req, res) {
     res.status(500).json({ error: 1, status: 500, data: "Erreur serveur" })
   }
 }
+
+
+
+export async function getStats(req, res) {
+  try {
+    const result = await getStatsSQL(req.params.prestataireUsername)
+    res.status(result.status).json(result)
+  } catch {
+    res.status(500).json({ error: 1, status: 500, data: "Erreur serveur" })
+  }
+}
+
+
+

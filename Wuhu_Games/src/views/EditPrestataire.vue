@@ -78,8 +78,8 @@
               <span v-if="!isEnglish">{{ s.name }}</span>
               <span v-else>
                 {{ s.id === 'achat' ? 'Shop page' :
-                   s.id === 'planning' ? 'Schedule' :
-                   'Information page' }}
+                  s.id === 'planning' ? 'Schedule' :
+                  s.id === 'livre-dor' ? 'Guest book' :  'Information page' }}
               </span>
             </label>
           </div>
@@ -123,7 +123,9 @@ const form = ref({
 const availableServices = ref([
   { id: 'achat', name: 'Page d’achat' },
   { id: 'planning', name: 'Planning' },
-  { id: 'info', name: 'Page d’information' }
+  { id: 'info', name: 'Page d’information' },
+  { id: 'livre-dor', name: "Livre d'or" }
+  
 ])
 
 async function submitForm() {
@@ -173,8 +175,25 @@ async function handleFileUpload(event) {
 </script>
 
 <style scoped>
-.prestataire { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; background: linear-gradient(to right, #5858d8, #0080ff); z-index:0; }
-.prestataire-container { background:white; padding:40px 60px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; }
+.prestataire { 
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(to right, #5858d8, #0080ff);
+  padding: 40px 20px;
+}
+.prestataire-container { 
+  background: white;
+  padding: 40px 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
 .prestataire-title { font-size:24px; font-weight:bold; margin-bottom:20px; color:#0000f5; }
 .prestataire-form { width:100%; display:flex; flex-direction:column; gap:16px; }
 .input-group { display:flex; flex-direction:column; }

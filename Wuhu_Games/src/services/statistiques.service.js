@@ -94,10 +94,22 @@ export async function addView(username) {
   await api.post(`/statistiques/views/${username}`)
 }
 
+
+
+export async function getLivreDorStats(username) {
+  if (!useSQL) {
+    return { error: 0, status: 200, data: [] }
+  }
+  const res = await api.get(`/livre-dor/${username}/stats`)
+  return res.data
+}
+
+
 export default {
   ajouterCommandeGlobale,
   getPanierMoyen,
   getClassementArticles,
   getVuesPageInfo,
-  addView
+  addView,
+  getLivreDorStats
 }

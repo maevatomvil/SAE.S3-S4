@@ -19,6 +19,12 @@
       <p>Evolution du nombre de consultation de la page par rapport au temps</p>
       <canvas id="chartVues"></canvas>
     </div>
+
+    <div v-if="prestataire?.services?.includes('livre-dor')" class="card">
+      <h2>Service de livre d'or</h2>
+      <p>Nombre de messages reçus par jour</p>
+      <canvas id="chartLivreDor"></canvas>
+    </div>
   </div>
 </template>
 
@@ -38,7 +44,7 @@ const prestataire = ref(null)
 const panierMoyen = ref(0)
 const classement = ref([])
 const vues = ref([])
-
+const messagesParJour = ref([])
 onMounted(async () => {
   if (!auth.authUser || auth.authUser.username !== username) {
     window.location.href = '/'
@@ -47,7 +53,7 @@ onMounted(async () => {
 
   const res = await TemplateService.getTemplates()
   prestataire.value = res.data.find(p => p.username === username)
-
+  
   if (prestataire.value?.services?.includes('achat')) {
     panierMoyen.value = await StatistiquesService.getPanierMoyen(prestataire.value.username)
     classement.value = await StatistiquesService.getClassementArticles(prestataire.value)
@@ -83,6 +89,33 @@ onMounted(async () => {
       }
     })
   }
+
+
+  if (prestataire.value?.services?.includes('livre-dor')) {
+    const res = await StatistiquesService.getLivreDorStats(username)
+    messagesParJour.value = res.data || []
+    await nextTick()
+    const ctx = document.getElementById('chartLivreDor')
+    if (!ctx) return
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: messagesParJour.value.map(v => v.date),
+        datasets: [{
+          label: 'Messages',
+          data: messagesParJour.value.map(v => v.count),
+          backgroundColor: '#5858d8'
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            ticks: { stepSize: 1, precision: 0 }
+          }
+        }
+      }
+    })
+}
 })
 </script>
 
