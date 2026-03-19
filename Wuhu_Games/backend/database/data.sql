@@ -145,6 +145,16 @@ CREATE TABLE availability (
 );
 
 
+CREATE TABLE planningPrestataire (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  prestataireUsername VARCHAR(255),
+  eventId VARCHAR(255),
+  username VARCHAR(255),
+  numero INT
+);
+
+
+
 
 
 
