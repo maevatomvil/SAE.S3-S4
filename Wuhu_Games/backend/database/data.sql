@@ -1,3 +1,21 @@
+DROP TABLE IF EXISTS hotelReservations;
+DROP TABLE IF EXISTS hotelAvailability;
+DROP TABLE IF EXISTS prestataireDemandesHotelAvailability;
+DROP TABLE IF EXISTS prestataireDemandesServices;
+DROP TABLE IF EXISTS prestataireDemandes;
+DROP TABLE IF EXISTS planningPrestataire;
+DROP TABLE IF EXISTS availability;
+DROP TABLE IF EXISTS spectateurs;
+DROP TABLE IF EXISTS views;
+DROP TABLE IF EXISTS livreDor;
+DROP TABLE IF EXISTS historique;
+DROP TABLE IF EXISTS panier;
+DROP TABLE IF EXISTS templates;
+DROP TABLE IF EXISTS homepage;
+DROP TABLE IF EXISTS inscriptions;
+DROP TABLE IF EXISTS competitions;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   firstname VARCHAR(255),
@@ -40,6 +58,7 @@ VALUES (1, '', '', '', '');
 CREATE TABLE templates (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255),
+  providerType VARCHAR(50) DEFAULT 'standard',
   type VARCHAR(255),
   name VARCHAR(255),
   name_en VARCHAR(255),
@@ -161,6 +180,7 @@ CREATE TABLE planningPrestataire (
 CREATE TABLE prestataireDemandes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255),
+  providerType VARCHAR(50) DEFAULT 'standard',
   serviceName VARCHAR(255),
   serviceName_en VARCHAR(255),
   email VARCHAR(255),
@@ -169,12 +189,46 @@ CREATE TABLE prestataireDemandes (
   descriptionEn TEXT,
   pageAchat TEXT,
   planning TEXT,
+  hotelAvailability MEDIUMTEXT,
   pageInfo TEXT,
   locationNeeds TEXT,
   status VARCHAR(50) DEFAULT 'pending',
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE hotelAvailability (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  prestataireUsername VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  simpleAvailable INT NOT NULL DEFAULT 0,
+  doubleAvailable INT NOT NULL DEFAULT 0,
+  priceSimple INT NOT NULL DEFAULT 0,
+  priceDouble INT NOT NULL DEFAULT 0,
+  UNIQUE KEY uniq_hotel_availability (prestataireUsername, date)
+);
+
+CREATE TABLE hotelReservations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  prestataireUsername VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL,
+  roomType VARCHAR(50) NOT NULL,
+  startDate DATE NOT NULL,
+  endDate DATE NOT NULL,
+  nights INT NOT NULL,
+  pricePerNight INT NOT NULL,
+  totalPrice INT NOT NULL,
+  status VARCHAR(50) DEFAULT 'confirmed',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CHECK (roomType IN ('simple', 'double')),
+  CHECK (endDate >= startDate),
+  UNIQUE KEY uniq_hotel_reservation (
+    prestataireUsername,
+    username,
+    roomType,
+    startDate,
+    endDate
+  )
+);
 
 CREATE TABLE prestataireDemandesServices (
   id INT AUTO_INCREMENT PRIMARY KEY,

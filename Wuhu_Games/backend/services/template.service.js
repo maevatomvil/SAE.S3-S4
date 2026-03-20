@@ -3,11 +3,12 @@ import { executeSQL } from "../database/db.js"
 export async function savePrestataireDemandeSQL(data) {
   const sql = `
     INSERT INTO prestataireDemandes 
-    (username, serviceName, serviceName_en, email, image, descriptionFr, descriptionEn, pageAchat, planning, pageInfo, locationNeeds) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (username, providerType, serviceName, serviceName_en, email, image, descriptionFr, descriptionEn, pageAchat, planning, hotelAvailability, pageInfo, locationNeeds) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
   const params = [
     data.username ?? null,
+    data.providerType ?? "standard",
     data.name ?? null,
     data.name_en ?? null,
     data.email ?? null,
@@ -16,6 +17,7 @@ export async function savePrestataireDemandeSQL(data) {
     data.shortDescription_en ?? null,
     data.pageTitleAchat ?? null,
     JSON.stringify(data.planning || []),
+    JSON.stringify(data.hotelAvailability || []),
     data.templateContent ?? null,
     data.locationNeeds ?? null
     ]
@@ -39,11 +41,24 @@ export async function savePrestataireDemandeSQL(data) {
 export async function getTemplatesSQL() {
   const sql = "SELECT * FROM templates"
   const templates = await executeSQL(sql)
+  const hotels = await executeSQL(
+    "SELECT prestataireUsername, date, simpleAvailable, doubleAvailable, priceSimple, priceDouble FROM hotelAvailability ORDER BY date ASC"
+  )
+
   return templates.map(t => ({
     ...t,
     services: JSON.parse(t.services || '[]'),
     articles: JSON.parse(t.articles || '[]'),
-    planning: JSON.parse(t.planning || '[]')
+    planning: JSON.parse(t.planning || '[]'),
+    hotelAvailability: hotels
+      .filter(h => h.prestataireUsername === t.username)
+      .map(h => ({
+        date: h.date,
+        simpleAvailable: h.simpleAvailable,
+        doubleAvailable: h.doubleAvailable,
+        priceSimple: h.priceSimple,
+        priceDouble: h.priceDouble
+      }))
   }))
 }
 
@@ -63,6 +78,8 @@ export async function getPrestataireDemandesSQL() {
     d.shortDescription_en = d.descriptionEn
     d.pageTitle = d.pageAchat
     d.templateContent = d.pageInfo
+    d.providerType = d.providerType || "standard"
+    d.hotelAvailability = JSON.parse(d.hotelAvailability || '[]')
   }
 
   return demandes

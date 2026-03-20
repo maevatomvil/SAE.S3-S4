@@ -105,6 +105,11 @@ const routes = [
         component: () => import('@/views/Pageservices/PrestatairePagePlanning.vue'),
         props: true
     },{
+        path: '/prestataire/:username/reservation',
+        name: 'PrestatairePageReservation',
+        component: () => import('@/views/Pageservices/PrestatairePageReservation.vue'),
+        props: true
+    },{
         path: '/prestataire/:username/edit',
         name: 'EditPrestataire',
         component: () => import('@/views/EditPrestataire.vue')

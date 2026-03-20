@@ -1,34 +1,51 @@
 import { executeSQL } from "../database/db.js"
 
 export async function accepterDemandeSQL(data) {
-
   await executeSQL(
     `
     INSERT INTO templates 
-    (username, name, name_en, shortDescription, shortDescription_en, image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat, articles, services, email, locationNeeds, type)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prestataireValide')
+    (username, providerType, name, name_en, shortDescription, shortDescription_en, image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat, articles, services, email, locationNeeds, type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prestataireValide')
     `,
     [
-      
-    data.username ?? null,
-    data.name ?? null,
-    data.name_en ?? null,
-    data.shortDescription ?? null,
-    data.shortDescription_en ?? null,
-    data.image ?? null,
-    data.pageTitle ?? null,
-    data.templateContent ?? null,
-    JSON.stringify(data.planning || []),
-    data.pageTitleAchat ?? null,
-    data.pageDescriptionAchat ?? null,
-    JSON.stringify(data.articles || []),
-    JSON.stringify(data.services || []),
-    data.email ?? null,
-    data.locationNeeds ?? null
-  ]
-
-    
+      data.username ?? null,
+      data.providerType ?? "standard",
+      data.name ?? null,
+      data.name_en ?? null,
+      data.shortDescription ?? null,
+      data.shortDescription_en ?? null,
+      data.image ?? null,
+      data.pageTitle ?? null,
+      data.templateContent ?? null,
+      JSON.stringify(data.planning || []),
+      data.pageTitleAchat ?? null,
+      data.pageDescriptionAchat ?? null,
+      JSON.stringify(data.articles || []),
+      JSON.stringify(data.services || []),
+      data.email ?? null,
+      data.locationNeeds ?? null
+    ]
   )
+
+  if (data.providerType === "hotel" && Array.isArray(data.hotelAvailability)) {
+    for (const item of data.hotelAvailability) {
+      await executeSQL(
+        `
+        INSERT INTO hotelAvailability
+        (prestataireUsername, date, simpleAvailable, doubleAvailable, priceSimple, priceDouble)
+        VALUES (?, ?, ?, ?, ?, ?)
+        `,
+        [
+          data.username,
+          item.date,
+          item.simpleAvailable ?? 0,
+          item.doubleAvailable ?? 0,
+          item.priceSimple ?? 0,
+          item.priceDouble ?? 0
+        ]
+      )
+    }
+  }
 
   await executeSQL(
     "UPDATE users SET role = 'prestataire' WHERE username = ?",
@@ -66,6 +83,16 @@ export async function refuserDemandeSQL(data) {
 
 export async function supprimerPrestataireSQL(username) {
   await executeSQL(
+    "DELETE FROM hotelReservations WHERE prestataireUsername = ?",
+    [username]
+  )
+
+  await executeSQL(
+    "DELETE FROM hotelAvailability WHERE prestataireUsername = ?",
+    [username]
+  )
+
+  await executeSQL(
     "DELETE FROM templates WHERE username = ?",
     [username]
   )
@@ -87,6 +114,7 @@ export async function updatePrestataireSQL(data) {
       image = ?,
       shortDescription = ?,
       shortDescription_en = ?,
+      providerType = COALESCE(?, providerType),
       services = ?,
       x = COALESCE(?, x),
       y = COALESCE(?, y)
@@ -98,6 +126,7 @@ export async function updatePrestataireSQL(data) {
       data.image ?? null,
       data.shortDescription ?? null,
       data.shortDescription_en ?? null,
+      data.providerType ?? null,
       JSON.stringify(data.services || []),
       data.x ?? null,
       data.y ?? null,
