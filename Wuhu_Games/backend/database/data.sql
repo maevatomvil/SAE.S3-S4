@@ -184,7 +184,7 @@ CREATE TABLE prestataireDemandes (
   serviceName VARCHAR(255),
   serviceName_en VARCHAR(255),
   email VARCHAR(255),
-  image TEXT,
+  image MEDIUMTEXT,
   descriptionFr TEXT,
   descriptionEn TEXT,
   pageAchat TEXT,

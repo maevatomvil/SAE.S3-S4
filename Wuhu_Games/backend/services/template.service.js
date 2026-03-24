@@ -1,4 +1,7 @@
 import { executeSQL } from "../database/db.js"
+import sanitizeHtml from 'sanitize-html'
+
+const sanitize = (str) => str ? sanitizeHtml(str, { allowedTags: [], allowedAttributes: {} }) : null
 
 export async function savePrestataireDemandeSQL(data) {
   const sql = `
@@ -7,21 +10,20 @@ export async function savePrestataireDemandeSQL(data) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
   const params = [
-    data.username ?? null,
+    sanitize(data.username) ?? null,
     data.providerType ?? "standard",
-    data.name ?? null,
-    data.name_en ?? null,
-    data.email ?? null,
+    sanitize(data.name) ?? null,
+    sanitize(data.name_en) ?? null,
+    sanitize(data.email) ?? null,
     data.image ?? null,
-    data.shortDescription ?? null,
-    data.shortDescription_en ?? null,
-    data.pageTitleAchat ?? null,
+    sanitize(data.shortDescription) ?? null,
+    sanitize(data.shortDescription_en) ?? null,
+    sanitize(data.pageTitleAchat) ?? null,
     JSON.stringify(data.planning || []),
     JSON.stringify(data.hotelAvailability || []),
     data.templateContent ?? null,
-    data.locationNeeds ?? null
-    ]
-
+    sanitize(data.locationNeeds) ?? null
+  ]
 
   const result = await executeSQL(sql, params)
   const demandeId = result.insertId
@@ -85,7 +87,6 @@ export async function getPrestataireDemandesSQL() {
   return demandes
 }
 
-
 export async function deleteTemplateSQL(id) {
   await executeSQL("DELETE FROM templates WHERE id = ?", [id])
 }
@@ -94,20 +95,20 @@ export async function updateTemplateSQL(username, data) {
   const fields = []
   const params = []
 
-  if (data.name !== undefined) { fields.push('name = ?'); params.push(data.name) }
-  if (data.name_en !== undefined) { fields.push('name_en = ?'); params.push(data.name_en) }
-  if (data.shortDescription !== undefined) { fields.push('shortDescription = ?'); params.push(data.shortDescription) }
-  if (data.shortDescription_en !== undefined) { fields.push('shortDescription_en = ?'); params.push(data.shortDescription_en) }
+  if (data.name !== undefined) { fields.push('name = ?'); params.push(sanitize(data.name)) }
+  if (data.name_en !== undefined) { fields.push('name_en = ?'); params.push(sanitize(data.name_en)) }
+  if (data.shortDescription !== undefined) { fields.push('shortDescription = ?'); params.push(sanitize(data.shortDescription)) }
+  if (data.shortDescription_en !== undefined) { fields.push('shortDescription_en = ?'); params.push(sanitize(data.shortDescription_en)) }
   if (data.image !== undefined) { fields.push('image = ?'); params.push(data.image) }
-  if (data.pageTitle !== undefined) { fields.push('pageTitle = ?'); params.push(data.pageTitle) }
+  if (data.pageTitle !== undefined) { fields.push('pageTitle = ?'); params.push(sanitize(data.pageTitle)) }
   if (data.templateContent !== undefined) { fields.push('templateContent = ?'); params.push(data.templateContent) }
   if (data.planning !== undefined) { fields.push('planning = ?'); params.push(JSON.stringify(data.planning)) }
-  if (data.pageTitleAchat !== undefined) { fields.push('pageTitleAchat = ?'); params.push(data.pageTitleAchat) }
+  if (data.pageTitleAchat !== undefined) { fields.push('pageTitleAchat = ?'); params.push(sanitize(data.pageTitleAchat)) }
   if (data.pageDescriptionAchat !== undefined) { fields.push('pageDescriptionAchat = ?'); params.push(data.pageDescriptionAchat) }
   if (data.articles !== undefined) { fields.push('articles = ?'); params.push(JSON.stringify(data.articles)) }
   if (data.services !== undefined) { fields.push('services = ?'); params.push(JSON.stringify(data.services)) }
-  if (data.email !== undefined) { fields.push('email = ?'); params.push(data.email) }
-  if (data.locationNeeds !== undefined) { fields.push('locationNeeds = ?'); params.push(data.locationNeeds) }
+  if (data.email !== undefined) { fields.push('email = ?'); params.push(sanitize(data.email)) }
+  if (data.locationNeeds !== undefined) { fields.push('locationNeeds = ?'); params.push(sanitize(data.locationNeeds)) }
   if (data.x !== undefined) { fields.push('x = ?'); params.push(data.x) }
   if (data.y !== undefined) { fields.push('y = ?'); params.push(data.y) }
 
