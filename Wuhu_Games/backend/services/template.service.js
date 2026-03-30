@@ -109,8 +109,8 @@ export async function updateTemplateSQL(username, data) {
   if (data.services !== undefined) { fields.push('services = ?'); params.push(JSON.stringify(data.services)) }
   if (data.email !== undefined) { fields.push('email = ?'); params.push(sanitize(data.email)) }
   if (data.locationNeeds !== undefined) { fields.push('locationNeeds = ?'); params.push(sanitize(data.locationNeeds)) }
-  if (data.x !== undefined) { fields.push('x = ?'); params.push(data.x) }
-  if (data.y !== undefined) { fields.push('y = ?'); params.push(data.y) }
+  if (data.zoneId !== undefined) { fields.push('zoneId = ?'); params.push(data.zoneId) }
+
 
   if (fields.length === 0) return
 

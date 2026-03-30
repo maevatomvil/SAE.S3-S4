@@ -1,0 +1,127 @@
+[
+  {
+    "id": "terrain",
+    "title": "terrain",
+    "shape": "rect",
+    "x1": 985,
+    "y1": 521,
+    "x2": 1034,
+    "y2": 566,
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Piscine",
+    "title": "Piscine",
+    "shape": "poly",
+    "points": [
+      { "x": 981, "y": 569 },
+      { "x": 1055, "y": 643 },
+      { "x": 1015, "y": 598 }
+    ],
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Hotel1",
+    "title": "Hotel1",
+    "shape": "rect",
+    "x1": 672,
+    "y1": 464,
+    "x2": 647,
+    "y2": 430,
+    "type": "hotel",
+    "capacity": "single"
+  },
+  {
+    "id": "Gymnase",
+    "title": "Gymnase",
+    "shape": "poly",
+    "points": [
+      { "x": 446, "y": 880 },
+      { "x": 423, "y": 848 },
+      { "x": 435, "y": 863 }
+    ],
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Hotel2",
+    "title": "Hotel2",
+    "shape": "poly",
+    "points": [
+      { "x": 530, "y": 877 },
+      { "x": 497, "y": 854 },
+      { "x": 509, "y": 868 }
+    ],
+    "type": "hotel",
+    "capacity": "single"
+  },
+  {
+    "id": "Hotel3",
+    "title": "Hotel3",
+    "shape": "poly",
+    "points": [
+      { "x": 484, "y": 835 },
+      { "x": 456, "y": 804 }
+    ],
+    "type": "hotel",
+    "capacity": "single"
+  },
+  {
+    "id": "Hotel4",
+    "title": "Hotel4",
+    "shape": "poly",
+    "points": [
+      { "x": 542, "y": 729 },
+      { "x": 572, "y": 753 },
+      { "x": 553, "y": 726 },
+      { "x": 558, "y": 737 }
+    ],
+    "type": "hotel",
+    "capacity": "single"
+  },
+  {
+    "id": "Hotel5",
+    "title": "Hotel5",
+    "shape": "poly",
+    "points": [
+      { "x": 560, "y": 915 },
+      { "x": 538, "y": 898 },
+      { "x": 547, "y": 908 }
+    ],
+    "type": "hotel",
+    "capacity": "single"
+  },
+  {
+    "id": "TerrainGolf",
+    "title": "Terrain de Golf",
+    "shape": "poly",
+    "points": [
+      { "x": 672, "y": 610 },
+      { "x": 739, "y": 734 },
+      { "x": 945, "y": 653 },
+      { "x": 852, "y": 526 }
+    ],
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "LacCanoe",
+    "title": "Lac de Canoe kayak",
+    "shape": "poly",
+    "points": [
+      { "x": 501, "y": 403 },
+      { "x": 498, "y": 342 },
+      { "x": 554, "y": 325 },
+      { "x": 620, "y": 333 },
+      { "x": 672, "y": 360 },
+      { "x": 681, "y": 421 },
+      { "x": 631, "y": 435 },
+      { "x": 539, "y": 428 },
+      { "x": 526, "y": 415 }
+    ],
+    "type": "normal",
+    "capacity": "multi"
+  }
+]

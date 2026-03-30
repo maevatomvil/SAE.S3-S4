@@ -6,6 +6,7 @@
     <h2 v-else>{{ subtitleEn }}</h2>
 
     <button v-if="isOrganizer" @click="editMode = true" class="btn-edit">Modifier</button>
+    
   </section>
 
   <div class="page-principale">
@@ -68,30 +69,37 @@
       <div v-html="isEnglish ? afterEn : afterFr"></div>
 
       <div style="width:100%; aspect-ratio:1/1;">
-        <MapComponent>
-          <div
-            v-for="p in prestataires"
-            :key="p.id"
-            class="pin"
-            :style="pinStyle(p)">
-          <div class="pin-label">
-            <strong style="text-align: center;">{{ p.name }}</strong>
-            <br>
-            <button class="pin-btn" @click="goToPrestataire(p)">
+        <MapComponent 
+          :selectableZones="zones"
+          @zone-click="openZonePopup"
+        />
+
+
+        <div
+          v-if="activeZone"
+          class="zone-popup"
+          :style="popupStyle">
+          <template v-if="activeZone.type === 'hotel'">
+            <strong>{{ activeZone.prestataires[0].name }}</strong><br>
+            <button class="pin-btn" @click="goToPrestataire(activeZone.prestataires[0])">
               Accéder
             </button>
+          </template>
 
-            <ul class="services-list">
-              <li v-for="s in p.services" :key="s">{{ s }}</li>
+          <template v-else>
+            <ul>
+              <li v-for="p in activeZone.prestataires" :key="p.id">
+                {{ p.name }} ({{ p.services.join(', ') }})
+                <button class="pin-btn" @click="goToPrestataire(p)">
+                  Accéder
+                </button>
+              </li>
             </ul>
-          </div>
+          </template>
         </div>
+      
 
-          
-        </MapComponent>
       </div>
-
-
 
     </div>
 
@@ -107,6 +115,8 @@ import HomePageService from '@/services/homepage.service.js'
 import Editor from '@tinymce/tinymce-vue'
 import TemplateService from '@/services/template.service.js'
 import { useRouter } from 'vue-router'
+import zonesRaw from "@/../backend/database/zones.json"
+
 const router = useRouter()
 
 function goToPrestataire(p) {
@@ -197,26 +207,6 @@ const editorConfig = {
   plugins: ['link','lists','media']
 }
 
-onMounted(async () => {
-  const res = await HomePageService.getHomePage()
-  const data = res?.data || {}
-
-  if (data.subtitleFr) subtitleFr.value = data.subtitleFr
-  if (data.subtitleEn) subtitleEn.value = data.subtitleEn
-  if (data.beforeFr) beforeFr.value = data.beforeFr
-  if (data.beforeEn) beforeEn.value = data.beforeEn
-  if (data.afterFr) afterFr.value = data.afterFr
-  if (data.afterEn) afterEn.value = data.afterEn
-
-  if (!auth.authUser) {
-    await auth.initSession()
-  }
-  const res2 = await TemplateService.getTemplates()
-  console.log("TEMPLATES =", res2.data)
-
-  prestataires.value = res2.data.filter(t => t.type === 'prestataireValide' && t.x !== undefined && t.y !== undefined)
-  console.log("prestataires =", prestataires.value)
-})
 
 async function savePage() {
   const data = {
@@ -243,14 +233,46 @@ async function savePage() {
 
 
 
-function pinStyle(p) {
-  return {
-    left: p.x + '%',
-    top: p.y + '%'
+
+
+const activeZone = ref(null)
+const popupStyle = ref({})
+
+function openZonePopup(zoneId) {
+  const z = zones.value.find(z => z.id === zoneId)
+  if (!z) return
+
+  activeZone.value = z
+  popupStyle.value = {
+    left: z.x + '%',
+    top: z.y + '%'
   }
 }
 
+const zones = ref([])
+onMounted(async () => {
+  const res = await HomePageService.getHomePage()
+  const data = res?.data || {}
 
+  if (data.subtitleFr) subtitleFr.value = data.subtitleFr
+  if (data.subtitleEn) subtitleEn.value = data.subtitleEn
+  if (data.beforeFr) beforeFr.value = data.beforeFr
+  if (data.beforeEn) beforeEn.value = data.beforeEn
+  if (data.afterFr) afterFr.value = data.afterFr
+  if (data.afterEn) afterEn.value = data.afterEn
+
+  if (!auth.authUser) {
+    await auth.initSession()
+  }
+
+  const res2 = await TemplateService.getTemplates()
+  prestataires.value = res2.data.filter(t => t.type === 'prestataireValide')
+
+  zones.value = zonesRaw.map(z => ({
+    ...z,
+    prestataires: prestataires.value.filter(p => p.zoneId === z.id)
+  }))
+})
 
 
 </script>
@@ -424,6 +446,19 @@ function pinStyle(p) {
   text-align: center;
   display: block;
 }
+
+
+.zone-popup {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: black;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  z-index: 999;
+}
+
 
 
 

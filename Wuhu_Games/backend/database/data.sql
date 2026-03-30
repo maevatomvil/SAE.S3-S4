@@ -75,7 +75,8 @@ CREATE TABLE templates (
   email VARCHAR(255),
   locationNeeds TEXT,
   x FLOAT,
-  y FLOAT
+  y FLOAT,
+  zoneId VARCHAR(255)
 );
 
 

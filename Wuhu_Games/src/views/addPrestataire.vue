@@ -122,6 +122,28 @@
           <input v-model="form.locationNeeds" :placeholder="isEnglish ? 'Ex: near water, near village...' : 'Ex : près de l\'eau, près du village ...'" />
         </div>
 
+
+
+        <div class="input-group">
+          <label>{{ isEnglish ? "Choose your location" : "Choisissez votre emplacement" }}</label>
+
+          <div class="map-wrapper">
+            <MapComponent
+              :selectable-zones="allowedZones"
+              @zone-click="selectZone"
+            />
+          </div>
+          
+
+
+
+
+          <p v-if="form.zoneId">
+            {{ isEnglish ? "Selected zone:" : "Zone sélectionnée :" }} {{ form.zoneId }}
+          </p>
+        </div>
+
+
         <button type="submit" class="btn-submit">
           {{ isEnglish ? "Submit request" : "Envoyer la demande" }}
         </button>
@@ -141,13 +163,16 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, computed} from 'vue'
+import MapComponent from "@/views/Map.vue"
+
 import { useRouter } from 'vue-router'
 import TemplateService from '@/services/template.service'
 import { useAuth } from '@/stores/auth.js'
 import { useLanguageStore } from '@/stores/languageStore.js'
+import zones from "@/../backend/database/zones.json"
+
 
 const auth = useAuth()
 const router = useRouter()
@@ -170,6 +195,7 @@ const form = ref({
   hotelAvailability: [],
   username: auth.authUser?.username || '',
   locationNeeds: '',
+  zoneId: null  
 })
 
 const successMessage = ref('')
@@ -208,6 +234,7 @@ function addHotelAvailability() {
     priceDouble: 0
   })
 }
+
 
 function removeHotelAvailability(index) {
   form.value.hotelAvailability.splice(index, 1)
@@ -299,6 +326,15 @@ async function handleSubmit() {
       form.value.image = await convertFileToBase64(form.value.image)
     }
 
+    if (!form.value.zoneId) {
+      errorMessage.value = isEnglish.value
+        ? "Please choose a location on the map"
+        : "Veuillez choisir un emplacement sur la carte"
+      return
+    }
+
+
+
     const result = await TemplateService.saveTemplate(form.value)
 
     if (result.error === 0) {
@@ -351,6 +387,56 @@ function openTemplate(serviceId) {
   else if (serviceId === 'info') router.push('/PageInformation')
 
 }
+
+
+function selectZone(zoneId) {
+  form.value.zoneId = zoneId
+}
+
+function convertZones(zs) {
+  return zs
+    .map(z => {
+      if (z.shape === "rect") {
+        return {
+          id: z.id,
+          shape: "rect",
+          x: (z.x1 / 1500) * 100,
+          y: (z.y1 / 1500) * 100,
+          width: ((z.x2 - z.x1) / 1500) * 100,
+          height: ((z.y2 - z.y1) / 1500) * 100
+        }
+      }
+
+      if (z.shape === "poly") {
+        const xs = z.points.map(p => p.x)
+        const ys = z.points.map(p => p.y)
+        return {
+          id: z.id,
+          shape: "poly",
+          points: z.points,
+          x: (Math.min(...xs) / 1500) * 100,
+          y: (Math.min(...ys) / 1500) * 100,
+          width: ((Math.max(...xs) - Math.min(...xs)) / 1500) * 100,
+          height: ((Math.max(...ys) - Math.min(...ys)) / 1500) * 100
+        }
+      }
+
+      return null
+    })
+    .filter(z => z !== null)
+}
+
+
+const allowedZones = computed(() => {
+  const isHotel = form.value.providerType === "hotel"
+
+  const filtered = zones.filter(z => {
+    if (isHotel) return z.type === "hotel"
+    return z.type === "normal"
+  })
+
+  return convertZones(filtered)
+})
 </script>
 
 <style scoped>
@@ -373,6 +459,17 @@ function openTemplate(serviceId) {
   width: 100%;
   max-width: 600px;
 }
+
+
+.map-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
 
 
 

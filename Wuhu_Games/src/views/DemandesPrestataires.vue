@@ -1,12 +1,14 @@
 <template>
   <div class="demandes-container">
     <h1>Demandes de Prestations</h1>
+
     <div v-if="demandes.length === 0">
       Aucune demande pour le moment.
     </div>
+
     <div v-for="demande in demandes" :key="demande.id" class="demande-card">
       <h2>{{ demande.name }} / {{ demande.name_en }} </h2>
-      <p><strong>Utilisateur :</strong> {{ demande.username }}</p> 
+      <p><strong>Utilisateur :</strong> {{ demande.username }}</p>
       <p><strong>Email :</strong> {{ demande.email }}</p>
       <p><strong>Description courte :</strong> {{ demande.shortDescription }}</p>
       <p><strong>Description courte (anglais) :</strong> {{ demande.shortDescription_en }}</p>
@@ -19,28 +21,18 @@
           </li>
         </ul>
       </div>
+
       <div v-if="demande.image">
         <img :src="demande.image" :alt="demande.name" class="demande-image"/>
       </div>
       <div v-if="demande.templateContent" class="template-content" v-html="demande.templateContent"></div>
       <p><strong>Besoins d’emplacement :</strong> {{ demande.locationNeeds }}</p>
-
-      <div v-if="selectedDemande && selectedDemande.id === demande.id" class="map-zone">
-        <div class="map-wrapper">
-          <MapComponent @map-click="setPosition" />
-        </div>
-
-        <p v-if="pendingPosition">
-          Position : {{ pendingPosition.x.toFixed(2) }}% / {{ pendingPosition.y.toFixed(2) }}%
-        </p>
-
-        <button @click="savePosition(demande)" style="background-color: orange; border-radius: 10px;">
-          Sauvegarder la position
-        </button>
-      </div>
-
-      <button @click="accepterDemande(demande)" style="background-color: greenyellow; border-radius: 10px;">Accepter</button>
-      <button @click="refuserDemande(demande)" style="background-color: red; border-radius: 10px;">Refuser</button>
+      <button @click="accepterDemande(demande)" style="background-color: greenyellow; border-radius: 10px;">
+        Accepter
+      </button>
+      <button @click="refuserDemande(demande)" style="background-color: red; border-radius: 10px;">
+        Refuser
+      </button>
     </div>
   </div>
 </template>
@@ -49,12 +41,8 @@
 import { ref, onMounted } from 'vue'
 import { getPrestataireDemandes } from '@/services/template.service.js'
 import PrestataireService from '@/services/prestataire.service.js'
-import MapComponent from '@/views/Map.vue'
-import TemplateService from '@/services/template.service.js'
 
 const demandes = ref([])
-const selectedDemande = ref(null)
-const pendingPosition = ref(null)
 
 function serviceName(id) {
   const mapping = {
@@ -67,22 +55,6 @@ function serviceName(id) {
   return mapping[id] || id
 }
 
-function setPosition(pos) {
-  pendingPosition.value = pos
-}
-
-async function savePosition(demande) {
-  if (!pendingPosition.value) return
-  await PrestataireService.accepterDemande(demande)
-  await TemplateService.updateTemplate(demande.username, {
-    x: pendingPosition.value.x,
-    y: pendingPosition.value.y
-  })
-
-  window.location.reload()
-  demandes.value = demandes.value.filter(d => d.id !== demande.id)
-}
-
 onMounted(async () => {
   const res = await getPrestataireDemandes()
   if (res.error === 0) {
@@ -91,7 +63,8 @@ onMounted(async () => {
 })
 
 async function accepterDemande(demande) {
-  selectedDemande.value = demande
+  await PrestataireService.accepterDemande(demande)
+  demandes.value = demandes.value.filter(d => d.id !== demande.id)
 }
 
 async function refuserDemande(demande) {
@@ -115,26 +88,18 @@ h1 {
   background-color: #f5f5f5;
   border-radius: 8px;
 }
+
 .demande-card h2 {
   margin-bottom: 10px;
 }
+
 .demande-image {
   max-width: 200px;
   margin-bottom: 10px;
 }
+
 .template-content {
   border-top: 1px solid #ccc;
   padding-top: 10px;
 }
-
-
-
-.map-wrapper {
-  width: 900px;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;
-  position: relative;
-}
-
-
 </style>

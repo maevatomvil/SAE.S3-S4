@@ -43,8 +43,8 @@ export async function saveTemplate(data) {
     email: data.email,
     services: data.services,
     locationNeeds: data.locationNeeds || '',
-    x: data.x,
-    y: data.y
+    zoneId: data.zoneId
+
   }
 
   const existed = templates.some(t => t.username === data.username)
