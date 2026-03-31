@@ -334,7 +334,7 @@ async function handleSubmit() {
     }
 
 
-
+    console.log("zoneId envoyé:", form.value.zoneId)
     const result = await TemplateService.saveTemplate(form.value)
 
     if (result.error === 0) {

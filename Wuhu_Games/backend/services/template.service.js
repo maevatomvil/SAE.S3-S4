@@ -4,10 +4,11 @@ import sanitizeHtml from 'sanitize-html'
 const sanitize = (str) => str ? sanitizeHtml(str, { allowedTags: [], allowedAttributes: {} }) : null
 
 export async function savePrestataireDemandeSQL(data) {
+  console.log("zoneId reçu backend:", data.zoneId)
   const sql = `
     INSERT INTO prestataireDemandes 
-    (username, providerType, serviceName, serviceName_en, email, image, descriptionFr, descriptionEn, pageAchat, planning, hotelAvailability, pageInfo, locationNeeds) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (username, providerType, serviceName, serviceName_en, email, image, descriptionFr, descriptionEn, pageAchat, planning, hotelAvailability, pageInfo, locationNeeds, zoneId) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
   const params = [
     sanitize(data.username) ?? null,
@@ -22,7 +23,8 @@ export async function savePrestataireDemandeSQL(data) {
     JSON.stringify(data.planning || []),
     JSON.stringify(data.hotelAvailability || []),
     data.templateContent ?? null,
-    sanitize(data.locationNeeds) ?? null
+    sanitize(data.locationNeeds) ?? null,
+    sanitize(data.zoneId) ?? null
   ]
 
   const result = await executeSQL(sql, params)
@@ -81,7 +83,8 @@ export async function getPrestataireDemandesSQL() {
     d.pageTitle = d.pageAchat
     d.templateContent = d.pageInfo
     d.providerType = d.providerType || "standard"
-    d.hotelAvailability = JSON.parse(d.hotelAvailability || '[]')
+    d.hotelAvailability = JSON.parse(d.hotelAvailability || '[]'),
+    d.zoneId = d.zoneId ?? null
   }
 
   return demandes

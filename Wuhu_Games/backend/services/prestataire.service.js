@@ -4,8 +4,8 @@ export async function accepterDemandeSQL(data) {
   await executeSQL(
     `
     INSERT INTO templates 
-    (username, providerType, name, name_en, shortDescription, shortDescription_en, image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat, articles, services, email, locationNeeds, type)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prestataireValide')
+    (username, providerType, name, name_en, shortDescription, shortDescription_en, image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat, articles, services, email, locationNeeds, zoneId, type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'prestataireValide')
     `,
     [
       data.username ?? null,
@@ -23,7 +23,8 @@ export async function accepterDemandeSQL(data) {
       JSON.stringify(data.articles || []),
       JSON.stringify(data.services || []),
       data.email ?? null,
-      data.locationNeeds ?? null
+      data.locationNeeds ?? null,
+      data.zoneId ?? null
     ]
   )
 

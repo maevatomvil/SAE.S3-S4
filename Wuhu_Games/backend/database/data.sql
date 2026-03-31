@@ -194,7 +194,8 @@ CREATE TABLE prestataireDemandes (
   pageInfo TEXT,
   locationNeeds TEXT,
   status VARCHAR(50) DEFAULT 'pending',
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  zoneId VARCHAR(255)
 );
 
 CREATE TABLE hotelAvailability (

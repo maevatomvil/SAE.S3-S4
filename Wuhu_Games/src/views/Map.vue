@@ -10,6 +10,8 @@
         class="zone"
         :style="zoneStyle(zone)"
         @click.stop="handleZoneClick(zone.id)"
+        @mouseenter="emit('zone-hover', zone.id)"
+        @mouseleave="emit('zone-leave', zone.id)"
       ></div>
     </div>
 
@@ -76,7 +78,7 @@ const props = defineProps({
   selectableZones: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['zone-click'])
+const emit = defineEmits(['zone-click', 'zone-hover', 'zone-leave'])
 
 function handleZoneClick(id) {
   emit("zone-click", id)
