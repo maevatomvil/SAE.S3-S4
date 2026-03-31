@@ -64,18 +64,27 @@
           :style="popupStyle"
           @mouseenter="cancelClose"
           @mouseleave="scheduleClose">
-          <ul>
+          <h3 style="text-align:center; margin:0 0 6px 0; font-size:14px; font-weight:bold;">
+            {{ activeZone.id }}
+          </h3>
+
+          <ul v-if="activeZone.prestataires.length > 0">
             <li v-for="p in activeZone.prestataires" :key="p.username">
               <strong>{{ p.name }}</strong> — {{ p.services.join(', ') }}
               <button class="pin-btn" @click="goToPrestataire(p)">Accéder</button>
             </li>
           </ul>
-        </div>
-      </div>
 
-    </div>
+          <p v-else style="text-align:center; margin:0; font-size:12px; opacity:0.8;">
+            Emplacement vide
+          </p>
+        </div>
+        </div>
+
+        </div>
 
   </div>
+
 </template>
 
 <script setup>
@@ -222,29 +231,6 @@ function cancelClose() {
 }
 
 const zones = ref([])
-
-onMounted(async () => {
-  const res = await HomePageService.getHomePage()
-  const data = res?.data || {}
-  if (data.subtitleFr) subtitleFr.value = data.subtitleFr
-  if (data.subtitleEn) subtitleEn.value = data.subtitleEn
-  if (data.beforeFr) beforeFr.value = data.beforeFr
-  if (data.beforeEn) beforeEn.value = data.beforeEn
-  if (data.afterFr) afterFr.value = data.afterFr
-  if (data.afterEn) afterEn.value = data.afterEn
-  if (!auth.authUser) {
-    await auth.initSession()
-  }
-  const res2 = await TemplateService.getTemplates()
-  prestataires.value = res2.data.filter(t => t.type === 'prestataireValide')
-  zones.value = convertZones(
-    zonesRaw.map(z => ({
-      ...z,
-      prestataires: prestataires.value.filter(p => p.zoneId === z.id)
-    }))
-  )
-})
-
 function convertZones(zs) {
   return zs.map(z => {
     if (z.shape === "rect") {
@@ -270,6 +256,36 @@ function convertZones(zs) {
     return null
   }).filter(z => z !== null)
 }
+
+onMounted(async () => {
+  const res = await HomePageService.getHomePage()
+  const data = res?.data || {}
+  if (data.subtitleFr) subtitleFr.value = data.subtitleFr
+  if (data.subtitleEn) subtitleEn.value = data.subtitleEn
+  if (data.beforeFr) beforeFr.value = data.beforeFr
+  if (data.beforeEn) beforeEn.value = data.beforeEn
+  if (data.afterFr) afterFr.value = data.afterFr
+  if (data.afterEn) afterEn.value = data.afterEn
+  if (!auth.authUser) {
+    await auth.initSession()
+  }
+  const res2 = await TemplateService.getTemplates()
+  prestataires.value = res2.data.filter(t => t.type === 'prestataireValide')
+  zones.value = convertZones(
+    zonesRaw.map(z => ({
+      ...z,
+      prestataires: prestataires.value.filter(p => p.zoneId === z.id),
+      color: prestataires.value.some(p => p.zoneId === z.id)
+      ? "rgba(0, 255, 0, 0.15)"   // vert 
+      : "rgba(255, 0, 0, 0.15)" ,  // rouge
+
+      borderColor: prestataires.value.some(p => p.zoneId === z.id)
+        ? "rgba(0, 150, 0, 0.9)"    // vert foncé
+        : "rgba(150, 0, 0, 0.9)"    // rouge foncé
+
+    }))
+  )
+})
 </script>
 
 <style scoped>

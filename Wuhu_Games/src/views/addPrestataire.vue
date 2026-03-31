@@ -164,6 +164,7 @@
   </div>
 </template>
 <script setup>
+
 import { ref, onMounted, computed} from 'vue'
 import MapComponent from "@/views/Map.vue"
 
@@ -182,6 +183,7 @@ const EVENT_START_DATE = '2025-05-11'
 const EVENT_END_DATE = '2025-05-24'
 const eventPeriodLabelFr = '11/05/2025 au 24/05/2025'
 const eventPeriodLabelEn = 'May 11, 2025 to May 24, 2025'
+const prestataires = ref([])
 
 const form = ref({
   name: '',
@@ -201,11 +203,17 @@ const form = ref({
 const successMessage = ref('')
 const errorMessage = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   if (!auth.authUser) { 
     router.push('/login')
     return
   }
+
+  const res = await TemplateService.getTemplates()
+  console.log("templates:", res.data)
+
+  prestataires.value = (res.data || []).filter(t => t.type === 'prestataireValide')
+
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
   if (savedForm.name) form.value = savedForm
   if (!form.value.services) form.value.services = []
@@ -216,7 +224,9 @@ onMounted(() => {
 
 function toggleHotelProvider(event) {
   form.value.providerType = event.target.checked ? 'hotel' : 'standard'
-
+   if (!event.target.checked) {
+    form.value.zoneId = null
+  }
   if (form.value.providerType === 'hotel') {
     form.value.services = form.value.services.filter(service => service !== 'planning')
     if (!form.value.hotelAvailability.length) {
@@ -224,6 +234,12 @@ function toggleHotelProvider(event) {
     }
   }
 }
+
+
+const occupiedZones = computed(() =>
+  prestataires.value.map(p => p.zoneId)
+)
+
 
 function addHotelAvailability() {
   form.value.hotelAvailability.push({
@@ -435,8 +451,21 @@ const allowedZones = computed(() => {
     return z.type === "normal"
   })
 
-  return convertZones(filtered)
+  const converted = convertZones(filtered)
+
+  return converted.map(z => {
+    const original = zones.find(o => o.id === z.id)
+
+    const disabled =
+      original.type === "hotel" &&
+      original.capacity === "single" &&
+      occupiedZones.value.includes(original.id)
+
+    return { ...z, disabled }
+  })
 })
+
+
 </script>
 
 <style scoped>

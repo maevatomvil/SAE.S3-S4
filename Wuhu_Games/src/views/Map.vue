@@ -7,7 +7,7 @@
       <div
         v-for="zone in selectableZones"
         :key="zone.id"
-        class="zone"
+        :class="['zone', { disabled: zone.disabled }]"
         :style="zoneStyle(zone)"
         @click.stop="handleZoneClick(zone.id)"
         @mouseenter="emit('zone-hover', zone.id)"
@@ -58,8 +58,8 @@
 
 .zone {
   position: absolute;
-  background-color: rgba(255, 0, 0, 0.171);
-  border: 3px solid rgb(255, 0, 0);
+  background-color: rgba(21, 189, 255, 0.171);
+  border: 3px solid rgb(0, 89, 255);
   border-radius: 6px;
   pointer-events: auto;
   cursor: pointer;
@@ -67,8 +67,21 @@
 }
 
 .zone:hover {
-  background-color: rgba(255, 0, 0, 0.8);
+  background-color: rgba(15, 109, 233, 0.712);
 }
+
+
+
+.zone.disabled {
+  background-color: rgba(255, 0, 0, 0.6) !important;
+  border-color: rgb(255, 0, 0) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+
+
+
 </style>
 
 <script setup>
@@ -89,7 +102,9 @@ function zoneStyle(z) {
     left: z.x + "%",
     top: z.y + "%",
     width: z.width + "%",
-    height: z.height + "%"
+    height: z.height + "%",
+    backgroundColor: z.color || "rgba(21, 189, 255, 0.771)",
+    borderColor: z.borderColor || "rgb(0, 89, 255)"
   }
 }
 </script>
