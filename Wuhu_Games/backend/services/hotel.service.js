@@ -2,12 +2,14 @@ import { db, executeSQL } from "../database/db.js"
 
 function enumerateDates(startDate, endDate) {
   const dates = []
-  let current = new Date(`${startDate}T00:00:00`)
-  const end = new Date(`${endDate}T00:00:00`)
+  const [startYear, startMonth, startDay] = startDate.split("-").map(Number)
+  const [endYear, endMonth, endDay] = endDate.split("-").map(Number)
+  let current = new Date(Date.UTC(startYear, startMonth - 1, startDay))
+  const end = new Date(Date.UTC(endYear, endMonth - 1, endDay))
 
   while (current <= end) {
     dates.push(current.toISOString().slice(0, 10))
-    current.setDate(current.getDate() + 1)
+    current.setUTCDate(current.getUTCDate() + 1)
   }
 
   return dates
@@ -16,7 +18,7 @@ function enumerateDates(startDate, endDate) {
 export async function getHotelAvailabilitySQL(prestataireUsername) {
   const rows = await executeSQL(
     `
-    SELECT date, simpleAvailable, doubleAvailable, priceSimple, priceDouble
+    SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, simpleAvailable, doubleAvailable, priceSimple, priceDouble
     FROM hotelAvailability
     WHERE prestataireUsername = ?
     ORDER BY date ASC
@@ -73,7 +75,7 @@ export async function createHotelReservationSQL(data) {
     const placeholders = dates.map(() => "?").join(", ")
     const rows = await executeSQL(
       `
-      SELECT date, ${stockColumn} AS stock, ${priceColumn} AS price
+      SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, ${stockColumn} AS stock, ${priceColumn} AS price
       FROM hotelAvailability
       WHERE prestataireUsername = ?
       AND date IN (${placeholders})
@@ -84,7 +86,13 @@ export async function createHotelReservationSQL(data) {
 
     if (rows.length !== dates.length) {
       await db.rollback()
-      return { error: 1, status: 400, data: "Certaines dates ne sont pas disponibles" }
+      const foundDates = rows.map(row => row.date)
+      const missingDates = dates.filter(date => !foundDates.includes(date))
+      return {
+        error: 1,
+        status: 400,
+        data: `Certaines dates ne sont pas disponibles : ${missingDates.join(", ")}`
+      }
     }
 
     const minStock = Math.min(...rows.map(row => row.stock))
@@ -134,6 +142,13 @@ export async function createHotelReservationSQL(data) {
     }
   } catch (err) {
     await db.rollback()
+    if (err?.code === "ER_DUP_ENTRY") {
+      return {
+        error: 1,
+        status: 409,
+        data: "Vous avez déjà réservé cette chambre pour cette période"
+      }
+    }
     throw err
   }
 }

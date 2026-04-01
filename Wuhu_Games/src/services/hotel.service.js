@@ -33,8 +33,16 @@ export async function createHotelReservation(payload) {
     return { error: 0, status: 201, data: payload }
   }
 
-  const res = await api.post("/hotels/reservation", payload)
-  return res.data
+  try {
+    const res = await api.post("/hotels/reservation", payload)
+    return res.data
+  } catch (error) {
+    return error.response?.data || {
+      error: 1,
+      status: 500,
+      data: "Erreur lors de la reservation"
+    }
+  }
 }
 
 export default {

@@ -134,8 +134,14 @@
           <strong>{{ recap.total }} EUR</strong>
         </p>
 
-        <button class="validate-button" :disabled="!auth.authUser" @click="validateOrder">
-          {{ auth.authUser ? (isEnglish ? "Confirm booking" : "Confirmer la reservation") : (isEnglish ? "Login to book" : "Connectez-vous pour reserver") }}
+        <button class="validate-button" :disabled="!auth.authUser || isSubmitting" @click="validateOrder">
+          {{
+            !auth.authUser
+              ? (isEnglish ? "Login to book" : "Connectez-vous pour reserver")
+              : isSubmitting
+                ? (isEnglish ? "Booking..." : "Reservation en cours...")
+                : (isEnglish ? "Confirm booking" : "Confirmer la reservation")
+          }}
         </button>
       </div>
 
@@ -170,6 +176,7 @@ const availabilityInfo = ref(null)
 const selectedRoomType = ref(null)
 const message = ref("")
 const messageType = ref("success")
+const isSubmitting = ref(false)
 
 function normalizeDateKey(value) {
   if (!value) return ""
@@ -196,7 +203,9 @@ const days = computed(() => sortedDates.value.map(date => ({
 const monthLabel = computed(() => {
   const firstDate = sortedDates.value[0]
   if (!firstDate) return isEnglish.value ? "Month" : "Mois"
-  return new Intl.DateTimeFormat(isEnglish.value ? "en-GB" : "fr-FR", { month: "long" }).format(new Date(`${firstDate}T00:00:00`))
+  const [year, month, day] = firstDate.split("-").map(Number)
+  return new Intl.DateTimeFormat(isEnglish.value ? "en-GB" : "fr-FR", { month: "long" })
+    .format(new Date(Date.UTC(year, month - 1, day)))
 })
 
 const yearLabel = computed(() => sortedDates.value[0]?.slice(0, 4) || "2025")
@@ -223,8 +232,9 @@ const recap = computed(() => {
 })
 
 function getNextDate(dateStr) {
-  const d = new Date(`${dateStr}T00:00:00`)
-  d.setDate(d.getDate() + 1)
+  const [year, month, day] = dateStr.split("-").map(Number)
+  const d = new Date(Date.UTC(year, month - 1, day))
+  d.setUTCDate(d.getUTCDate() + 1)
   return d.toISOString().slice(0, 10)
 }
 
@@ -331,11 +341,14 @@ function chooseRoom(type) {
 }
 
 function formatDateFr(date) {
-  return new Intl.DateTimeFormat(isEnglish.value ? "en-GB" : "fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  }).format(new Date(`${date}T00:00:00`))
+  const normalized = normalizeDateKey(date)
+  const [year, month, day] = normalized.split("-")
+
+  if (!year || !month || !day) return normalized
+
+  return isEnglish.value
+    ? `${day}/${month}/${year}`
+    : `${day}/${month}/${year}`
 }
 
 async function loadPrestataire() {
@@ -378,24 +391,42 @@ async function loadAvailability() {
 async function validateOrder() {
   if (!auth.authUser || !recap.value) return
 
-  const result = await HotelService.createHotelReservation({
-    prestataireUsername: route.params.username,
-    username: auth.authUser.username,
-    roomType: recap.value.roomType,
-    startDate: recap.value.startDate,
-    endDate: recap.value.endDate
-  })
+  isSubmitting.value = true
+  message.value = ""
 
-  if (result.error === 0) {
-    await loadAvailability()
-    resetSelection()
+  try {
+    const result = await HotelService.createHotelReservation({
+      prestataireUsername: route.params.username,
+      username: auth.authUser.username,
+      roomType: recap.value.roomType,
+      startDate: recap.value.startDate,
+      endDate: recap.value.endDate
+    })
+
+    if (result.error === 0) {
+      await loadAvailability()
+      resetSelection()
+      message.value = isEnglish.value
+        ? `Booking confirmed. Total: ${result.data.totalPrice} EUR`
+        : `Reservation confirmee. Total : ${result.data.totalPrice} EUR`
+      messageType.value = "success"
+    } else {
+      const fallbackError = isEnglish.value
+        ? `Booking failed for ${recap.value.startDate}${recap.value.endDate !== recap.value.startDate ? ` to ${recap.value.endDate}` : ""}.`
+        : `La reservation a echoue pour ${formatDateFr(recap.value.startDate)}${recap.value.endDate !== recap.value.startDate ? ` au ${formatDateFr(recap.value.endDate)}` : ""}.`
+
+      message.value = typeof result.data === "string" && result.data.trim()
+        ? result.data
+        : fallbackError
+      messageType.value = "error"
+    }
+  } catch {
     message.value = isEnglish.value
-      ? `Booking confirmed. Total: ${result.data.totalPrice} EUR`
-      : `Reservation confirmee. Total : ${result.data.totalPrice} EUR`
-    messageType.value = "success"
-  } else {
-    message.value = result.data
+      ? "An unexpected error occurred during booking."
+      : "Une erreur inattendue est survenue lors de la reservation."
     messageType.value = "error"
+  } finally {
+    isSubmitting.value = false
   }
 }
 
