@@ -33,6 +33,10 @@ tags:
     description: Gestion des spectateurs
   - name: LivreDor
     description: Gestion du livre d'or des prestataires
+  - name: Hotels
+    description: Gestion des disponibilités et réservations hôtelières
+  - name: PlanningPrestataire
+    description: Gestion des inscriptions aux événements prestataires
 
 
 
@@ -42,7 +46,7 @@ paths:
   #         AUTH
   ##############################
 
-  /login:
+  /auth/login:
     post:
       tags: [Auth]
       summary: Connexion utilisateur
@@ -64,7 +68,7 @@ paths:
         '404':
           description: Identifiants incorrects
 
-  /signup:
+  /auth/signup:
     post:
       tags: [Auth]
       summary: Création d'un compte utilisateur
@@ -92,7 +96,7 @@ paths:
         '409':
           description: Email ou username déjà utilisé
 
-  /session:
+  /auth/session:
     get:
       tags: [Auth]
       summary: Vérifie la session utilisateur
@@ -102,7 +106,7 @@ paths:
         '401':
           description: Session invalide
 
-  /logout:
+  /auth/logout:
     post:
       tags: [Auth]
       summary: Déconnexion utilisateur
@@ -643,6 +647,175 @@ paths:
         '200':
           description: Commandes récupérées
 
+  /planning-prestataire:
+    post:
+      tags: [PlanningPrestataire]
+      summary: Inscrit un utilisateur à un événement de prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prestataireUsername:
+                  type: string
+                eventId:
+                  type: string
+                username:
+                  type: string
+              required: [prestataireUsername, eventId, username]
+      responses:
+        '200':
+          description: Inscription enregistrée
+    delete:
+      tags: [PlanningPrestataire]
+      summary: Désinscrit un utilisateur d'un événement de prestataire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prestataireUsername:
+                  type: string
+                eventId:
+                  type: string
+                username:
+                  type: string
+              required: [prestataireUsername, eventId, username]
+      responses:
+        '200':
+          description: Désinscription enregistrée
+
+  /planning-prestataire/{prestataireUsername}/{eventId}:
+    get:
+      tags: [PlanningPrestataire]
+      summary: Récupère les inscriptions d'un événement prestataire
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des inscriptions
+
+  /planning-prestataire/{prestataireUsername}/{eventId}/numero/{username}:
+    get:
+      tags: [PlanningPrestataire]
+      summary: Récupère le numéro d'inscription d'un utilisateur à un événement prestataire
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Numéro récupéré
+        '404':
+          description: Utilisateur non inscrit
+
+  /hotels/{prestataireUsername}/availability:
+    get:
+      tags: [Hotels]
+      summary: Récupère les disponibilités hôtelières d'un prestataire
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Disponibilités récupérées
+    put:
+      tags: [Hotels]
+      summary: Met à jour les disponibilités hôtelières d'un prestataire
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                availability:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        format: date
+                      simpleAvailable:
+                        type: integer
+                      doubleAvailable:
+                        type: integer
+                      priceSimple:
+                        type: integer
+                      priceDouble:
+                        type: integer
+      responses:
+        '200':
+          description: Disponibilités mises à jour
+
+  /hotels/reservation:
+    post:
+      tags: [Hotels]
+      summary: Crée une réservation hôtelière
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prestataireUsername:
+                  type: string
+                username:
+                  type: string
+                roomType:
+                  type: string
+                  enum: [simple, double]
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+              required: [prestataireUsername, username, roomType, startDate, endDate]
+      responses:
+        '201':
+          description: Réservation créée
+        '400':
+          description: Dates ou disponibilité invalides
+        '409':
+          description: Réservation déjà existante
+
   /homepage:
     get:
       tags: [Homepage]
@@ -786,6 +959,20 @@ paths:
         '201':
           description: Message ajouté
 
+  /livre-dor/{prestataireUsername}/stats:
+    get:
+      tags: [LivreDor]
+      summary: Récupère les statistiques du livre d'or d'un prestataire
+      parameters:
+        - name: prestataireUsername
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Statistiques récupérées
+
   /livre-dor/{id}:
     delete:
       tags: [LivreDor]
@@ -799,4 +986,3 @@ paths:
       responses:
         '200':
           description: Message supprimé
-

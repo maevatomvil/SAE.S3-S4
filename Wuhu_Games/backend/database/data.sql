@@ -109,12 +109,6 @@ CREATE TABLE livreDor (
 );
 
 
-INSERT INTO livreDor (message) VALUES
-('Message1 '),
-('Message2 ');
-
-
-
 CREATE TABLE views (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255),
@@ -256,7 +250,92 @@ INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VA
 ('2025-05-24',3,2,50,80);
 
 INSERT INTO users (firstname, surname, username, email, password, role) VALUES
-('Bernadette','Buche','vis01','vis01@example.com','0c6cba853348a88915bd8f708dadaba441b1c832a8e25aca0ef12146e3a0ac75','visiteur'),
+('Bernadette','Buche','vis01','vis01@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','visiteur'), /*mdp = ouioui */
 ('Chloé','Buche','org01','org02@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','organisateur'), /*mdp = ouioui */
-('Arthur','Buche','vis02','vis03@example.com','4b979e04599fd0c70c5b421f9ca8abb88ee9daebc4759aea9ff5ae24d2a89d01','visiteur'),
-('Benoît','Buche','pres01','pres01@example.com','443b42ac37dde8dc73aa08b5df626bdc5a56ff3df95bd6d1d228eda94d15bdab','prestataire');
+('Arthur','Buche','preshotel1','preshotel1@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','prestataire'), /*mdp = ouioui */
+('Benoît','Buche','prestand1','prestand1@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','prestataire'); /*mdp = ouioui */
+
+INSERT INTO templates (
+  username, providerType, type, name, name_en, shortDescription, shortDescription_en,
+  image, pageTitle, templateContent, planning, pageTitleAchat, pageDescriptionAchat,
+  articles, services, email, locationNeeds, x, y, zoneId
+) VALUES
+(
+  'preshotel1',
+  'hotel',
+  'prestataireValide',
+  'Hôtel des Wuhu Games',
+  'Wuhu Games Hotel',
+  'Hôtel partenaire à deux pas du village des athlètes, avec chambres simples et doubles disponibles pendant toute la compétition.',
+  'Partner hotel a short walk from the athletes village, with single and double rooms available during the whole event.',
+  '',
+  'Bienvenue à l Hôtel des Wuhu Games',
+  '<p>Notre hôtel accueille visiteurs, équipes et accompagnants dans une ambiance simple et chaleureuse. Réception ouverte toute la journée, petit-déjeuner maison et accès rapide aux sites de compétition.</p><p>Vous pouvez consulter les disponibilités puis réserver directement votre chambre.</p>',
+  '[]',
+  '',
+  '',
+  '[]',
+  '["reservation","info","livre-dor"]',
+  'reservation@hotel-wuhu.test',
+  'Hôtel déjà installé à l entrée du site, aucun besoin technique supplémentaire.',
+  42,
+  18,
+  'zone-hotel'
+),
+(
+  'prestand1',
+  'standard',
+  'prestataireValide',
+  'Saveurs du Stade',
+  'Stadium Bites',
+  'Stand de restauration complet : plats chauds, bowls, desserts, boissons et menus rapides pour le public comme pour les sportifs.',
+  'Full catering stand: hot meals, bowls, desserts, drinks and quick menus for spectators and athletes.',
+  '',
+  'Saveurs du Stade',
+  '<p>Retrouvez une carte complète tout au long des Wuhu Games : restauration rapide, options végétales, boissons fraîches et formule du jour.</p><p>Nous servons sur place et préparons les commandes à retirer directement au stand.</p>',
+  '[{"id":"food-planning-1","jour":"Lundi","titre":"Menu midi spécial ouverture","heure":"12:00","lieu":"Esplanade centrale"},{"id":"food-planning-2","jour":"Mardi","titre":"Atelier dégustation locale","heure":"17:30","lieu":"Stand Saveurs du Stade"},{"id":"food-planning-3","jour":"Jeudi","titre":"After game burger & fries","heure":"19:00","lieu":"Zone restauration"},{"id":"food-planning-4","jour":"Samedi","titre":"Brunch des finales","heure":"10:30","lieu":"Terrasse visiteurs"}]',
+  'Commander chez Saveurs du Stade',
+  '<p>Composez votre panier parmi nos plats, desserts et boissons. Les commandes sont préparées rapidement et à retirer sur place avec votre username.</p>',
+  '[{"id":"food-1","titre":"Burger Wuhu","description":"Steak grillé, cheddar affiné, oignons confits et sauce maison.","prix":14,"stock":30,"image":null},{"id":"food-2","titre":"Bowl veggie croquant","description":"Riz, falafels, légumes rôtis, pickles et sauce yaourt citronné.","prix":12,"stock":24,"image":null},{"id":"food-3","titre":"Wrap poulet croustillant","description":"Poulet pané, salade, tomates, sauce poivrée et frites maison.","prix":11,"stock":28,"image":null},{"id":"food-4","titre":"Cookie géant chocolat-noisette","description":"Cookie moelleux cuit sur place, idéal pour la pause de l après-midi.","prix":4,"stock":40,"image":null},{"id":"food-5","titre":"Citronnade maison","description":"Boisson fraîche au citron, menthe et eau pétillante.","prix":3,"stock":50,"image":null}]',
+  '["achat","planning","info","livre-dor"]',
+  'contact@saveurs-stade.test',
+  'Stand mobile avec besoin d un branchement électrique standard et d un point d eau à proximité.',
+  63,
+  57,
+  'zone-restauration'
+);
+
+INSERT INTO hotelAvailability (prestataireUsername, date, simpleAvailable, doubleAvailable, priceSimple, priceDouble) VALUES
+('preshotel1','2025-05-11',6,4,79,109),
+('preshotel1','2025-05-12',6,4,79,109),
+('preshotel1','2025-05-13',5,4,79,109),
+('preshotel1','2025-05-14',5,3,82,112),
+('preshotel1','2025-05-15',5,3,82,112),
+('preshotel1','2025-05-16',4,3,85,115),
+('preshotel1','2025-05-17',4,3,85,115),
+('preshotel1','2025-05-18',4,2,85,115),
+('preshotel1','2025-05-19',5,3,82,112),
+('preshotel1','2025-05-20',5,3,82,112),
+('preshotel1','2025-05-21',6,4,79,109),
+('preshotel1','2025-05-22',6,4,79,109),
+('preshotel1','2025-05-23',5,4,79,109),
+('preshotel1','2025-05-24',5,3,79,109);
+
+INSERT INTO livreDor (prestataireUsername, message) VALUES
+('preshotel1','Chambre très propre et calme, parfait après une grosse journée sur le site.'),
+('preshotel1','Le personnel a été adorable quand on est arrivés tard après les compétitions.'),
+('preshotel1','Petit-déjeuner simple mais très bon, et surtout service rapide le matin.'),
+('preshotel1','On a réservé pour deux nuits, rien à redire sur la literie et l accueil.'),
+('preshotel1','Super pratique pour venir à pied depuis le village, je recommande vraiment.'),
+('prestand1','Le burger était excellent, et la file a avancé très vite entre deux épreuves.'),
+('prestand1','Bonne surprise sur les options végétales, le bowl était copieux et frais.');
+
+INSERT INTO views (username, date, count) VALUES
+('preshotel1','2025-05-11',18),
+('preshotel1','2025-05-12',26),
+('prestand1','2025-05-11',31),
+('prestand1','2025-05-12',29);
+
+INSERT INTO planningPrestataire (prestataireUsername, eventId, username, numero) VALUES
+('prestand1','food-planning-1','vis01',18452),
+('prestand1','food-planning-2','org01',28714);

@@ -150,6 +150,29 @@
     <div v-if="message" class="reservation-panel">
       <div class="card status-card">
         <p :class="messageType">{{ message }}</p>
+        <div v-if="reservationDetails" class="reservation-summary">
+          <p>
+            {{ isEnglish ? "Dates:" : "Dates :" }}
+            <strong>
+              {{ formatDateFr(reservationDetails.startDate) }}
+              <span v-if="reservationDetails.endDate !== reservationDetails.startDate">
+                {{ isEnglish ? " to " : " au " }}{{ formatDateFr(reservationDetails.endDate) }}
+              </span>
+            </strong>
+          </p>
+          <p>
+            {{ isEnglish ? "Room type:" : "Type de chambre :" }}
+            <strong>{{ reservationDetails.roomType === 'simple' ? (isEnglish ? 'Single' : 'Simple') : 'Double' }}</strong>
+          </p>
+          <p>
+            {{ isEnglish ? "Price:" : "Prix :" }}
+            <strong>{{ reservationDetails.totalPrice }} EUR</strong>
+          </p>
+        </div>
+        <p v-if="reservationCode" class="reservation-code">
+          <span>{{ isEnglish ? "Booking code:" : "Code de reservation :" }}</span>
+          <strong>{{ reservationCode }}</strong>
+        </p>
       </div>
     </div>
   </div>
@@ -177,6 +200,8 @@ const selectedRoomType = ref(null)
 const message = ref("")
 const messageType = ref("success")
 const isSubmitting = ref(false)
+const reservationCode = ref("")
+const reservationDetails = ref(null)
 
 function normalizeDateKey(value) {
   if (!value) return ""
@@ -243,6 +268,8 @@ function onDayClick(day) {
   availabilityInfo.value = null
   selectedRoomType.value = null
   message.value = ""
+  reservationCode.value = ""
+  reservationDetails.value = null
 
   if (!rangeStart.value || rangeEnd.value) {
     rangeStart.value = day.date
@@ -393,6 +420,8 @@ async function validateOrder() {
 
   isSubmitting.value = true
   message.value = ""
+  reservationCode.value = ""
+  reservationDetails.value = null
 
   try {
     const result = await HotelService.createHotelReservation({
@@ -406,14 +435,21 @@ async function validateOrder() {
     if (result.error === 0) {
       await loadAvailability()
       resetSelection()
+      reservationCode.value = result.data.reservationCode || ""
+      reservationDetails.value = {
+        startDate: result.data.startDate,
+        endDate: result.data.endDate,
+        roomType: result.data.roomType,
+        totalPrice: result.data.totalPrice
+      }
       message.value = isEnglish.value
         ? `Booking confirmed. Total: ${result.data.totalPrice} EUR`
-        : `Reservation confirmee. Total : ${result.data.totalPrice} EUR`
+        : `Réservation confirmée. Total : ${result.data.totalPrice} EUR`
       messageType.value = "success"
     } else {
       const fallbackError = isEnglish.value
         ? `Booking failed for ${recap.value.startDate}${recap.value.endDate !== recap.value.startDate ? ` to ${recap.value.endDate}` : ""}.`
-        : `La reservation a echoue pour ${formatDateFr(recap.value.startDate)}${recap.value.endDate !== recap.value.startDate ? ` au ${formatDateFr(recap.value.endDate)}` : ""}.`
+        : `La réservation a échoué pour ${formatDateFr(recap.value.startDate)}${recap.value.endDate !== recap.value.startDate ? ` au ${formatDateFr(recap.value.endDate)}` : ""}.`
 
       message.value = typeof result.data === "string" && result.data.trim()
         ? result.data
@@ -460,6 +496,9 @@ watch(() => route.params.username, async () => {
 .reservation-panel { max-width:760px; margin:30px auto 0; display:grid; gap:18px; }
 .card { background:#fff; border-radius:18px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.08); }
 .status-card { padding-top: 18px; padding-bottom: 18px; }
+.reservation-summary { margin-top:12px; color:#111; }
+.reservation-summary p { margin:8px 0; color:#111; }
+.reservation-code { margin-top:16px; padding:14px 16px; border:2px solid #d8defd; border-radius:12px; background:#f4f6ff; color:#2f2fb3; font-size:1rem; display:flex; justify-content:space-between; gap:12px; align-items:center; }
 .availability-list { list-style:none; padding:0; margin:0 0 16px; display:grid; gap:10px; }
 .availability-list li { display:flex; justify-content:space-between; gap:16px; }
 .room-options { display:flex; gap:12px; flex-wrap:wrap; }
