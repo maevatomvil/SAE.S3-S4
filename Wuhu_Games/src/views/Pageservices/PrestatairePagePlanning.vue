@@ -1,4 +1,4 @@
-```vue
+
 <template>
   <div class="titre">
     <h1>Planning</h1>
@@ -199,4 +199,3 @@ async function desinscrire(compet) {
 .divCodeInscription { visibility:hidden; display:block; padding:10px; margin:5px; border-radius:8px; width:fit-content; margin-left:auto; margin-right:auto; height:400px; }
 .divCodeInscription.visibility { visibility:visible; }
 </style>
-```

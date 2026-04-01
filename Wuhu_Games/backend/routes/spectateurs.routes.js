@@ -1,4 +1,5 @@
 import express from "express"
+import { requireOrganizer } from "../middlewares/requireOrganizer.js"
 import {
   getSpectateurs,
   getSpectateursForCompet,

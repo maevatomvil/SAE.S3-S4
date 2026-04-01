@@ -1,6 +1,6 @@
 import { Router } from "express"
 import express from "express"
-
+import { requireOrganizer } from "../middlewares/requireOrganizer.js"
 import {
   getInscriptions,
   getNumero,

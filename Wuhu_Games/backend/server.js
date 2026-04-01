@@ -1,6 +1,10 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import helmet from "helmet"
+import rateLimit from "express-rate-limit"
+
+
 
 import authRoutes from "./routes/auth.routes.js"
 import competitionsRoutes from "./routes/competitions.routes.js"
@@ -21,6 +25,21 @@ import YAML from "yamljs"
 
 const app = express()
 const swaggerDocument = YAML.load("./swagger.yaml")
+app.use(
+  helmet({
+    contentSecurityPolicy: false, 
+    crossOriginEmbedderPolicy: false,
+  })
+)
+
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, 
+  max: 100
+})
+
+app.use(limiter)
+
 
 app.use(cookieParser())
 app.use(cors({ origin: "http://localhost:5173", credentials: true }))

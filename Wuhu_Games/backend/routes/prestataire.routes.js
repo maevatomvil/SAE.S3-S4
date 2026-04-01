@@ -1,6 +1,6 @@
 import express from "express"
 import PrestataireService from "../services/prestataire.service.js"
-
+import { requireOrganizer } from "../middlewares/requireOrganizer.js"
 const router = express.Router()
 
 router.post("/accepter", async (req, res) => {

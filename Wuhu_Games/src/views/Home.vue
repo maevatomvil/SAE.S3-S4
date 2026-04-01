@@ -276,12 +276,14 @@ onMounted(async () => {
       ...z,
       prestataires: prestataires.value.filter(p => p.zoneId === z.id),
       color: prestataires.value.some(p => p.zoneId === z.id)
-      ? "rgba(0, 255, 0, 0.15)"   // vert 
-      : "rgba(255, 0, 0, 0.15)" ,  // rouge
+      ? "rgba(255, 0, 0, 0.15)"   // rouge
+      : "rgba(0, 0, 255, 0.15)", //bleu
+      
 
       borderColor: prestataires.value.some(p => p.zoneId === z.id)
-        ? "rgba(0, 150, 0, 0.9)"    // vert foncé
-        : "rgba(150, 0, 0, 0.9)"    // rouge foncé
+        ?"rgba(150, 0, 0, 1)"  //rouge foncé 
+        : "rgba(0, 0, 150, 1)"      // bleu foncé 
+        
 
     }))
   )

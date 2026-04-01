@@ -13,7 +13,6 @@
 
       <div class="sections-div">
         <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
-        <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
         <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
         <div class="section dropdown">
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
@@ -52,7 +51,6 @@
 
       <div class="sections-div">
         <router-link class="section" to="/">{{ isEnglish ? 'Home' : 'Accueil' }}</router-link>
-        <router-link class="section" to="/page-hotel">{{ isEnglish ? 'Hotels' : 'Hôtellerie' }}</router-link>
         <router-link class="section" to="/competition">{{ isEnglish ? 'Competition' : 'Compétition' }}</router-link>
         <div class="section dropdown">
         <span>{{ isEnglish ? 'Vendors' : 'Prestataires' }}</span>
