@@ -52,6 +52,27 @@
 
       <div v-html="isEnglish ? afterEn : afterFr"></div>
 
+     <section class="titre2">
+        <h2 v-if="!isEnglish">Nos prestataires</h2>
+        <h2 v-else>Our vendors</h2>
+
+        <div class="filtres">
+          <label v-for="s in servicesDisponibles" :key="s">
+            <input type="checkbox" :value="s" v-model="filtresActifs" />
+            {{ serviceLabelLang(s) }}
+          </label>
+        </div>
+
+        <ul class="liste-prestataires">
+          <li v-for="p in prestatairesFiltrés" :key="p.username" class="prestataire-item">
+            <strong>{{ isEnglish ? p.name_en : p.name }}</strong> — {{ p.services.map(serviceLabelLang).join(', ') }}
+            <button class="pin-btn" style="display:inline-block; width:auto; padding:4px 10px; margin-left:8px;" @click="goToPrestataire(p)">{{ isEnglish ? 'Access' : 'Accéder' }}</button>
+          </li>
+          <li v-if="prestatairesFiltrés.length === 0" style="color:#aaa;">{{ isEnglish ? 'No vendor found.' : 'Aucun prestataire trouvé.' }}</li>
+        </ul>
+      </section>
+
+
       <div style="width:100%; aspect-ratio:1/1; position:relative;">
         <MapComponent
           :selectableZones="zones"
@@ -140,7 +161,6 @@ const afterFr = ref(`
       <li><strong>Réserver un hébergement</strong> sur l'île</li>
       <li><strong>S'inscrire aux compétitions</strong></li>
       <li><strong>S'inscrire en tant que spectateur</strong></li>
-      <li><strong>Louer du matériel sportif</strong> directement sur place</li>
     </ul>
     <h2>Prestataires et exposants : rejoignez le village partenaires</h2>
     <p>
@@ -163,7 +183,6 @@ const afterEn = ref(`
       <li><strong>Book accommodation</strong> on the island</li>
       <li><strong>Register for competitions</strong></li>
       <li><strong>Register as a spectator</strong></li>
-      <li><strong>Rent sports equipment</strong> directly on site</li>
     </ul>
     <h2>Vendors and exhibitors: join the partner village</h2>
     <p>
@@ -257,6 +276,43 @@ function convertZones(zs) {
   }).filter(z => z !== null)
 }
 
+
+
+
+const filtresActifs = ref([])
+
+const servicesDisponibles = computed(() => {
+  const all = prestataires.value.flatMap(p => p.services)
+  return [...new Set(all)]
+})
+
+const prestatairesFiltrés = computed(() => {
+  if (filtresActifs.value.length === 0) return prestataires.value
+  return prestataires.value.filter(p =>
+    filtresActifs.value.every(s => p.services.includes(s))
+  )
+})
+
+function serviceLabelLang(id) {
+  if (isEnglish.value) {
+    return {
+      achat: 'Shop',
+      reservation: 'Booking',
+      planning: 'Schedule',
+      info: 'Information page',
+      'livre-dor': 'Guest book'
+    }[id] || id
+  }
+  return {
+    achat: "Page d'achat",
+    reservation: 'Réservation',
+    planning: 'Planning',
+    info: "Page d'information",
+    'livre-dor': "Livre d'or"
+  }[id] || id
+}
+
+
 onMounted(async () => {
   const res = await HomePageService.getHomePage()
   const data = res?.data || {}
@@ -326,4 +382,11 @@ onMounted(async () => {
 .input-title { padding:10px; width:100%; margin-bottom:10px; }
 .pin-btn { width: 100%; background: #007bff; border: none; color: white; padding: 6px 0; border-radius: 4px; cursor: pointer; font-size: 12px; text-align: center; display: block; }
 .zone-popup { position: absolute; transform: translate(-50%, -100%); background: black; color: white; padding: 8px; border-radius: 6px; font-size: 12px; z-index: 999; }
+.filtres { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.filtres label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; }
+.liste-prestataires { list-style:none; padding:0; }
+.prestataire-item { padding:8px 0; border-bottom:1px solid #eee; font-size:14px; }
+
+
+
 </style>

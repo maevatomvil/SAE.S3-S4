@@ -117,7 +117,7 @@ const prestataires = ref([])
 const auth = useAuth()
 const router = useRouter()
 const isAuthenticated = computed(() => auth.isAuthenticated())
-
+const demandeEnAttente = ref(false)
 
 
 onMounted(async () => {
@@ -127,6 +127,15 @@ onMounted(async () => {
 
   const res = await PrestataireMenuService.getPrestatairesValides()
   prestataires.value = res.data
+
+  if (auth.authUser) {
+    const resDemandes = await TemplateService.getPrestataireDemandes()
+    console.log("demandes:", resDemandes)
+    console.log("authUser:", auth.authUser?.username)
+    if (resDemandes.error === 0) {
+        demandeEnAttente.value = resDemandes.data.some(d => d.username === auth.authUser.username)
+      }
+  }
 })
 
 
@@ -154,13 +163,13 @@ function toggleLanguage() {
 
 
 const peutDevenirPrestataire = computed(() => {
-  if (!isAuthenticated.value) return false
-  const username = auth.authUser?.username
-  return !prestataires.value.some(p => p.username === username)
+  if (!auth.authUser) return false
+  const role = auth.authUser?.role
+  if (role === 'prestataire' || role === 'organisateur') return false
+  if (prestataires.value.some(p => p.username === auth.authUser?.username)) return false
+  if (demandeEnAttente.value) return false
+  return true
 })
-
-
-
 </script>
 
 <style>

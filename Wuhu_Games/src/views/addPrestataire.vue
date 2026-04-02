@@ -2,7 +2,7 @@
   <div class="prestataire">
     <div class="prestataire-container">
       <h2 class="prestataire-title"> {{ isEnglish ? "Become a Vendor" : "Devenir Prestataire" }}</h2>
-       <span v-if="!isEnglish"> Important : un utilisateur ne peut posséder qu’une seule page prestataire à la fois. <br>Si une demande est déjà en attente la nouvelle ne sera pas prise en compte. </span> <span v-else> Important: a user can only own one vendor page at a time. <br>If a request is already pending, the new one will not be considered. </span>
+       <span v-if="!isEnglish"> Important : un utilisateur ne peut posséder qu’une seule page prestataire à la fois. </span> <span v-else> Important: a user can only own one vendor page at a time. </span>
       <br>
       <form @submit.prevent="handleSubmit" class="prestataire-form">
 
@@ -118,7 +118,7 @@
           </button>
         </div>
         <div class="input-group">
-          <label>{{ isEnglish ? "Location needs" : "Besoins d’emplacement" }}</label>
+          <label>{{ isEnglish ? " needs" : "Besoins " }}</label>
           <input v-model="form.locationNeeds" :placeholder="isEnglish ? 'Ex: near water, near village...' : 'Ex : près de l\'eau, près du village ...'" />
         </div>
 
