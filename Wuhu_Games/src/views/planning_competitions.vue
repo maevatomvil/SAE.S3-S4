@@ -7,9 +7,9 @@
   </div>
 
   <div v-if="!auth.authUser">
-    <p>
-      <span v-if="!isEnglish">Connectez-vous pour voir le planning</span>
-      <span v-else>Log in to view the schedule</span>
+    <p class="login-warning">
+      <span v-if="!isEnglish">Connectez-vous pour pouvoir vous inscrire</span>
+      <span v-else>Log in to register</span>
     </p>
   </div>
 
@@ -244,7 +244,7 @@
     </div>
   </div>
 
-  <br><br><br>
+<br><br><br>
 </template>
 
 <script setup>
@@ -359,6 +359,14 @@ async function supprimer(compet) {
   if (popupInscriptionOuvert.value && popupInscriptionOuvert.value.titre === compet.titre) popupInscriptionOuvert.value = null
 }
 </script>
+
+<style scoped>
+.login-warning {
+  color: #d73f48;
+  font-weight: 700;
+  text-align: center;
+}
+</style>
 
 <style>
 * { font-family: 'Montserrat'; text-decoration: none; }

@@ -6,7 +6,7 @@
   </div>
 
   <div v-if="!auth.authUser">
-    <p>Connectez vous pour voir le planning</p>
+    <p class="login-warning">Connectez-vous pour pouvoir vous inscrire</p>
   </div>
 
   <div class="planning" v-if="competitions.compUser">
@@ -257,6 +257,14 @@ async function desinscrire(compet) {
   popupReservationOuvert.value = null
 }
 </script>
+
+<style scoped>
+.login-warning {
+  color: #d73f48;
+  font-weight: 700;
+  text-align: center;
+}
+</style>
 
 <style>
 * { font-family: 'Montserrat'; text-decoration: none; }

@@ -1,84 +1,92 @@
 export const defaultVendorTemplate = {
   vendorForm: {
-    name: 'LocaSport Wuhu',
-    name_en: 'Wuhu Sports Gear Rental',
-    email: 'location.materiel@example.com',
+    name: 'La Pause des Champions',
+    name_en: 'Champions Snack Corner',
+    email: 'pause.champions@example.com',
     providerType: 'standard',
     image: null,
-    shortDescription: 'Stand de location de matériel sportif pour profiter du site sans vous encombrer.',
-    shortDescription_en: 'Sports equipment rental stand to enjoy the venue without carrying your own gear.',
+    shortDescription: 'Stand de restauration rapide avec plats chauds, encas maison et boissons fraîches pour toute la journée.',
+    shortDescription_en: 'Quick food stand with hot dishes, homemade snacks and cold drinks all day long.',
     services: ['achat', 'planning', 'info'],
     hotelAvailability: [],
-    locationNeeds: 'près du village',
+    locationNeeds: 'près de la zone restauration',
     zoneId: 'terrain'
   },
   achat: {
-    pageTitleAchat: 'Location de matériel sportif',
+    pageTitleAchat: 'Commander à La Pause des Champions',
     pageDescriptionAchat:
-      '<p>Retrouvez ici notre sélection de matériel sportif à louer pendant toute la durée de l événement. Les retraits se font directement au stand et notre équipe peut vous conseiller selon votre activité du jour.</p><p>Casques, kits de jeu, accessoires de récupération et petits équipements pratiques sont préparés à l avance pour faciliter votre visite.</p>',
+      '<p>Retrouvez ici notre sélection de plats chauds, formules rapides et boissons préparées pour accompagner les visiteurs tout au long de l événement.</p><p>Les commandes se retirent directement au stand et notre équipe prépare les portions à l avance pour limiter l attente aux heures de pointe.</p>',
     articles: [
       {
-        id: 'location-velo-journee',
-        titre: 'Location de vélo - journée',
-        description: 'Vélo loisir avec antivol et casque inclus pour circuler facilement sur le site des Wuhu Games.',
-        prix: 18,
-        stock: 12,
+        id: 'champ-burger',
+        titre: 'Burger du champion',
+        description: 'Burger généreux au steak grillé, cheddar affiné, pickles d oignon et sauce maison.',
+        prix: 13,
+        stock: 24,
         image: null
       },
       {
-        id: 'kit-badminton',
-        titre: 'Kit badminton - demi-journée',
-        description: 'Deux raquettes, volants et sac de transport pour une session rapide entre deux compétitions.',
-        prix: 10,
-        stock: 20,
+        id: 'champ-wrap',
+        titre: 'Wrap poulet croustillant',
+        description: 'Wrap chaud avec poulet croustillant, crudités fraîches et sauce légèrement épicée.',
+        prix: 11,
+        stock: 28,
         image: null
       },
       {
-        id: 'pack-recuperation',
-        titre: 'Pack récupération sportive',
-        description: 'Tapis, rouleau de massage et élastique léger pour l échauffement ou la récupération.',
-        prix: 8,
-        stock: 15,
+        id: 'champ-cookie',
+        titre: 'Cookie noisette-chocolat',
+        description: 'Grand cookie moelleux cuit sur place, parfait pour la pause de l après-midi.',
+        prix: 4,
+        stock: 35,
+        image: null
+      },
+      {
+        id: 'champ-citronnade',
+        titre: 'Citronnade maison',
+        description: 'Boisson fraîche au citron, menthe et eau pétillante.',
+        prix: 3,
+        stock: 40,
         image: null
       }
     ]
   },
   info: {
-    pageTitle: 'Comment louer votre matériel sportif',
+    pageTitle: 'Bienvenue à La Pause des Champions',
     templateContent:
-      '<p>Bienvenue chez LocaSport Wuhu, votre stand de location de matériel sportif installé près du village partenaires. Notre objectif est simple : permettre aux visiteurs, accompagnants et participants de profiter du site sans transporter tout leur équipement.</p><p>Nous proposons du matériel pratique pour la journée ou la demi-journée, un retrait rapide sur place et des conseils pour choisir l équipement adapté à votre activité. Les stocks affichés sur la page d achat sont mis à jour pour faciliter la démonstration.</p><p>Le stand est prévu près du village afin de rester facile d accès tout au long de l événement. Pensez à consulter le planning pour connaître nos temps forts et les créneaux d essai.</p>'
+      '<p>Bienvenue à La Pause des Champions, un stand pensé pour proposer une restauration simple, efficace et chaleureuse au cœur du site.</p><p>Nous préparons des plats rapides, quelques recettes maison et des boissons fraîches pour les visiteurs, les accompagnants et les équipes qui veulent manger sans perdre de temps entre deux animations.</p><p>Le stand est situé près de la zone restauration pour faciliter le retrait des commandes et fluidifier le service sur les périodes les plus fréquentées.</p>'
   },
   planning: [
     {
-      id: 'planning-loc-1',
+      id: 'planning-food-1',
       jour: 'Lundi',
-      titre: 'Ouverture du stand et retrait express',
-      heure: '09:00',
-      lieu: 'Stand LocaSport - village partenaires',
+      titre: 'Ouverture petit-déjeuner et boissons chaudes',
+      heure: '08:30',
+      lieu: 'Stand La Pause des Champions',
       joueurs: []
     },
     {
-      id: 'planning-loc-2',
+      id: 'planning-food-2',
       jour: 'Mardi',
-      titre: 'Essai libre de trottinettes et vélos',
-      heure: '14:30',
-      lieu: 'Allée centrale près du village',
+      titre: 'Menu du midi spécial supporters',
+      heure: '12:15',
+      lieu: 'Stand La Pause des Champions',
       joueurs: []
     },
     {
-      id: 'planning-loc-3',
+      id: 'planning-food-3',
       jour: 'Jeudi',
-      titre: 'Atelier réglage et prise en main',
-      heure: '11:00',
-      lieu: 'Stand LocaSport - village partenaires',
+      titre: 'Pause goûter : cookies et boissons fraîches',
+      heure: '16:00',
+      lieu: 'Zone restauration',
       joueurs: []
     },
     {
-      id: 'planning-loc-4',
+      id: 'planning-food-4',
       jour: 'Samedi',
-      titre: 'Retours tardifs et assistance finale',
-      heure: '17:00',
-      lieu: 'Stand LocaSport - village partenaires',
+      titre: 'Service continu après les finales',
+      heure: '18:30',
+      lieu: 'Stand La Pause des Champions',
       joueurs: []
     }
   ]
