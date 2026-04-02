@@ -130,8 +130,8 @@
             <span v-else>Hotel availability</span>
           </label>
           <p class="hotel-hint">
-            <span v-if="!isEnglish">Seules les dates du 11/05/2025 au 24/05/2025 sont autorisées.</span>
-            <span v-else>Only dates from May 11, 2025 to May 24, 2025 are allowed.</span>
+            <span v-if="!isEnglish">Seules les dates du 12/05/2025 au 18/05/2025 sont autorisées.</span>
+            <span v-else>Only dates from May 12, 2025 to May 18, 2025 are allowed.</span>
           </p>
 
           <div class="hotel-grid-card">
@@ -204,8 +204,8 @@ import { useLanguageStore } from '@/stores/languageStore.js'
 
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
-const EVENT_START_DATE = '2025-05-11'
-const EVENT_END_DATE = '2025-05-24'
+const EVENT_START_DATE = '2025-05-12'
+const EVENT_END_DATE = '2025-05-18'
 
 const auth = useAuth()
 
@@ -240,8 +240,8 @@ async function submitForm() {
     if (invalidDate) {
       alert(
         isEnglish.value
-          ? 'Hotel dates must stay between May 11, 2025 and May 24, 2025.'
-          : 'Les dates de l hotel doivent rester entre le 11/05/2025 et le 24/05/2025.'
+          ? 'Hotel dates must stay between May 12, 2025 and May 18, 2025.'
+          : 'Les dates de l hotel doivent rester entre le 12/05/2025 et le 18/05/2025.'
       )
       return
     }

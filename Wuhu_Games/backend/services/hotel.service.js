@@ -1,6 +1,13 @@
 import { db, executeSQL } from "../database/db.js"
 import { generateReservationCode } from "../utils/reservationCode.js"
 
+const EVENT_START_DATE = "2025-05-12"
+const EVENT_END_DATE = "2025-05-18"
+
+function isDateWithinEvent(date) {
+  return date >= EVENT_START_DATE && date <= EVENT_END_DATE
+}
+
 function enumerateDates(startDate, endDate) {
   const dates = []
   const [startYear, startMonth, startDay] = startDate.split("-").map(Number)
@@ -31,6 +38,11 @@ export async function getHotelAvailabilitySQL(prestataireUsername) {
 }
 
 export async function saveHotelAvailabilitySQL(prestataireUsername, availability) {
+  const invalidDate = availability.find(item => item?.date && !isDateWithinEvent(item.date))
+  if (invalidDate) {
+    return { error: 1, status: 400, data: "Les dates de l'hôtel doivent rester entre le 12/05/2025 et le 18/05/2025" }
+  }
+
   await executeSQL("DELETE FROM hotelAvailability WHERE prestataireUsername = ?", [prestataireUsername])
 
   for (const item of availability) {
@@ -63,6 +75,10 @@ export async function createHotelReservationSQL(data) {
 
   if (!["simple", "double"].includes(roomType)) {
     return { error: 1, status: 400, data: "Type de chambre invalide" }
+  }
+
+  if (!isDateWithinEvent(startDate) || !isDateWithinEvent(endDate)) {
+    return { error: 1, status: 400, data: "La réservation doit rester entre le 12/05/2025 et le 18/05/2025" }
   }
 
   const dates = enumerateDates(startDate, endDate)

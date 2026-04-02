@@ -236,20 +236,13 @@ CREATE TABLE prestataireDemandesServices (
 );
 
 INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VALUES
-('2025-05-11',5,3,50,80),
 ('2025-05-12',4,2,50,80),
 ('2025-05-13',6,4,50,80),
 ('2025-05-14',3,2,55,85),
 ('2025-05-15',5,3,55,85),
 ('2025-05-16',2,1,60,90),
 ('2025-05-17',4,2,60,90),
-('2025-05-18',3,3,60,90),
-('2025-05-19',5,2,55,85),
-('2025-05-20',4,4,55,85),
-('2025-05-21',3,2,50,80),
-('2025-05-22',4,3,50,80),
-('2025-05-23',2,1,50,80),
-('2025-05-24',3,2,50,80);
+('2025-05-18',3,3,60,90);
 
 INSERT INTO users (firstname, surname, username, email, password, role) VALUES
 ('Bernadette','Buche','vis01','vis01@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','visiteur'), /*mdp = ouioui */
@@ -309,20 +302,13 @@ INSERT INTO templates (
 );
 
 INSERT INTO hotelAvailability (prestataireUsername, date, simpleAvailable, doubleAvailable, priceSimple, priceDouble) VALUES
-('preshotel1','2025-05-11',6,4,79,109),
 ('preshotel1','2025-05-12',6,4,79,109),
 ('preshotel1','2025-05-13',5,4,79,109),
 ('preshotel1','2025-05-14',5,3,82,112),
 ('preshotel1','2025-05-15',5,3,82,112),
 ('preshotel1','2025-05-16',4,3,85,115),
 ('preshotel1','2025-05-17',4,3,85,115),
-('preshotel1','2025-05-18',4,2,85,115),
-('preshotel1','2025-05-19',5,3,82,112),
-('preshotel1','2025-05-20',5,3,82,112),
-('preshotel1','2025-05-21',6,4,79,109),
-('preshotel1','2025-05-22',6,4,79,109),
-('preshotel1','2025-05-23',5,4,79,109),
-('preshotel1','2025-05-24',5,3,79,109);
+('preshotel1','2025-05-18',4,2,85,115);
 
 INSERT INTO livreDor (prestataireUsername, message) VALUES
 ('preshotel1','Chambre très propre et calme, parfait après une grosse journée sur le site.'),
@@ -334,9 +320,8 @@ INSERT INTO livreDor (prestataireUsername, message) VALUES
 ('prestand1','Bonne surprise sur les options végétales, le bowl était copieux et frais.');
 
 INSERT INTO views (username, date, count) VALUES
-('preshotel1','2025-05-11',18),
 ('preshotel1','2025-05-12',26),
-('prestand1','2025-05-11',31),
+('preshotel1','2025-05-13',22),
 ('prestand1','2025-05-12',29);
 
 INSERT INTO spectateurs (titre, jour, heure, username, numero) VALUES

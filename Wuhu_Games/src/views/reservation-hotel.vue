@@ -194,8 +194,8 @@ const days = [
   { label: 9, date: '2025-05-09', disabled: true, grey: true },
   { label: 10, date: '2025-05-10', disabled: true, grey: true },
 
-  // 11–24 mai : période de l'événement, cliquable
-  { label: 11, date: '2025-05-11', disabled: false, grey: false },
+  // 12–18 mai : période de l'événement, cliquable
+  { label: 11, date: '2025-05-11', disabled: true, grey: true },
   { label: 12, date: '2025-05-12', disabled: false, grey: false },
   { label: 13, date: '2025-05-13', disabled: false, grey: false },
   { label: 14, date: '2025-05-14', disabled: false, grey: false },
@@ -203,12 +203,12 @@ const days = [
   { label: 16, date: '2025-05-16', disabled: false, grey: false },
   { label: 17, date: '2025-05-17', disabled: false, grey: false },
   { label: 18, date: '2025-05-18', disabled: false, grey: false },
-  { label: 19, date: '2025-05-19', disabled: false, grey: false },
-  { label: 20, date: '2025-05-20', disabled: false, grey: false },
-  { label: 21, date: '2025-05-21', disabled: false, grey: false },
-  { label: 22, date: '2025-05-22', disabled: false, grey: false },
-  { label: 23, date: '2025-05-23', disabled: false, grey: false },
-  { label: 24, date: '2025-05-24', disabled: false, grey: false },
+  { label: 19, date: '2025-05-19', disabled: true, grey: true },
+  { label: 20, date: '2025-05-20', disabled: true, grey: true },
+  { label: 21, date: '2025-05-21', disabled: true, grey: true },
+  { label: 22, date: '2025-05-22', disabled: true, grey: true },
+  { label: 23, date: '2025-05-23', disabled: true, grey: true },
+  { label: 24, date: '2025-05-24', disabled: true, grey: true },
 
   // 25–31 mai (non réservables)
   { label: 25, date: '2025-05-25', disabled: true, grey: true },

@@ -180,10 +180,10 @@ const auth = useAuth()
 const router = useRouter()
 const languageStore = useLanguageStore()
 const isEnglish = computed(() => languageStore.isEnglish)
-const EVENT_START_DATE = '2025-05-11'
-const EVENT_END_DATE = '2025-05-24'
-const eventPeriodLabelFr = '11/05/2025 au 24/05/2025'
-const eventPeriodLabelEn = 'May 11, 2025 to May 24, 2025'
+const EVENT_START_DATE = '2025-05-12'
+const EVENT_END_DATE = '2025-05-18'
+const eventPeriodLabelFr = '12/05/2025 au 18/05/2025'
+const eventPeriodLabelEn = 'May 12, 2025 to May 18, 2025'
 const prestataires = ref([])
 const defaultTemplateData = {
   ...defaultVendorTemplate.achat,
