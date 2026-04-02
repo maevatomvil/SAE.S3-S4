@@ -154,7 +154,7 @@
       <ul>
         <li v-for="joueur in selectedCompet.joueurs || []" :key="joueur.username">
           {{ joueur.firstname }} {{ joueur.surname }} ({{ joueur.username }})
-          <span v-if="canEdit"> — Code : {{ inscriptions[selectedCompet.titre]?.[joueur.username] }} </span>
+          <span v-if="canEdit"> — Code : {{ joueur.numero }} </span>
         </li>
       </ul>
 

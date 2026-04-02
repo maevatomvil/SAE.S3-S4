@@ -128,18 +128,16 @@ INSERT INTO competitions (jour, heure, titre, lieu) VALUES
 ('Samedi','16:00','Cyclisme','Piste de cyclisme ');
 
 INSERT INTO inscriptions (titre, jour, heure, username, numero) VALUES
-('Tir à l''arc','Lundi','09:00','jdupont',1),
-('Canoë-Kayak','Lundi','14:30','jdupont',1),
-('Bowling','Mardi','10:00','jdupont',1),
-('Golf Demi-Finale','Mardi','15:00','jdupont',1),
-('Golf Finale','Mardi','20:00','jdupont',1),
-('Tennis de table','Mercredi','11:00','jdupont',1),
-('Tennis','Jeudi','14:00','jdupont',1),
-('Basketball','Vendredi','09:30','jdupont',1),
-('Cyclisme','Samedi','16:00','jdupont',1),
+('Tir à l''arc','Lundi','09:00','jdupont','CMD-250101-0900-A1B2'),
+('Canoë-Kayak','Lundi','14:30','jdupont','CMD-250101-1430-C3D4'),
+('Bowling','Mardi','10:00','jdupont','CMD-250102-1000-E5F6'),
+('Golf Demi-Finale','Mardi','15:00','jdupont','CMD-250102-1500-G7H8'),
+('Golf Finale','Mardi','20:00','jdupont','CMD-250102-2000-I9J0'),
+('Tennis de table','Mercredi','11:00','jdupont','CMD-250103-1100-K1L2'),
+('Tennis','Jeudi','14:00','jdupont','CMD-250104-1400-M3N4'),
+('Basketball','Vendredi','09:30','jdupont','CMD-250105-0930-O5P6'),
+('Cyclisme','Samedi','16:00','jdupont','CMD-250106-1600-Q7R8'),
 ('Tennis','Jeudi','14:00','vis01','CMD-250512-1400-E5F6');
-
-
 
 CREATE TABLE spectateurs (
   id INT AUTO_INCREMENT PRIMARY KEY,
