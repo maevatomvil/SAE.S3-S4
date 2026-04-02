@@ -1,4 +1,5 @@
 import { executeSQL } from "../database/db.js"
+import { generateReservationCode } from "../utils/reservationCode.js"
 
 export async function getPanierSQL(username, prestataireUsername) {
   const rows = await executeSQL(
@@ -55,13 +56,18 @@ export async function saveHistoriqueSQL(username, prestataireUsername, historiqu
 }
 
 export async function finaliserCommandeSQL(commande) {
+  const commandeAvecCode = {
+    ...commande,
+    id: generateReservationCode()
+  }
+
   await executeSQL(
     "INSERT INTO historique (username, prestataireUsername, commande) VALUES (?, ?, ?)",
-    [commande.username, commande.prestataireUsername, JSON.stringify(commande)]
+    [commande.username, commande.prestataireUsername, JSON.stringify(commandeAvecCode)]
   )
   await executeSQL(
     "DELETE FROM panier WHERE username = ? AND prestataireUsername = ?",
     [commande.username, commande.prestataireUsername]
   )
-  return { error: 0, status: 200, data: "Commande finalisée" }
+  return { error: 0, status: 200, data: commandeAvecCode }
 }

@@ -19,6 +19,7 @@ import statistiquesRoutes from "./routes/statistiques.routes.js"
 import livreDorRoutes from "./routes/livreDor.routes.js"
 import planningPrestataireRoutes from "./routes/planningPrestataire.routes.js"
 import hotelRoutes from "./routes/hotel.routes.js"
+import reservationsRoutes from "./routes/reservations.routes.js"
 
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
@@ -68,6 +69,7 @@ app.use("/prestataire", prestataireRoutes)
 
 app.use("/planning-prestataire", planningPrestataireRoutes)
 app.use("/hotels", hotelRoutes)
+app.use("/reservations", reservationsRoutes)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 

@@ -1,13 +1,14 @@
 import { executeSQL } from "../database/db.js"
+import { generateReservationCode } from "../utils/reservationCode.js"
 
 export async function inscrireSQL(data) {
   const { prestataireUsername, eventId, username } = data
   let numero, rows
   do {
-    numero = Math.floor(Math.random() * 99999) + 1
+    numero = generateReservationCode()
     rows = await executeSQL(
-      "SELECT numero FROM planningPrestataire WHERE prestataireUsername = ? AND numero = ?",
-      [prestataireUsername, numero]
+      "SELECT numero FROM planningPrestataire WHERE numero = ?",
+      [numero]
     )
   } while (rows.length > 0)
 

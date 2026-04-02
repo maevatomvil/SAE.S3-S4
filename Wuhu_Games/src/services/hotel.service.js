@@ -45,8 +45,28 @@ export async function createHotelReservation(payload) {
   }
 }
 
+export async function getUserReservations(username) {
+  const res = await api.get(`/reservations/${username}`)
+  return res.data
+}
+
+export async function cancelReservation(payload) {
+  try {
+    const res = await api.delete("/reservations", { data: payload })
+    return res.data
+  } catch (error) {
+    return error.response?.data || {
+      error: 1,
+      status: 500,
+      data: "Erreur lors de l'annulation"
+    }
+  }
+}
+
 export default {
   getHotelAvailability,
   saveHotelAvailability,
-  createHotelReservation
+  createHotelReservation,
+  getUserReservations,
+  cancelReservation
 }

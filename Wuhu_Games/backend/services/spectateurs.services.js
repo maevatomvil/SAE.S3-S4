@@ -1,4 +1,5 @@
 import { executeSQL } from "../database/db.js"
+import { generateReservationCode } from "../utils/reservationCode.js"
 
 export async function getSpectateurs() {
   const sql = "SELECT titre, jour, heure, username, numero FROM spectateurs"
@@ -25,10 +26,10 @@ export async function getNumeroSpectateur(titre, jour, heure, username) {
 export async function inscrireSpectateur(data) {
   let numero
   do {
-    numero = Math.floor(Math.random() * 99999) + 1
+    numero = generateReservationCode()
     const check = await executeSQL(
-      "SELECT numero FROM spectateurs WHERE titre = ? AND numero = ?",
-      [data.titre, numero]
+      "SELECT numero FROM spectateurs WHERE numero = ?",
+      [numero]
     )
     if (!check.length) break
   } while (true)

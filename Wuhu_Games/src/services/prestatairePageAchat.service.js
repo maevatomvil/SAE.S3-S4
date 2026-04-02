@@ -1,5 +1,4 @@
 import api from "@/services/axios.service.js"
-import { v4 as uuidv4 } from 'uuid'
 const useSQL = true
 export async function getPanier(username, prestataireUsername) {
   if (!useSQL) {
@@ -45,7 +44,6 @@ export async function finaliserCommande(panier, username, prestataireUsername) {
     else groupe[item.id].quantite++
   }
   const commande = {
-    id: uuidv4(),
     date: new Date().toLocaleString(),
     username,
     prestataireUsername,
@@ -60,7 +58,8 @@ export async function finaliserCommande(panier, username, prestataireUsername) {
     allOrders.push(commande)
     localStorage.setItem("allOrders", JSON.stringify(allOrders))
   } else {
-    await api.post(`/boutique/commandes`, { commande })
+    const res = await api.post(`/boutique/commandes`, { commande })
+    return res.data.data
   }
   return commande
 }

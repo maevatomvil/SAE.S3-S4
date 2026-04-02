@@ -41,7 +41,7 @@ CREATE TABLE inscriptions (
   jour VARCHAR(255),
   heure VARCHAR(255),
   username VARCHAR(255),
-  numero INT
+  numero VARCHAR(255)
 );
 
 CREATE TABLE homepage (
@@ -136,7 +136,8 @@ INSERT INTO inscriptions (titre, jour, heure, username, numero) VALUES
 ('Tennis de table','Mercredi','11:00','jdupont',1),
 ('Tennis','Jeudi','14:00','jdupont',1),
 ('Basketball','Vendredi','09:30','jdupont',1),
-('Cyclisme','Samedi','16:00','jdupont',1);
+('Cyclisme','Samedi','16:00','jdupont',1),
+('Tennis','Jeudi','14:00','vis01','CMD-250512-1400-E5F6');
 
 
 
@@ -146,7 +147,7 @@ CREATE TABLE spectateurs (
   jour VARCHAR(255),
   heure VARCHAR(255),
   username VARCHAR(255),
-  numero INT
+  numero VARCHAR(255)
 );
 
 
@@ -164,7 +165,7 @@ CREATE TABLE planningPrestataire (
   prestataireUsername VARCHAR(255),
   eventId VARCHAR(255),
   username VARCHAR(255),
-  numero INT
+  numero VARCHAR(255)
 );
 
 
@@ -207,6 +208,7 @@ CREATE TABLE hotelReservations (
   id INT AUTO_INCREMENT PRIMARY KEY,
   prestataireUsername VARCHAR(255) NOT NULL,
   username VARCHAR(255) NOT NULL,
+  reservationCode VARCHAR(255) NOT NULL UNIQUE,
   roomType VARCHAR(50) NOT NULL,
   startDate DATE NOT NULL,
   endDate DATE NOT NULL,
@@ -251,6 +253,7 @@ INSERT INTO availability (date, simple, doubleRoom, priceSimple, priceDouble) VA
 
 INSERT INTO users (firstname, surname, username, email, password, role) VALUES
 ('Bernadette','Buche','vis01','vis01@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','visiteur'), /*mdp = ouioui */
+('Camille','Martin','vis02','vis02@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','visiteur'), /*mdp = ouioui */
 ('Chloé','Buche','org01','org02@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','organisateur'), /*mdp = ouioui */
 ('Arthur','Buche','preshotel1','preshotel1@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','prestataire'), /*mdp = ouioui */
 ('Benoît','Buche','prestand1','prestand1@example.com','$2a$12$8gcqO6U3WisgQpqxKndOvuypO.X0RBK8sxxnKkzGm2BQHwn.gudbC','prestataire'); /*mdp = ouioui */
@@ -336,6 +339,22 @@ INSERT INTO views (username, date, count) VALUES
 ('prestand1','2025-05-11',31),
 ('prestand1','2025-05-12',29);
 
+INSERT INTO spectateurs (titre, jour, heure, username, numero) VALUES
+('Basketball','Vendredi','09:30','vis01','CMD-250516-0930-A7B8');
+
 INSERT INTO planningPrestataire (prestataireUsername, eventId, username, numero) VALUES
-('prestand1','food-planning-1','vis01',18452),
-('prestand1','food-planning-2','org01',28714);
+('prestand1','food-planning-1','vis01','CMD-250511-1200-C9D0'),
+('prestand1','food-planning-2','org01','CMD-250513-1730-E1F2');
+
+INSERT INTO hotelReservations (
+  prestataireUsername, username, reservationCode, roomType, startDate, endDate,
+  nights, pricePerNight, totalPrice, status
+) VALUES
+('preshotel1','vis01','CMD-250512-1820-A1B2','simple','2025-05-12','2025-05-13',2,79,158,'confirmed');
+
+INSERT INTO historique (username, prestataireUsername, commande) VALUES
+(
+  'vis01',
+  'prestand1',
+  '{"id":"CMD-250512-1835-C3D4","date":"12/05/2025 18:20:00","username":"vis01","prestataireUsername":"prestand1","articles":[{"id":"food-1","titre":"Burger Wuhu","description":"Steak grillé, cheddar affiné, oignons confits et sauce maison.","prix":14,"quantite":1},{"id":"food-5","titre":"Citronnade maison","description":"Boisson fraîche au citron, menthe et eau pétillante.","prix":3,"quantite":2}]}'
+);

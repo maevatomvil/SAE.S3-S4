@@ -27,8 +27,11 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Editor from '@tinymce/tinymce-vue'
 import TemplateService from '@/services/template.service'
+import { defaultVendorTemplate } from '@/constants/defaultPrestataireTemplate.js'
 
 const router = useRouter()
+const defaultInfoTitle = defaultVendorTemplate.info.pageTitle
+const defaultInfoContent = defaultVendorTemplate.info.templateContent
 
 const pageTitle = ref('')
 const content = ref('')
@@ -37,8 +40,8 @@ const errorMessage = ref('')
 
 onMounted(async () => {
   const template = await TemplateService.getCurrentTemplate()
-  pageTitle.value = template.pageTitle || ''
-  content.value = template.content || ''
+  pageTitle.value = template.pageTitle || defaultInfoTitle
+  content.value = template.templateContent || template.content || defaultInfoContent
 })
 
 function savePage() {
@@ -48,7 +51,11 @@ function savePage() {
     return
   }
 
-  TemplateService.saveCurrentTemplate({ pageTitle: pageTitle.value, content: content.value })
+  TemplateService.saveCurrentTemplate({
+    pageTitle: pageTitle.value,
+    templateContent: content.value,
+    content: content.value
+  })
   successMessage.value = 'Page sauvegardée !'
 
   setTimeout(() => {

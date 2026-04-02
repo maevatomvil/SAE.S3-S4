@@ -57,6 +57,11 @@ const routes = [
         path: '/signup',
         name: 'signup',
         component: () => import('@/views/signup.vue')
+    },
+    {
+        path: '/mes-reservations',
+        name: 'MesReservations',
+        component: () => import('@/views/MesReservations.vue')
     },{
         path: '/addPrestataire',
         name: 'addPrestataire',

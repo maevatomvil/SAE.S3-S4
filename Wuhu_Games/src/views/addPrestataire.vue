@@ -173,6 +173,7 @@ import TemplateService from '@/services/template.service'
 import { useAuth } from '@/stores/auth.js'
 import { useLanguageStore } from '@/stores/languageStore.js'
 import zones from "@/../backend/database/zones.json"
+import { defaultVendorTemplate } from '@/constants/defaultPrestataireTemplate.js'
 
 
 const auth = useAuth()
@@ -184,20 +185,21 @@ const EVENT_END_DATE = '2025-05-24'
 const eventPeriodLabelFr = '11/05/2025 au 24/05/2025'
 const eventPeriodLabelEn = 'May 11, 2025 to May 24, 2025'
 const prestataires = ref([])
+const defaultTemplateData = {
+  ...defaultVendorTemplate.achat,
+  ...defaultVendorTemplate.info,
+  planning: defaultVendorTemplate.planning
+}
 
-const form = ref({
-  name: '',
-  name_en: '', 
-  email: '',
-  providerType: 'standard',
-  image: null,
-  shortDescription: '',
-  shortDescription_en: '',
-  services: [],
+const defaultVendorForm = {
+  ...defaultVendorTemplate.vendorForm,
   hotelAvailability: [],
   username: auth.authUser?.username || '',
-  locationNeeds: '',
-  zoneId: null  
+  zoneId: defaultVendorTemplate.vendorForm.zoneId
+}
+
+const form = ref({
+  ...defaultVendorForm
 })
 
 const successMessage = ref('')
@@ -215,7 +217,18 @@ onMounted(async () => {
   prestataires.value = (res.data || []).filter(t => t.type === 'prestataireValide')
 
   const savedForm = JSON.parse(localStorage.getItem('savedForm') || '{}')
-  if (savedForm.name) form.value = savedForm
+  if (savedForm.name) {
+    form.value = { ...defaultVendorForm, ...savedForm }
+  } else {
+    form.value = { ...defaultVendorForm, username: auth.authUser?.username || '' }
+  }
+  const currentTemplate = await TemplateService.getCurrentTemplate()
+  if (!Object.keys(currentTemplate || {}).length) {
+    TemplateService.saveCurrentTemplate({
+      ...defaultTemplateData,
+      content: defaultTemplateData.templateContent
+    })
+  }
   if (!form.value.services) form.value.services = []
   if (!form.value.hotelAvailability) form.value.hotelAvailability = []
   if (!form.value.providerType) form.value.providerType = 'standard'
@@ -287,18 +300,18 @@ async function handleSubmit() {
     const t = await TemplateService.getCurrentTemplate()
 
     if (form.value.services.includes('achat')) {
-      form.value.pageTitleAchat = t.pageTitleAchat || ''
-      form.value.pageDescriptionAchat = t.pageDescriptionAchat || ''
-      form.value.articles = t.articles || []
+      form.value.pageTitleAchat = t.pageTitleAchat || defaultTemplateData.pageTitleAchat
+      form.value.pageDescriptionAchat = t.pageDescriptionAchat || defaultTemplateData.pageDescriptionAchat
+      form.value.articles = t.articles?.length ? t.articles : defaultTemplateData.articles
     }
 
     if (form.value.services.includes('info')) {
-      form.value.templateContent = t.content || ''
-      form.value.pageTitle = t.pageTitle || ''
+      form.value.templateContent = t.templateContent || t.content || defaultTemplateData.templateContent
+      form.value.pageTitle = t.pageTitle || defaultTemplateData.pageTitle
     }
 
     if (form.value.services.includes('planning')) {
-      form.value.planning = t.planning || []
+      form.value.planning = t.planning?.length ? t.planning : defaultTemplateData.planning
     }
 
     if (form.value.providerType === 'hotel') {
@@ -360,17 +373,8 @@ async function handleSubmit() {
 
       errorMessage.value = ''
       form.value = {
-        name: '',
-        name_en: '',
-        email: '',
-        providerType: 'standard',
-        image: null,
-        shortDescription: '',
-        shortDescription_en: '',
-        services: [],
-        hotelAvailability: [],
-        username: '',
-        locationNeeds: ''
+        ...defaultVendorForm,
+        username: auth.authUser?.username || ''
       }
       TemplateService.clearCurrentTemplate()
       localStorage.removeItem('savedForm')

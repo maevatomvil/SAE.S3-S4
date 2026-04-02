@@ -85,6 +85,37 @@
           </div>
         </div>
 
+        <div
+          class="input-group hotel-toggle-card"
+          :class="{ 'hotel-toggle-card--active': form.providerType === 'hotel' }"
+        >
+          <label class="checkbox-label checkbox-label--hotel">
+            <input
+              type="checkbox"
+              :checked="form.providerType === 'hotel'"
+              disabled
+            />
+            <span class="hotel-toggle-text">
+              <span v-if="!isEnglish">Je souhaite devenir un hôtel</span>
+              <span v-else>I want to become a hotel</span>
+            </span>
+          </label>
+          <p class="hotel-toggle-hint">
+            <span v-if="form.providerType === 'hotel' && !isEnglish">
+              Cette page est configurée comme un hôtel. Les services affichés et les disponibilités suivent ce mode.
+            </span>
+            <span v-else-if="form.providerType === 'hotel' && isEnglish">
+              This page is configured as a hotel. Services and availability follow this mode.
+            </span>
+            <span v-else-if="!isEnglish">
+              Cette page n'est pas configurée comme un hôtel.
+            </span>
+            <span v-else>
+              This page is not configured as a hotel.
+            </span>
+          </p>
+        </div>
+
         <div class="input-group">
           <label>
             <span v-if="!isEnglish">Type de prestataire</span>
@@ -193,12 +224,11 @@ const form = ref({
   username: auth.authUser?.username || ''
 })
 
-const availableServices = ref([
+const availableServices = computed(() => [
   { id: 'achat', name: 'Page d’achat' },
-  { id: 'planning', name: 'Planning' },
+  ...(form.value.providerType === 'hotel' ? [] : [{ id: 'planning', name: 'Planning' }]),
   { id: 'info', name: 'Page d’information' },
   { id: 'livre-dor', name: "Livre d'or" }
-  
 ])
 
 async function submitForm() {
@@ -262,8 +292,11 @@ onMounted(async () => {
         username: p.username
       }
 
-      if (form.value.providerType === 'hotel' && !form.value.services.includes('reservation')) {
-        form.value.services.push('reservation')
+      if (form.value.providerType === 'hotel') {
+        form.value.services = form.value.services.filter(service => service !== 'planning')
+        if (!form.value.services.includes('reservation')) {
+          form.value.services.push('reservation')
+        }
       }
     }
   }
@@ -316,6 +349,36 @@ async function handleFileUpload(event) {
 .service-item { display:flex; align-items:center; gap:10px; }
 .preview-image { max-width:200px; margin-top:10px; border-radius:8px; }
 .error { color:red; font-weight:600; }
+.hotel-toggle-card {
+  border: 1px solid #dbe1f4;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #f7f9ff;
+}
+.hotel-toggle-card--active {
+  border-color: #4f5ff0;
+  background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+  box-shadow: 0 8px 24px rgba(79, 95, 240, 0.12);
+}
+.checkbox-label--hotel {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.checkbox-label--hotel input {
+  width:18px;
+  height:18px;
+}
+.hotel-toggle-text {
+  font-weight:700;
+  color:#25314d;
+}
+.hotel-toggle-hint {
+  margin: 10px 0 0;
+  color:#55627f;
+  font-size:13px;
+  line-height:1.5;
+}
 .hotel-group { gap:10px; }
 .hotel-hint { margin: 0; color:#555; font-size:13px; }
 .hotel-grid-card { border: 1px solid #dbe1f4; border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%); }

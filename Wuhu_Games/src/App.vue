@@ -25,6 +25,7 @@
             </div>
           </div>
         </div>
+        <router-link class="section" to="/mes-reservations">{{ isEnglish ? 'My bookings' : 'Mes réservations' }}</router-link>
         <div class="lang-switch">
           <span :class="{ active: !isEnglish }">FR</span>
           <label class="switch">
@@ -70,6 +71,7 @@
             </div>
           </div>
         </div>
+        <router-link class="section" to="/mes-reservations">{{ isEnglish ? 'My bookings' : 'Mes réservations' }}</router-link>
          <div class="lang-switch">
           <span :class="{ active: !isEnglish }">FR</span>
           <label class="switch">

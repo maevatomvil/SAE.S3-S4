@@ -37,6 +37,8 @@ tags:
     description: Gestion des disponibilités et réservations hôtelières
   - name: PlanningPrestataire
     description: Gestion des inscriptions aux événements prestataires
+  - name: Reservations
+    description: Récapitulatif et annulation des réservations utilisateur
 
 
 
@@ -219,7 +221,7 @@ paths:
               required: [titre, jour, heure, username]
       responses:
         '200':
-          description: Inscription réussie (numéro généré)
+          description: Inscription réussie (code généré)
         '409':
           description: Déjà inscrit
 
@@ -273,7 +275,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Numéro d'inscription
+          description: Code d'inscription
         '404':
           description: Non inscrit
 
@@ -605,7 +607,7 @@ paths:
               type: object
       responses:
         '200':
-          description: Commande finalisée
+          description: Commande finalisée avec code de réservation
 
   /statistiques/views/{username}:
     get:
@@ -667,7 +669,7 @@ paths:
               required: [prestataireUsername, eventId, username]
       responses:
         '200':
-          description: Inscription enregistrée
+          description: Inscription enregistrée avec code
     delete:
       tags: [PlanningPrestataire]
       summary: Désinscrit un utilisateur d'un événement de prestataire
@@ -730,7 +732,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Numéro récupéré
+          description: Code récupéré
         '404':
           description: Utilisateur non inscrit
 
@@ -919,7 +921,44 @@ paths:
             type: string
       responses:
         '200':
-          description: Numéro récupéré
+          description: Code récupéré
+
+  /reservations/{username}:
+    get:
+      tags: [Reservations]
+      summary: Récupère toutes les réservations d'un utilisateur
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Réservations récupérées
+
+  /reservations:
+    delete:
+      tags: [Reservations]
+      summary: Annule une réservation utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [competition, spectator, planning, hotel, order]
+                username:
+                  type: string
+                payload:
+                  type: object
+              required: [kind, username, payload]
+      responses:
+        '200':
+          description: Réservation annulée
 
 
 

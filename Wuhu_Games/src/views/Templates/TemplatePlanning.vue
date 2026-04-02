@@ -61,8 +61,10 @@
 import { ref, onMounted } from 'vue'
 import TemplateService from '@/services/template.service'
 import { v4 as uuidv4 } from 'uuid'
+import { defaultVendorTemplate } from '@/constants/defaultPrestataireTemplate.js'
 
 const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+const defaultPlanning = defaultVendorTemplate.planning
 
 const planning = ref([])
 const newCompet = ref({ jour:'', titre:'', heure:'', lieu:'' })
@@ -71,7 +73,7 @@ const errorMessage = ref('')
 
 onMounted(async () => {
   const template = await TemplateService.getCurrentTemplate()
-  planning.value = template.planning || []
+  planning.value = template.planning?.length ? template.planning : defaultPlanning
 })
 
 function getMatin(jour) {

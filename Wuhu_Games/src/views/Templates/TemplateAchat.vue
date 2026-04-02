@@ -61,8 +61,10 @@ import { v4 as uuidv4 } from 'uuid'
 import TemplateService from '@/services/template.service'
 import Editor from '@tinymce/tinymce-vue'
 import { useAuth } from '@/stores/auth.js'
+import { defaultVendorTemplate } from '@/constants/defaultPrestataireTemplate.js'
 
 const auth = useAuth()
+const defaultArticles = defaultVendorTemplate.achat.articles
 
 const pageTitleAchat = ref('')
 const pageDescriptionAchat = ref('')
@@ -72,9 +74,9 @@ const errorMessage = ref('')
 
 onMounted(async () => {
   const template = await TemplateService.getCurrentTemplate()
-  pageTitleAchat.value = template.pageTitleAchat || ''
-  pageDescriptionAchat.value = template.pageDescriptionAchat || ''
-  articles.value = (template.articles || []).map(a => ({
+  pageTitleAchat.value = template.pageTitleAchat || defaultVendorTemplate.achat.pageTitleAchat
+  pageDescriptionAchat.value = template.pageDescriptionAchat || defaultVendorTemplate.achat.pageDescriptionAchat
+  articles.value = ((template.articles && template.articles.length ? template.articles : defaultArticles)).map(a => ({
     ...a,
     stock: a.stock ?? 0
   }))
