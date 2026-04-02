@@ -1,8 +1,8 @@
 <template>
   <div class="titre">
     <h1>
-      <span v-if="!isEnglish">Planning des compétitions</span>
-      <span v-else>Competition schedule</span>
+      <span v-if="!isEnglish">Participer aux compétitions</span>
+      <span v-else>participate in competitions</span>
     </h1>
   </div>
 

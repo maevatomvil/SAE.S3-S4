@@ -1,7 +1,7 @@
 [
   {
-    "id": "terrain",
-    "title": "terrain",
+    "id": "terrains",
+    "title": "terrains",
     "shape": "rect",
     "x1": 985,
     "y1": 521,
@@ -121,6 +121,63 @@
       { "x": 539, "y": 428 },
       { "x": 526, "y": 415 }
     ],
+    "type": "normal",
+    "capacity": "multi"
+  },
+
+
+  {
+    "id": "Stands1",
+    "title": "Stands1",
+    "shape": "rect",
+    "x1": 582,
+    "y1": 812,
+    "x2": 543,
+    "y2": 795,
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Stands2",
+    "title": "Stands2",
+    "shape": "rect",
+    "x1": 541,
+    "y1": 815,
+    "x2": 584,
+    "y2": 839,
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Stands3",
+    "title": "Stands3",
+    "shape": "rect",
+    "x1": 451,
+    "y1": 772,
+    "x2": 483,
+    "y2": 794,
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Stands4",
+    "title": "Stands4",
+    "shape": "rect",
+    "x1": 461,
+    "y1": 849,
+    "x2": 492,
+    "y2": 875,
+    "type": "normal",
+    "capacity": "multi"
+  },
+  {
+    "id": "Stands5",
+    "title": "Stands5",
+    "shape": "rect",
+    "x1": 456,
+    "y1": 888,
+    "x2": 482,
+    "y2": 918,
     "type": "normal",
     "capacity": "multi"
   }

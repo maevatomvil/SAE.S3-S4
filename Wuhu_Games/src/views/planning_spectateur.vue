@@ -1,7 +1,7 @@
 <template>
   <div class="titre">
     <h1>
-      {{ isEnglish ? "Competition Schedule" : "Planning des compétitions" }}
+      {{ isEnglish ? "Book a spectator seat" : "Réserver une place spectateur" }}
     </h1>
   </div>
 
