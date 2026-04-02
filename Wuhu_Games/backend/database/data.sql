@@ -283,7 +283,7 @@ INSERT INTO templates (
   'Hôtel déjà installé à l entrée du site, aucun besoin technique supplémentaire.',
   42,
   18,
-  'zone-hotel'
+  'Hotel1'
 ),
 (
   'prestand1',
@@ -305,7 +305,7 @@ INSERT INTO templates (
   'Stand mobile avec besoin d un branchement électrique standard et d un point d eau à proximité.',
   63,
   57,
-  'zone-restauration'
+  'Gymnase_wuhu'
 );
 
 INSERT INTO hotelAvailability (prestataireUsername, date, simpleAvailable, doubleAvailable, priceSimple, priceDouble) VALUES

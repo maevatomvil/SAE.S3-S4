@@ -11,7 +11,7 @@
     "capacity": "multi"
   },
   {
-    "id": "Piscine",
+    "id": "Piscine_wuhu",
     "title": "Piscine",
     "shape": "poly",
     "points": [
@@ -34,7 +34,7 @@
     "capacity": "single"
   },
   {
-    "id": "Gymnase",
+    "id": "Gymnase_wuhu",
     "title": "Gymnase",
     "shape": "poly",
     "points": [
@@ -107,7 +107,7 @@
     "capacity": "multi"
   },
   {
-    "id": "LacCanoe",
+    "id": "Lac_Wuhu",
     "title": "Lac de Canoe kayak",
     "shape": "poly",
     "points": [
