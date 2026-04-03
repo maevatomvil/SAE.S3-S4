@@ -2,6 +2,24 @@
   <div class="stats">
     <h1>Statistiques de vos services</h1>
 
+    <div v-if="prestataire?.providerType === 'hotel'" class="card reservations-card">
+      <h2>Réservations de l'hôtel</h2>
+      <div v-if="hotelReservations.length" class="reservations-list">
+        <div v-for="reservation in hotelReservations" :key="reservation.reservationCode" class="reservation-item">
+          <div class="reservation-item__top">
+            <strong>{{ reservation.reservationCode }}</strong>
+            <span>{{ reservation.totalPrice }} EUR</span>
+          </div>
+          <p>Client : {{ reservation.username }}</p>
+          <p>Chambre : {{ reservation.roomType === 'simple' ? 'Simple' : 'Double' }}</p>
+          <p>Séjour : {{ reservation.startDate }}<span v-if="reservation.startDate !== reservation.endDate"> au {{ reservation.endDate }}</span></p>
+          <p>Nuits : {{ reservation.nights }}</p>
+          <p>Réservée le : {{ reservation.createdAt }}</p>
+        </div>
+      </div>
+      <p v-else>Aucune réservation pour le moment.</p>
+    </div>
+
     <div v-if="prestataire?.services?.includes('achat')" class="card">
       <h2>Service E-commerce</h2>
       <p>Prix d'un panier moyen : {{ panierMoyen.toFixed(2) }} €</p>
@@ -45,6 +63,7 @@ const panierMoyen = ref(0)
 const classement = ref([])
 const vues = ref([])
 const messagesParJour = ref([])
+const hotelReservations = ref([])
 onMounted(async () => {
   if (!auth.authUser || auth.authUser.username !== username) {
     window.location.href = '/'
@@ -53,6 +72,10 @@ onMounted(async () => {
 
   const res = await TemplateService.getTemplates()
   prestataire.value = res.data.find(p => p.username === username)
+
+  if (prestataire.value?.providerType === 'hotel') {
+    hotelReservations.value = await StatistiquesService.getHotelReservations(username)
+  }
   
   if (prestataire.value?.services?.includes('achat')) {
     panierMoyen.value = await StatistiquesService.getPanierMoyen(prestataire.value.username)
@@ -136,6 +159,35 @@ onMounted(async () => {
   width: 100%;
   max-width: 700px;
   text-align: center;
+}
+
+.reservations-card {
+  text-align: left;
+}
+
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.reservation-item {
+  border: 1px solid #d8e1ff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #f7f9ff;
+}
+
+.reservation-item p {
+  margin: 6px 0 0;
+}
+
+.reservation-item__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #1f43b8;
 }
 
 ul {

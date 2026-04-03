@@ -9,7 +9,7 @@
           <input v-model="form.username" placeholder="Entrez votre login" required />
         </div>
 
-        <div class="input-group"> <p> ( info pour la personne qui teste le site : mdp de org01 = ouioui)</p>
+        <div class="input-group">
           <label>Mot de passe</label>
           <input v-model="form.password" type="password" placeholder="Entrez votre mot de passe" required />
         </div>

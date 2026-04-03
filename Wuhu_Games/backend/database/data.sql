@@ -290,7 +290,7 @@ INSERT INTO templates (
   '[{"id":"food-planning-1","jour":"Lundi","titre":"Menu midi spécial ouverture","heure":"12:00","lieu":"Esplanade centrale"},{"id":"food-planning-2","jour":"Mardi","titre":"Atelier dégustation locale","heure":"17:30","lieu":"Stand Saveurs du Stade"},{"id":"food-planning-3","jour":"Jeudi","titre":"After game burger & fries","heure":"19:00","lieu":"Zone restauration"},{"id":"food-planning-4","jour":"Samedi","titre":"Brunch des finales","heure":"10:30","lieu":"Terrasse visiteurs"}]',
   'Commander chez Saveurs du Stade',
   '<p>Composez votre panier parmi nos plats, desserts et boissons. Les commandes sont préparées rapidement et à retirer sur place avec votre username.</p>',
-  '[{"id":"food-1","titre":"Burger Wuhu","description":"Steak grillé, cheddar affiné, oignons confits et sauce maison.","prix":14,"stock":30,"image":null},{"id":"food-2","titre":"Bowl veggie croquant","description":"Riz, falafels, légumes rôtis, pickles et sauce yaourt citronné.","prix":12,"stock":24,"image":null},{"id":"food-3","titre":"Wrap poulet croustillant","description":"Poulet pané, salade, tomates, sauce poivrée et frites maison.","prix":11,"stock":28,"image":null},{"id":"food-4","titre":"Cookie géant chocolat-noisette","description":"Cookie moelleux cuit sur place, idéal pour la pause de l après-midi.","prix":4,"stock":40,"image":null},{"id":"food-5","titre":"Citronnade maison","description":"Boisson fraîche au citron, menthe et eau pétillante.","prix":3,"stock":50,"image":null}]',
+  '[{"id":"food-1","titre":"Burger Wuhu","description":"Steak grillé, cheddar affiné, oignons confits et sauce maison.","prix":14,"stock":30,"image":"/repas.jpg"},{"id":"food-3","titre":"Wrap poulet croustillant","description":"Poulet pané, salade, tomates, sauce poivrée et frites maison.","prix":11,"stock":28,"image":"/wrap.webp"},{"id":"food-4","titre":"Cookie géant chocolat-noisette","description":"Cookie moelleux cuit sur place, idéal pour la pause de l après-midi.","prix":4,"stock":40,"image":"/cookie.jpeg"},{"id":"food-5","titre":"Citronnade maison","description":"Boisson fraîche au citron, menthe et eau pétillante.","prix":3,"stock":50,"image":"/citronnade.webp"}]',
   '["achat","planning","info","livre-dor"]',
   'contact@saveurs-stade.test',
   'Stand mobile avec besoin d un branchement électrique standard et d un point d eau à proximité.',
@@ -308,14 +308,15 @@ INSERT INTO hotelAvailability (prestataireUsername, date, simpleAvailable, doubl
 ('preshotel1','2025-05-17',4,3,85,115),
 ('preshotel1','2025-05-18',4,2,85,115);
 
-INSERT INTO livreDor (prestataireUsername, message) VALUES
-('preshotel1','Chambre très propre et calme, parfait après une grosse journée sur le site.'),
-('preshotel1','Le personnel a été adorable quand on est arrivés tard après les compétitions.'),
-('preshotel1','Petit-déjeuner simple mais très bon, et surtout service rapide le matin.'),
-('preshotel1','On a réservé pour deux nuits, rien à redire sur la literie et l accueil.'),
-('preshotel1','Super pratique pour venir à pied depuis le village, je recommande vraiment.'),
-('prestand1','Le burger était excellent, et la file a avancé très vite entre deux épreuves.'),
-('prestand1','Bonne surprise sur les options végétales, le bowl était copieux et frais.');
+INSERT INTO livreDor (prestataireUsername, message, createdAt) VALUES
+('preshotel1','Chambre très propre et calme, parfait après une grosse journée sur le site.','2025-05-12 20:14:00'),
+('preshotel1','Le personnel a été adorable quand on est arrivés tard après les compétitions.','2025-05-12 22:08:00'),
+('preshotel1','Petit-déjeuner simple mais très bon, et surtout service rapide le matin.','2025-05-13 08:42:00'),
+('preshotel1','On a réservé pour deux nuits, rien à redire sur la literie et l accueil.','2025-05-14 11:25:00'),
+('preshotel1','Super pratique pour venir à pied depuis le village, je recommande vraiment.','2025-05-14 17:51:00'),
+('preshotel1','L accueil a été fluide et la chambre était prête dès notre arrivée.','2025-05-14 21:10:00'),
+('prestand1','Le burger était excellent, et la file a avancé très vite entre deux épreuves.','2025-05-13 12:40:00'),
+('prestand1','Bonne surprise sur les options végétales, le bowl était copieux et frais.','2025-05-17 18:05:00');
 
 INSERT INTO views (username, date, count) VALUES
 ('preshotel1','2025-05-12',26),
@@ -333,7 +334,8 @@ INSERT INTO hotelReservations (
   prestataireUsername, username, reservationCode, roomType, startDate, endDate,
   nights, pricePerNight, totalPrice, status
 ) VALUES
-('preshotel1','vis01','CMD-250512-1820-A1B2','simple','2025-05-12','2025-05-13',2,79,158,'confirmed');
+('preshotel1','vis01','CMD-250512-1820-A1B2','simple','2025-05-12','2025-05-13',2,79,158,'confirmed'),
+('preshotel1','vis02','CMD-250515-1945-D4E6','double','2025-05-15','2025-05-16',2,112,224,'confirmed');
 
 INSERT INTO historique (username, prestataireUsername, commande) VALUES
 (

@@ -35,3 +35,25 @@ export async function getCommandesSQL(prestataireUsername) {
   )
   return { error: 0, status: 200, data: rows.map(r => JSON.parse(r.commande)) }
 }
+
+export async function getHotelReservationsSQL(prestataireUsername) {
+  const rows = await executeSQL(
+    `
+    SELECT
+      reservationCode,
+      username,
+      roomType,
+      DATE_FORMAT(startDate, '%Y-%m-%d') AS startDate,
+      DATE_FORMAT(endDate, '%Y-%m-%d') AS endDate,
+      nights,
+      totalPrice,
+      DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS createdAt
+    FROM hotelReservations
+    WHERE prestataireUsername = ?
+    ORDER BY createdAt DESC
+    `,
+    [prestataireUsername]
+  )
+
+  return { error: 0, status: 200, data: rows }
+}

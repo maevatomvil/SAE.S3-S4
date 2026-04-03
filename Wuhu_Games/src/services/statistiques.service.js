@@ -104,6 +104,14 @@ export async function getLivreDorStats(username) {
   return res.data
 }
 
+export async function getHotelReservations(username) {
+  if (!useSQL) {
+    return []
+  }
+  const res = await api.get(`/statistiques/hotels/${username}/reservations`)
+  return res.data.data || []
+}
+
 
 export default {
   ajouterCommandeGlobale,
@@ -111,5 +119,6 @@ export default {
   getClassementArticles,
   getVuesPageInfo,
   addView,
-  getLivreDorStats
+  getLivreDorStats,
+  getHotelReservations
 }

@@ -23,7 +23,7 @@ export const defaultVendorTemplate = {
         description: 'Burger généreux au steak grillé, cheddar affiné, pickles d oignon et sauce maison.',
         prix: 13,
         stock: 24,
-        image: null
+        image: '/repas.jpg'
       },
       {
         id: 'champ-wrap',
@@ -31,7 +31,7 @@ export const defaultVendorTemplate = {
         description: 'Wrap chaud avec poulet croustillant, crudités fraîches et sauce légèrement épicée.',
         prix: 11,
         stock: 28,
-        image: null
+        image: '/wrap.webp'
       },
       {
         id: 'champ-cookie',
@@ -39,7 +39,7 @@ export const defaultVendorTemplate = {
         description: 'Grand cookie moelleux cuit sur place, parfait pour la pause de l après-midi.',
         prix: 4,
         stock: 35,
-        image: null
+        image: '/cookie.jpeg'
       },
       {
         id: 'champ-citronnade',
@@ -47,7 +47,7 @@ export const defaultVendorTemplate = {
         description: 'Boisson fraîche au citron, menthe et eau pétillante.',
         prix: 3,
         stock: 40,
-        image: null
+        image: '/citronnade.webp'
       }
     ]
   },

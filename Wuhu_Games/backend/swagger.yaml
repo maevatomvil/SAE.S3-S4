@@ -251,7 +251,7 @@ paths:
   /inscriptions/{titre}/{jour}/{heure}/numero/{username}:
     get:
       tags: [Inscriptions]
-      summary: Récupère le numéro d'inscription d'un utilisateur
+      summary: Récupère le code d'inscription d'un utilisateur
       parameters:
         - name: titre
           in: path
@@ -649,6 +649,20 @@ paths:
         '200':
           description: Commandes récupérées
 
+  /statistiques/hotels/{username}/reservations:
+    get:
+      tags: [Statistiques]
+      summary: Récupère les réservations hôtel d'un prestataire
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Réservations hôtel récupérées
+
   /planning-prestataire:
     post:
       tags: [PlanningPrestataire]
@@ -713,7 +727,7 @@ paths:
   /planning-prestataire/{prestataireUsername}/{eventId}/numero/{username}:
     get:
       tags: [PlanningPrestataire]
-      summary: Récupère le numéro d'inscription d'un utilisateur à un événement prestataire
+      summary: Récupère le code d'inscription d'un utilisateur à un événement prestataire
       parameters:
         - name: prestataireUsername
           in: path
@@ -856,7 +870,7 @@ paths:
               type: object
       responses:
         '200':
-          description: Inscription réussie
+          description: Inscription réussie avec code
     delete:
       tags: [Spectateurs]
       summary: Désinscrit un spectateur
@@ -897,7 +911,7 @@ paths:
   /spectateurs/{titre}/{jour}/{heure}/numero/{username}:
     get:
       tags: [Spectateurs]
-      summary: Récupère le numéro d'un spectateur
+      summary: Récupère le code d'un spectateur
       parameters:
         - name: titre
           in: path
